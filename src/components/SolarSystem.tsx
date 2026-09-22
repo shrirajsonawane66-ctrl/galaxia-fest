@@ -1,0 +1,261 @@
+"use client"
+import { useState, memo } from "react"
+import { Disc3, Star, Ticket, Music4, Headphones } from "lucide-react"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import Image from "next/image"
+
+type Artist = {
+  id: string
+  name: string
+  genre: string
+  role: string
+  year: string
+  bio: string
+  image_url: string
+  display_order: number
+  size: number
+  orbit: number
+  duration: number
+  startAngle: number
+  spin: number
+  label: string
+  glow: string
+  accent: string
+}
+
+/**
+ * PlanetCD — spinning vinyl/CD
+ * Layers (center → edge):
+ *  - glow (blur, outside, not spinning)
+ *  - disc (rounded-full overflow-hidden, spinning via cd-spin)
+ *    - base vinyl (#0a0a0a)
+ *    - grooves (repeating-radial-gradient, low opacity)
+ *    - photo label (inset 32%, rounded-full overflow-hidden, vinyl-label look)
+ *    - center hole (10% diameter, metallic)
+ *    - sheen (conic-gradient streak, mix-blend overlay)
+ *
+ * BUG FIX: previous version used `contain: layout paint` on outer wrapper and
+ * `mask-image: radial-gradient` on conic span. `contain: paint` clips the planet
+ * at the orbit-pivot bounds → half-circle/wedge. `mask-image` with radial was also
+ * unnecessary. Fixed by:
+ *  - removing `contain: paint` (keep `contain: layout` only)
+ *  - ensuring `border-radius:50%` + `overflow:hidden` on SAME element as the disc
+ *  - using only `border-radius` + `overflow:hidden` for circular clipping, no clip-path/mask
+ */
+const PlanetCD = memo(function PlanetCD({ artist, size, spinning = true }: { artist: Artist; size: number; spinning?: boolean }) {
+  return (
+    <div
+      className="planet-cd"
+      style={
+        {
+          width: size,
+          height: size,
+          // per-planet glow via CSS variable — themeable
+          ["--glow" as any]: artist.glow,
+          ["--accent" as any]: artist.accent,
+        } as React.CSSProperties
+      }
+    >
+      {/* Glow — outside disc, not clipped, not spinning */}
+      <span
+        className="planet-cd-glow"
+        style={{ background: artist.glow }}
+        aria-hidden
+      />
+
+      {/* Disc — the spinning part, fully circular via border-radius + overflow:hidden */}
+      <div
+        className={spinning ? "planet-cd-disc cd-spin" : "planet-cd-disc"}
+        style={spinning ? ({ animationDuration: `${artist.spin}s` } as React.CSSProperties) : undefined}
+      >
+        {/* Base + grooves */}
+        <span className="cd-grooves" aria-hidden />
+        {/* Subtle inner shadow for depth */}
+        <span
+          className="absolute inset-0 rounded-full pointer-events-none"
+          style={{ boxShadow: "inset 0 0 20px rgba(0,0,0,0.85), inset 0 0 4px rgba(255,255,255,0.12)" }}
+          aria-hidden
+        />
+
+        {/* Photo label — small inner circle (vinyl label look), not donut, to avoid mask wedge */}
+        <span className="cd-photo-wrap">
+          <Image
+            src={artist.image_url}
+            alt={artist.name}
+            fill
+            sizes={`${Math.round(size * 0.36)}px`}
+            style={{ objectFit: "cover" }}
+            loading="lazy"
+            decoding="async"
+          />
+          {/* soft highlight on photo */}
+          <span className="absolute inset-0 rounded-full" style={{ background: "radial-gradient(circle at 30% 22%, rgba(255,255,255,0.22), transparent 58%)" }} aria-hidden />
+        </span>
+
+        {/* Center spindle hole — 9% diameter */}
+        <span className="cd-center-hole" aria-hidden />
+
+        {/* Rainbow sheen — diagonal streak, overlay blend */}
+        <span className="cd-sheen" aria-hidden />
+      </div>
+    </div>
+  )
+})
+
+export default function SolarSystem({ artists }: { artists: Artist[] }) {
+  const [open, setOpen] = useState<Artist | null>(null)
+
+  if (!artists.length) {
+    return (
+      <div className="text-center py-20 glass rounded-2xl">
+        <Music4 className="w-10 h-10 mx-auto text-white/40 mb-3" />
+        <p className="text-white/60 font-space">Artists will appear here once added in Admin.</p>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <div className="orbit-stage">
+        {/* Dashed concentric orbits */}
+        {artists.map((a) => (
+          <div
+            key={`orbit-${a.id}`}
+            className="absolute top-1/2 left-1/2 rounded-full border border-dashed"
+            style={{
+              width: a.orbit,
+              height: a.orbit,
+              marginLeft: -a.orbit / 2,
+              marginTop: -a.orbit / 2,
+              borderColor: "rgba(255,255,255,0.065)",
+            }}
+            aria-hidden
+          />
+        ))}
+
+        {/* Central core */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="relative">
+            <div className="core-pulse" style={{ width: 268, height: 268, left: -134, top: -134 } as React.CSSProperties} aria-hidden />
+            <div
+              className="relative w-48 h-48 rounded-full flex items-center justify-center"
+              style={{
+                background: `radial-gradient(circle at 30% 30%, #FFF7ED 0%, #FDE68A 18%, #F59E0B 42%, #EC4899 68%, #7C3AED 100%)`,
+                boxShadow: `0 0 60px rgba(236,72,153,0.45), 0 0 120px rgba(139,92,246,0.30), inset -20px -30px 60px rgba(0,0,0,0.38)`,
+                transform: "translateZ(0)",
+                backfaceVisibility: "hidden" as any,
+              }}
+            >
+              <div className="text-center">
+                <Headphones className="w-6 h-6 mx-auto text-white/90 mb-1" />
+                <div className="font-orbitron font-black text-sm tracking-widest text-white/95" style={{ textShadow: "0 1px 12px rgba(0,0,0,0.6)" }}>
+                  GALAXIA
+                </div>
+                <div className="text-[9px] font-space uppercase tracking-[0.3em] text-white/70 mt-1">The Core</div>
+              </div>
+            </div>
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full border border-white/10" style={{ opacity: 0.7 }} aria-hidden />
+          </div>
+        </div>
+
+        {/* Planets — pivot (orbit) → counter → PlanetCD (spin) */}
+        {artists.map((a, i) => {
+          const delay = -(a.startAngle / 360) * a.duration - i * 0.9
+          return (
+            <div
+              key={a.id}
+              className="orbit-pivot"
+              style={{
+                width: a.orbit,
+                height: a.orbit,
+                animationDuration: `${a.duration}s`,
+                animationDelay: `${delay}s`,
+              } as React.CSSProperties}
+            >
+              <div className="orbit-planet">
+                <div
+                  className="planet-inner"
+                  style={{
+                    animationDuration: `${a.duration}s`,
+                    animationDelay: `${delay}s`,
+                  } as React.CSSProperties}
+                >
+                  <button
+                    aria-label={`Open ${a.name} — ${a.genre}`}
+                    onClick={() => setOpen(a)}
+                    className="planet-btn group relative outline-none focus:ring-2 focus:ring-white/40 rounded-full"
+                    style={{ width: a.size, height: a.size }}
+                  >
+                    <PlanetCD artist={a} size={a.size} spinning />
+                    <span className="planet-label absolute left-1/2 -translate-x-1/2 top-full mt-3 whitespace-nowrap z-10 pointer-events-none">
+                      <span
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass text-[10px] font-space uppercase tracking-[0.3em] border border-white/10"
+                        style={{
+                          color: a.accent,
+                          background: "rgba(10,10,28,0.72)",
+                          backdropFilter: "blur(10px)",
+                          textShadow: "0 1px 8px rgba(0,0,0,0.7)",
+                          boxShadow: `0 0 14px ${a.glow}`,
+                        }}
+                      >
+                        <Disc3 className="w-3 h-3 animate-spin" style={{ animationDuration: "3s" }} />
+                        {a.name}
+                      </span>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="lg:hidden flex justify-center mt-2">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-xs font-space">
+          <span className="w-2 h-2 rounded-full bg-fuchsia-400 animate-pulse" /> Tap a record
+        </div>
+      </div>
+
+      <Dialog open={!!open} onOpenChange={(o) => !o && setOpen(null)}>
+        <DialogContent className="max-w-md p-0 overflow-hidden border-white/10">
+          {open && (
+            <div className="relative">
+              <div className="relative h-64 overflow-hidden">
+                <Image src={open.image_url} alt={open.name} fill sizes="(max-width: 448px) 100vw, 448px" style={{ objectFit: "cover" }} priority={false} />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050816] via-[#050816]/40 to-transparent" />
+                <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-space uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-full bg-fuchsia-400 animate-pulse" />
+                  {open.year}
+                </div>
+                <div className="absolute bottom-4 left-4 right-4">
+                  <div className="text-xs font-space uppercase tracking-[0.3em] mb-1" style={{ color: open.accent, textShadow: "0 1px 12px rgba(0,0,0,0.8)" }}>
+                    {open.genre}
+                  </div>
+                  <div className="font-orbitron font-black text-xl leading-none text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8)" }}>
+                    {open.name}
+                  </div>
+                  <div className="text-xs text-white/70 mt-1 font-space">{open.role}</div>
+                </div>
+                <div className="absolute top-4 right-12 w-12 h-12">
+                  <PlanetCD artist={open} size={48} spinning />
+                </div>
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="text-sm text-white/70 leading-relaxed">{open.bio}</p>
+                <div className="flex gap-2">
+                  <Button variant="galaxy" size="sm" onClick={() => setOpen(null)}>
+                    <Ticket className="w-4 h-4" /> Book Pass
+                  </Button>
+                  <Button variant="outline" size="sm" className="rounded-full" onClick={() => window.open(open.image_url, "_blank")}>
+                    <Star className="w-4 h-4" /> View Image
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
+  )
+}
