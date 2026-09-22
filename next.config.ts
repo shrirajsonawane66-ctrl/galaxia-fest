@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  outputFileTracingRoot: "/home/alpha45/Videos/galaxia",
   poweredByHeader: false,
   compress: true,
   reactStrictMode: true,
