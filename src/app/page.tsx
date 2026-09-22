@@ -297,7 +297,7 @@ export default function Home() {
       </section>
 
       {/* ARTISTS */}
-      <section id="artists" className="relative z-10 py-24 md:py-32 px-4 overflow-hidden">
+      <section id="artists" className="relative z-10 py-24 md:py-32 px-4 overflow-visible">
         <div className="max-w-7xl mx-auto">
           <Reveal className="text-center mb-10 md:mb-14">
             <div className="inline-flex items-center gap-3 mb-6">

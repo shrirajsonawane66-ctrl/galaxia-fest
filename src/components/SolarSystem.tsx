@@ -1,5 +1,5 @@
 "use client"
-import { useState, memo } from "react"
+import { useState, useEffect, memo } from "react"
 import { Disc3, Star, Ticket, Music4, Headphones } from "lucide-react"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -105,6 +105,34 @@ const PlanetCD = memo(function PlanetCD({ artist, size, spinning = true }: { art
 
 export default function SolarSystem({ artists }: { artists: Artist[] }) {
   const [open, setOpen] = useState<Artist | null>(null)
+  const [scale, setScale] = useState(1)
+  const [sizeScale, setSizeScale] = useState(1)
+
+  useEffect(() => {
+    const maxOrbit = Math.max(...artists.map((a) => a.orbit), 906)
+    const compute = () => {
+      const w = window.innerWidth
+      const containerW = Math.min(w - 32, 1280) // px-4 = 32
+      let s = 1
+      if (w < 640) {
+        // mobile: fit max orbit inside container with padding, clamp to keep readable
+        s = (containerW - 24) / maxOrbit
+        s = Math.max(0.34, Math.min(0.55, s))
+      } else if (w < 1024) {
+        s = (containerW - 40) / maxOrbit
+        s = Math.max(0.68, Math.min(1, s))
+      } else {
+        s = 1
+      }
+      setScale(s)
+      // keep planets readable on mobile — don't shrink as much as orbits
+      const ss = s < 0.7 ? Math.max(0.52, s * 1.42) : s
+      setSizeScale(Math.min(1, ss))
+    }
+    compute()
+    window.addEventListener("resize", compute)
+    return () => window.removeEventListener("resize", compute)
+  }, [artists])
 
   if (!artists.length) {
     return (
@@ -115,60 +143,76 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
     )
   }
 
+  const maxOrbit = Math.max(...artists.map((a) => a.orbit), 906)
+  const stageHeight = Math.round(maxOrbit * scale + 220)
+
   return (
     <>
-      <div className="orbit-stage">
-        {/* Dashed concentric orbits */}
-        {artists.map((a) => (
-          <div
-            key={`orbit-${a.id}`}
-            className="absolute top-1/2 left-1/2 rounded-full border border-dashed"
-            style={{
-              width: a.orbit,
-              height: a.orbit,
-              marginLeft: -a.orbit / 2,
-              marginTop: -a.orbit / 2,
-              borderColor: "rgba(255,255,255,0.065)",
-            }}
-            aria-hidden
-          />
-        ))}
-
-        {/* Central core */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <div className="relative">
-            <div className="core-pulse" style={{ width: 268, height: 268, left: -134, top: -134 } as React.CSSProperties} aria-hidden />
+      <div className="orbit-stage" style={{ height: stageHeight } as React.CSSProperties}>
+        {/* Dashed concentric orbits — scaled to fit viewport */}
+        {artists.map((a) => {
+          const orbitS = Math.round(a.orbit * scale)
+          return (
             <div
-              className="relative w-48 h-48 rounded-full flex items-center justify-center"
+              key={`orbit-${a.id}`}
+              className="absolute top-1/2 left-1/2 rounded-full border border-dashed"
               style={{
-                background: `radial-gradient(circle at 30% 30%, #FFF7ED 0%, #FDE68A 18%, #F59E0B 42%, #EC4899 68%, #7C3AED 100%)`,
-                boxShadow: `0 0 60px rgba(236,72,153,0.45), 0 0 120px rgba(139,92,246,0.30), inset -20px -30px 60px rgba(0,0,0,0.38)`,
-                transform: "translateZ(0)",
-                backfaceVisibility: "hidden" as any,
+                width: orbitS,
+                height: orbitS,
+                marginLeft: -orbitS / 2,
+                marginTop: -orbitS / 2,
+                borderColor: "rgba(255,255,255,0.065)",
               }}
-            >
-              <div className="text-center">
-                <Headphones className="w-6 h-6 mx-auto text-white/90 mb-1" />
-                <div className="font-orbitron font-black text-sm tracking-widest text-white/95" style={{ textShadow: "0 1px 12px rgba(0,0,0,0.6)" }}>
-                  GALAXIA
+              aria-hidden
+            />
+          )
+        })}
+
+        {/* Central core — scaled on mobile to keep proportion */}
+        {(() => {
+          const coreSize = Math.round(192 * (scale < 0.7 ? Math.max(0.7, sizeScale) : 1))
+          const pulseSize = Math.round(268 * (scale < 0.7 ? Math.max(0.7, sizeScale) : 1))
+          return (
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+              <div className="relative" style={{ width: coreSize, height: coreSize } as React.CSSProperties}>
+                <div className="core-pulse" style={{ width: pulseSize, height: pulseSize, left: - (pulseSize - coreSize) / 2, top: - (pulseSize - coreSize) / 2 } as React.CSSProperties} aria-hidden />
+                <div
+                  className="relative rounded-full flex items-center justify-center"
+                  style={{
+                    width: coreSize,
+                    height: coreSize,
+                    background: `radial-gradient(circle at 30% 30%, #FFF7ED 0%, #FDE68A 18%, #F59E0B 42%, #EC4899 68%, #7C3AED 100%)`,
+                    boxShadow: `0 0 60px rgba(236,72,153,0.45), 0 0 120px rgba(139,92,246,0.30), inset -20px -30px 60px rgba(0,0,0,0.38)`,
+                    transform: "translateZ(0)",
+                    backfaceVisibility: "hidden" as any,
+                  }}
+                >
+                  <div className="text-center">
+                    <Headphones className="w-6 h-6 mx-auto text-white/90 mb-1" />
+                    <div className="font-orbitron font-black text-sm tracking-widest text-white/95" style={{ textShadow: "0 1px 12px rgba(0,0,0,0.6)" }}>
+                      GALAXIA
+                    </div>
+                    <div className="text-[9px] font-space uppercase tracking-[0.3em] text-white/70 mt-1">The Core</div>
+                  </div>
                 </div>
-                <div className="text-[9px] font-space uppercase tracking-[0.3em] text-white/70 mt-1">The Core</div>
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10" style={{ width: coreSize + 64, height: coreSize + 64, opacity: 0.7 } as React.CSSProperties} aria-hidden />
               </div>
             </div>
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full border border-white/10" style={{ opacity: 0.7 }} aria-hidden />
-          </div>
-        </div>
+          )
+        })()}
 
-        {/* Planets — pivot (orbit) → counter → PlanetCD (spin) */}
+        {/* Planets — pivot (orbit) → counter → PlanetCD (spin) — responsive: scales to fit mobile viewport */}
         {artists.map((a, i) => {
           const delay = -(a.startAngle / 360) * a.duration - i * 0.9
+          const orbitS = Math.round(a.orbit * scale)
+          const sizeS = Math.round(a.size * sizeScale)
           return (
             <div
               key={a.id}
               className="orbit-pivot"
               style={{
-                width: a.orbit,
-                height: a.orbit,
+                width: orbitS,
+                height: orbitS,
                 animationDuration: `${a.duration}s`,
                 animationDelay: `${delay}s`,
               } as React.CSSProperties}
@@ -185,9 +229,9 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
                     aria-label={`Open ${a.name} — ${a.genre}`}
                     onClick={() => setOpen(a)}
                     className="planet-btn group relative outline-none focus:ring-2 focus:ring-white/40 rounded-full"
-                    style={{ width: a.size, height: a.size }}
+                    style={{ width: sizeS, height: sizeS }}
                   >
-                    <PlanetCD artist={a} size={a.size} spinning />
+                    <PlanetCD artist={a} size={sizeS} spinning />
                     <span className="planet-label absolute left-1/2 -translate-x-1/2 top-full mt-3 whitespace-nowrap z-10 pointer-events-none">
                       <span
                         className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass text-[10px] font-space uppercase tracking-[0.3em] border border-white/10"

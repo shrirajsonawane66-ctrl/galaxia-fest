@@ -412,8 +412,12 @@ body {
   transform: translate(-50%,0);
 }
 
-/* Mobile orbit container — keep orbits identical, scale down viewport */
-/* FIX: `contain: paint` clipped outer planets that extend beyond stage bounds → wedge/pie look */
+/* Orbit stage — responsive, no transform-scale clipping
+   FIX: previous `transform: scale()` + `content-visibility:auto` + `contain: paint`
+   clipped planets on mobile (layout 906px orbit vs 343px viewport = 280px overflow each side)
+   + parent `overflow-hidden` hid outer planets completely.
+   New: no transform, overflow visible, height auto with aspect, JS scales orbit/size to fit.
+*/
 .orbit-stage {
   position: relative;
   width: 100%;
@@ -421,23 +425,22 @@ body {
   margin-inline: auto;
   height: 960px;
   contain: layout;
-  content-visibility: auto;
-  contain-intrinsic-size: 1280px 960px;
+  overflow: visible;
 }
 @media (max-width: 1024px) {
   .orbit-stage {
-    height: 680px;
-    transform: scale(0.72);
-    transform-origin: top center;
-    margin-bottom: -160px; /* compensate scale */
+    height: 760px;
+    overflow: visible;
+    transform: none;
+    margin-bottom: 0;
   }
 }
 @media (max-width: 640px) {
   .orbit-stage {
-    height: 620px;
-    transform: scale(0.58);
-    transform-origin: top center;
-    margin-bottom: -210px;
+    height: 560px;
+    overflow: visible;
+    transform: none;
+    margin-bottom: 0;
   }
 }
 /* Mobile: labels always visible (no hover), tap still opens dialog */
