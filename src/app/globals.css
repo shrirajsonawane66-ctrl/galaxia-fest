@@ -233,7 +233,15 @@ body {
   pointer-events: none;
 }
 
-/* ── Orbit system — separate positioning and animation layers ── */
+/* ── Orbit system — one requestAnimationFrame layer, static artwork layers ── */
+.orbit-system {
+  position: absolute;
+  inset: 0;
+  transform: rotate(0deg);
+  transform-origin: center;
+  will-change: transform;
+  backface-visibility: hidden;
+}
 .orbit-pivot {
   position: absolute;
   top: 50%; left: 50%;
@@ -244,15 +252,7 @@ body {
   position: absolute;
   inset: 0;
   transform: rotate(var(--start-angle, 0deg));
-  will-change: transform;
   backface-visibility: hidden;
-  animation-name: orbit;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-@keyframes orbit {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }
 .orbit-planet {
   position: absolute;
@@ -262,15 +262,12 @@ body {
 }
 .planet-inner {
   transform: rotate(var(--counter-angle, 0deg));
+  backface-visibility: hidden;
+}
+.planet-upright {
+  transform: rotate(var(--counter-rotation, 0deg));
   will-change: transform;
   backface-visibility: hidden;
-  animation-name: counterOrbit;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-@keyframes counterOrbit {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(-360deg); }
 }
 /* Vinyl/CD spin — separate, faster (4-8s) */
 .vinyl-spin,

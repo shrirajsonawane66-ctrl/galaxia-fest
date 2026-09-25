@@ -107,7 +107,7 @@ type ResponsiveLayout = {
   orbitScale: number
   sizeScale: number
   coreScale: number
-  orbitDuration: number | null
+  orbitDuration: number
 }
 
 const MIN_PLANET_SIZE = 40
@@ -135,7 +135,7 @@ function getResponsiveLayout(stageWidth: number, maxOrbit: number, maxPlanet: nu
     ? 10
     : stageWidth < 1024
       ? 15
-      : null
+      : 20
 
   return { orbitScale, sizeScale, coreScale, orbitDuration }
 }
@@ -144,6 +144,12 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
   const [open, setOpen] = useState<Artist | null>(null)
   const [layout, setLayout] = useState(INITIAL_LAYOUT)
   const stageRef = useRef<HTMLDivElement>(null)
+  const systemRef = useRef<HTMLDivElement>(null)
+  const orbitAngleRef = useRef(0)
+  const orbitSpeedRef = useRef(0)
+  const pointerPausedRef = useRef(false)
+  const focusPausedRef = useRef(false)
+  const { orbitScale, sizeScale, coreScale, orbitDuration } = layout
   const maxOrbit = Math.max(...artists.map((a) => a.orbit), 906)
   const maxPlanet = Math.max(...artists.map((a) => a.size), 0)
 
@@ -182,6 +188,54 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
     }
   }, [maxOrbit, maxPlanet])
 
+  useEffect(() => {
+    const releasePointer = () => {
+      pointerPausedRef.current = false
+    }
+
+    window.addEventListener("pointerup", releasePointer)
+    window.addEventListener("pointercancel", releasePointer)
+    window.addEventListener("blur", releasePointer)
+    return () => {
+      window.removeEventListener("pointerup", releasePointer)
+      window.removeEventListener("pointercancel", releasePointer)
+      window.removeEventListener("blur", releasePointer)
+    }
+  }, [])
+
+  useEffect(() => {
+    const system = systemRef.current
+    if (!system) return
+
+    const targetSpeed = 360 / orbitDuration
+    const easing = 2.4
+    let animationFrame = 0
+    let angle = orbitAngleRef.current
+    let currentSpeed = orbitSpeedRef.current
+    let lastTime = performance.now()
+
+    const animate = (now: number) => {
+      const delta = Math.min((now - lastTime) / 1000, 0.05)
+      lastTime = now
+
+      if (!pointerPausedRef.current && !focusPausedRef.current) {
+        // Ease into the orbit speed to avoid the jump seen with CSS-only starts.
+        currentSpeed += (targetSpeed - currentSpeed) * Math.min(1, easing * delta)
+        angle = (angle + currentSpeed * delta) % 360
+        orbitAngleRef.current = angle
+        orbitSpeedRef.current = currentSpeed
+
+        system.style.transform = `rotate(${angle}deg)`
+        system.style.setProperty("--counter-rotation", `${-angle}deg`)
+      }
+
+      animationFrame = requestAnimationFrame(animate)
+    }
+
+    animationFrame = requestAnimationFrame(animate)
+    return () => cancelAnimationFrame(animationFrame)
+  }, [artists.length, orbitDuration])
+
   if (!artists.length) {
     return (
       <div className="text-center py-20 glass rounded-2xl">
@@ -191,7 +245,6 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
     )
   }
 
-  const { orbitScale, sizeScale, coreScale, orbitDuration: orbitDurationOverride } = layout
   const stageHeight = Math.max(360, Math.round(maxOrbit * orbitScale + 180))
 
   return (
@@ -253,11 +306,22 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
           )
         })()}
 
-        {/* Position, orbit, counter-rotation, and disc spin use separate elements
-            so reduced-motion and initial layout never affect centering. */}
+        <div
+          ref={systemRef}
+          className="orbit-system"
+          role="group"
+          aria-label="Artist records orbiting Galaxia"
+          onPointerDown={() => { pointerPausedRef.current = true }}
+          onFocusCapture={() => { focusPausedRef.current = true }}
+          onBlurCapture={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+              focusPausedRef.current = false
+            }
+          }}
+        >
+        {/* The system rotates as one layer; the nested counter-rotation keeps
+            every record artwork upright without changing its appearance. */}
         {artists.map((a) => {
-          const orbitDuration = orbitDurationOverride ?? a.duration
-          const delay = -(a.startAngle / 360) * orbitDuration
           const orbitS = Math.round(a.orbit * orbitScale)
           const sizeS = Math.max(MIN_PLANET_SIZE, Math.round(a.size * sizeScale))
           return (
@@ -271,50 +335,41 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
                 "--counter-angle": `${-a.startAngle}deg`,
               } as React.CSSProperties}
             >
-              <div
-                className="orbit-spin"
-                style={{
-                  animationDuration: `${orbitDuration}s`,
-                  animationDelay: `${delay}s`,
-                } as React.CSSProperties}
-              >
+              <div className="orbit-spin">
                 <div className="orbit-planet">
-                  <div
-                    className="planet-inner"
-                    style={{
-                      animationDuration: `${orbitDuration}s`,
-                      animationDelay: `${delay}s`,
-                    } as React.CSSProperties}
-                  >
-                    <button
-                      aria-label={`Open ${a.name} — ${a.genre}`}
-                      onClick={() => setOpen(a)}
-                      className="planet-btn group relative outline-none focus:ring-2 focus:ring-white/40 rounded-full"
-                      style={{ width: sizeS, height: sizeS }}
-                    >
-                      <PlanetCD artist={a} size={sizeS} spinning />
-                      <span className="planet-label absolute left-1/2 -translate-x-1/2 top-full mt-3 whitespace-nowrap z-10 pointer-events-none">
-                        <span
-                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass text-[10px] font-space uppercase tracking-[0.3em] border border-white/10"
-                          style={{
-                            color: a.accent,
-                            background: "rgba(10,10,28,0.72)",
-                            backdropFilter: "blur(10px)",
-                            textShadow: "0 1px 8px rgba(0,0,0,0.7)",
-                            boxShadow: `0 0 14px ${a.glow}`,
-                          }}
-                        >
-                          <Disc3 className="planet-label-icon w-3 h-3" style={{ animationDuration: "3s" }} />
-                          {a.name}
+                  <div className="planet-inner">
+                    <div className="planet-upright">
+                      <button
+                        aria-label={`Open ${a.name} — ${a.genre}`}
+                        onClick={() => setOpen(a)}
+                        className="planet-btn group relative outline-none focus:ring-2 focus:ring-white/40 rounded-full"
+                        style={{ width: sizeS, height: sizeS }}
+                      >
+                        <PlanetCD artist={a} size={sizeS} spinning />
+                        <span className="planet-label absolute left-1/2 -translate-x-1/2 top-full mt-3 whitespace-nowrap z-10 pointer-events-none">
+                          <span
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass text-[10px] font-space uppercase tracking-[0.3em] border border-white/10"
+                            style={{
+                              color: a.accent,
+                              background: "rgba(10,10,28,0.72)",
+                              backdropFilter: "blur(10px)",
+                              textShadow: "0 1px 8px rgba(0,0,0,0.7)",
+                              boxShadow: `0 0 14px ${a.glow}`,
+                            }}
+                          >
+                            <Disc3 className="planet-label-icon w-3 h-3" style={{ animationDuration: "3s" }} />
+                            {a.name}
+                          </span>
                         </span>
-                      </span>
-                    </button>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           )
         })}
+        </div>
       </div>
 
       <div className="lg:hidden flex justify-center mt-2">
