@@ -1,8 +1,9 @@
 "use client"
-import { useState, useEffect, memo, useRef } from "react"
+import { useState, useEffect, memo, useRef, useCallback, useId } from "react"
 import { Disc3, Star, Ticket, Music4, Headphones } from "lucide-react"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import styles from "@/components/GalaxiaCore.module.css"
 import Image from "next/image"
 
 type Artist = {
@@ -107,13 +108,12 @@ type ResponsiveLayout = {
   orbitScale: number
   sizeScale: number
   coreScale: number
-  orbitDuration: number
 }
 
 const MIN_PLANET_SIZE = 40
 const MOBILE_GUTTER = 12
 const TABLET_GUTTER = 24
-const INITIAL_LAYOUT: ResponsiveLayout = { orbitScale: 0.3, sizeScale: 0.45, coreScale: 0.36, orbitDuration: 10 }
+const INITIAL_LAYOUT: ResponsiveLayout = { orbitScale: 0.3, sizeScale: 0.45, coreScale: 0.36 }
 
 function getResponsiveLayout(stageWidth: number, maxOrbit: number, maxPlanet: number) {
   const sizeScale = stageWidth < 640
@@ -131,27 +131,149 @@ function getResponsiveLayout(stageWidth: number, maxOrbit: number, maxPlanet: nu
   const coreScale = stageWidth < 640
     ? Math.min(0.42, Math.max(0.32, stageWidth / 950))
     : sizeScale
-  const orbitDuration = stageWidth < 640
-    ? 10
-    : stageWidth < 1024
-      ? 15
-      : 20
 
-  return { orbitScale, sizeScale, coreScale, orbitDuration }
+  return { orbitScale, sizeScale, coreScale }
+}
+
+/**
+ * Galaxia Core feel-tuning (kept in one place for easy iteration).
+ *
+ * Rotation:
+ *   target = min(MAX_SPEED, IDLE + heldSeconds² * RAMP_PER_SEC)
+ *   speed += (target - speed) * min(1, EASE * dt)
+ *
+ * Orbit:
+ *   systemSpeed = SYS_IDLE + (speed - IDLE) * SYS_FOLLOW
+ *
+ * Ripples:
+ *   gap = 0.62 - speedFactor * 0.5 seconds
+ *   duration = 1.3 - speedFactor * 0.75 seconds
+ *   max scale = 2.1 + speedFactor * 1.3
+ *
+ * These values are intentionally not CSS keyframes: the one rAF loop below
+ * updates speed first, then core rotation, system rotation, audio rate, and
+ * ripples in that order so every visual/audio layer stays synchronized.
+ */
+const IDLE = 6
+const MAX_SPEED = 900
+const RAMP_PER_SEC = 180
+const EASE = 2.4
+const SYS_IDLE = 4
+const SYS_FOLLOW = 0.6
+const REDUCED_MAX_SPEED = 120
+const GALAXIA_PRIME_AUDIO = "/audio/galaxia-prime.mp3"
+
+type CorePhysics = {
+  angle: number
+  speed: number
+  target: number
+  holding: boolean
+  holdStart: number
+  systemAngle: number
+  rippleAccumulator: number
 }
 
 export default function SolarSystem({ artists }: { artists: Artist[] }) {
   const [open, setOpen] = useState<Artist | null>(null)
+  const [holding, setHolding] = useState(false)
   const [layout, setLayout] = useState(INITIAL_LAYOUT)
   const stageRef = useRef<HTMLDivElement>(null)
+  const coreRef = useRef<HTMLButtonElement>(null)
   const systemRef = useRef<HTMLDivElement>(null)
-  const orbitAngleRef = useRef(0)
-  const orbitSpeedRef = useRef(0)
-  const pointerPausedRef = useRef(false)
-  const focusPausedRef = useRef(false)
-  const { orbitScale, sizeScale, coreScale, orbitDuration } = layout
+  const pulseFieldRef = useRef<HTMLDivElement>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const reducedMotionRef = useRef(false)
+  const physicsRef = useRef<CorePhysics>({
+    angle: 0,
+    speed: IDLE,
+    target: IDLE,
+    holding: false,
+    holdStart: 0,
+    systemAngle: 0,
+    rippleAccumulator: 0,
+  })
+  const instructionsId = useId()
+  const { orbitScale, sizeScale, coreScale } = layout
   const maxOrbit = Math.max(...artists.map((a) => a.orbit), 906)
   const maxPlanet = Math.max(...artists.map((a) => a.size), 0)
+
+  const getAudioTrack = useCallback(() => {
+    if (typeof Audio === "undefined") return null
+    if (!audioRef.current) {
+      const track = new Audio(GALAXIA_PRIME_AUDIO)
+      track.loop = true
+      track.preload = "metadata"
+      audioRef.current = track
+    }
+    return audioRef.current
+  }, [])
+
+  useEffect(() => {
+    const track = getAudioTrack()
+    track?.load()
+
+    return () => {
+      physicsRef.current.holding = false
+      physicsRef.current.target = IDLE
+      pulseFieldRef.current?.replaceChildren()
+      if (!track) return
+      track.pause()
+      track.removeAttribute("src")
+      track.load()
+      if (audioRef.current === track) audioRef.current = null
+    }
+  }, [getAudioTrack])
+
+  const startHold = useCallback(() => {
+    const physics = physicsRef.current
+    if (physics.holding) return
+
+    // Audio starts inside the input event call stack. Do not move this behind
+    // state, a timeout, an effect, or an await: browsers require the gesture.
+    const track = getAudioTrack()
+    physics.holding = true
+    physics.holdStart = performance.now()
+    physics.target = IDLE
+    setHolding(true)
+
+    if (!track) return
+    try {
+      track.currentTime = 0
+      track.playbackRate = 1
+      const playRequest = track.play()
+      void playRequest.catch(() => {
+        // The visual interaction still works if this browser blocks playback.
+      })
+    } catch {
+      // Keep the hold interaction available if a media format is unsupported.
+    }
+  }, [getAudioTrack])
+
+  const endHold = useCallback(() => {
+    const physics = physicsRef.current
+    if (!physics.holding) return
+    physics.holding = false
+    physics.target = IDLE
+    setHolding(false)
+    audioRef.current?.pause()
+  }, [])
+
+  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key !== " " && event.key !== "Enter") return
+    event.preventDefault()
+    if (!event.repeat) startHold()
+  }, [startHold])
+
+  const handleKeyUp = useCallback((event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key !== " " && event.key !== "Enter") return
+    event.preventDefault()
+    endHold()
+  }, [endHold])
+
+  const handleTouchStart = useCallback((event: React.TouchEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    startHold()
+  }, [startHold])
 
   useEffect(() => {
     const stage = stageRef.current
@@ -165,8 +287,7 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
       setLayout((current) => (
         current.orbitScale === nextLayout.orbitScale &&
         current.sizeScale === nextLayout.sizeScale &&
-        current.coreScale === nextLayout.coreScale &&
-        current.orbitDuration === nextLayout.orbitDuration
+        current.coreScale === nextLayout.coreScale
           ? current
           : nextLayout
       ))
@@ -189,52 +310,135 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
   }, [maxOrbit, maxPlanet])
 
   useEffect(() => {
-    const releasePointer = () => {
-      pointerPausedRef.current = false
-    }
-
-    window.addEventListener("pointerup", releasePointer)
-    window.addEventListener("pointercancel", releasePointer)
-    window.addEventListener("blur", releasePointer)
-    return () => {
-      window.removeEventListener("pointerup", releasePointer)
-      window.removeEventListener("pointercancel", releasePointer)
-      window.removeEventListener("blur", releasePointer)
-    }
-  }, [])
-
-  useEffect(() => {
+    const stage = stageRef.current
+    const core = coreRef.current
     const system = systemRef.current
-    if (!system) return
+    const pulseField = pulseFieldRef.current
+    if (!stage || !core || !system || !pulseField) return
 
-    const targetSpeed = 360 / orbitDuration
-    const easing = 2.4
-    let animationFrame = 0
-    let angle = orbitAngleRef.current
-    let currentSpeed = orbitSpeedRef.current
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const syncMotionPreference = () => {
+      reducedMotionRef.current = motionQuery.matches
+      if (motionQuery.matches) {
+        physicsRef.current.rippleAccumulator = 0
+        pulseField.replaceChildren()
+      }
+    }
+    syncMotionPreference()
+    motionQuery.addEventListener("change", syncMotionPreference)
+
+    const physics = physicsRef.current
+    const track = audioRef.current
+    let isVisible = true
+    let animationFrame: number | null = null
     let lastTime = performance.now()
 
-    const animate = (now: number) => {
-      const delta = Math.min((now - lastTime) / 1000, 0.05)
-      lastTime = now
+    const currentMaxSpeed = () => (
+      reducedMotionRef.current ? REDUCED_MAX_SPEED : MAX_SPEED
+    )
 
-      if (!pointerPausedRef.current && !focusPausedRef.current) {
-        // Ease into the orbit speed to avoid the jump seen with CSS-only starts.
-        currentSpeed += (targetSpeed - currentSpeed) * Math.min(1, easing * delta)
-        angle = (angle + currentSpeed * delta) % 360
-        orbitAngleRef.current = angle
-        orbitSpeedRef.current = currentSpeed
-
-        system.style.transform = `rotate(${angle}deg)`
-        system.style.setProperty("--counter-rotation", `${-angle}deg`)
-      }
-
-      animationFrame = requestAnimationFrame(animate)
+    const speedFactor = () => {
+      const maxSpeed = currentMaxSpeed()
+      return Math.min(1, Math.max(0, (physics.speed - IDLE) / (maxSpeed - IDLE)))
     }
 
-    animationFrame = requestAnimationFrame(animate)
-    return () => cancelAnimationFrame(animationFrame)
-  }, [artists.length, orbitDuration])
+    const spawnRipple = (factor: number) => {
+      const ripple = document.createElement("div")
+      ripple.className = styles.ripple
+      // Exact prototype tuning: faster and larger as the core accelerates.
+      ripple.style.setProperty("--duration", `${1.3 - factor * 0.75}s`)
+      ripple.style.setProperty("--scale", `${2.1 + factor * 1.3}`)
+      pulseField.appendChild(ripple)
+      ripple.addEventListener("animationend", () => ripple.remove(), { once: true })
+    }
+
+    const frame = (now: number) => {
+      animationFrame = null
+      const dt = Math.min((now - lastTime) / 1000, 0.05)
+      lastTime = now
+
+      if (physics.holding) {
+        const heldSeconds = (now - physics.holdStart) / 1000
+        physics.target = Math.min(
+          currentMaxSpeed(),
+          IDLE + heldSeconds * heldSeconds * RAMP_PER_SEC,
+        )
+      }
+
+      // Ease on release too: target returns to IDLE, but speed never snaps.
+      physics.speed += (physics.target - physics.speed) * Math.min(1, EASE * dt)
+      physics.angle = (physics.angle + physics.speed * dt) % 360
+      core.style.transform = `rotate(${physics.angle}deg)`
+
+      const systemSpeed = SYS_IDLE + (physics.speed - IDLE) * SYS_FOLLOW
+      physics.systemAngle = (physics.systemAngle + systemSpeed * dt) % 360
+      system.style.transform = `rotate(${physics.systemAngle}deg)`
+      system.style.setProperty("--counter-rotation", `${-physics.systemAngle}deg`)
+
+      const factor = speedFactor()
+      if (track) track.playbackRate = 1 + factor * 0.5
+
+      if (!reducedMotionRef.current) {
+        const rippleGap = 0.62 - factor * 0.5
+        physics.rippleAccumulator += dt
+        if (physics.rippleAccumulator >= rippleGap) {
+          spawnRipple(factor)
+          physics.rippleAccumulator = 0
+        }
+      }
+
+      animationFrame = requestAnimationFrame(frame)
+    }
+
+    const startLoop = () => {
+      if (animationFrame !== null || document.hidden || !isVisible) return
+      lastTime = performance.now()
+      animationFrame = requestAnimationFrame(frame)
+    }
+
+    const stopLoop = () => {
+      if (animationFrame === null) return
+      cancelAnimationFrame(animationFrame)
+      animationFrame = null
+      lastTime = performance.now()
+    }
+
+    const syncVisibility = () => {
+      if (document.hidden) {
+        endHold()
+        stopLoop()
+      } else {
+        startLoop()
+      }
+    }
+
+    const observer = typeof IntersectionObserver === "function"
+      ? new IntersectionObserver(([entry]) => {
+          isVisible = entry.isIntersecting
+          if (!isVisible) {
+            endHold()
+            stopLoop()
+          } else {
+            startLoop()
+          }
+        }, { threshold: 0.01 })
+      : null
+
+    observer?.observe(stage)
+    window.addEventListener("blur", endHold)
+    window.addEventListener("pagehide", endHold)
+    document.addEventListener("visibilitychange", syncVisibility)
+    startLoop()
+
+    return () => {
+      stopLoop()
+      observer?.disconnect()
+      motionQuery.removeEventListener("change", syncMotionPreference)
+      window.removeEventListener("blur", endHold)
+      window.removeEventListener("pagehide", endHold)
+      document.removeEventListener("visibilitychange", syncVisibility)
+    }
+  }, [artists.length, endHold])
 
   if (!artists.length) {
     return (
@@ -246,6 +450,7 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
   }
 
   const stageHeight = Math.max(360, Math.round(maxOrbit * orbitScale + 180))
+  const coreSize = Math.round(192 * coreScale)
 
   return (
     <>
@@ -254,7 +459,52 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
         className="orbit-stage"
         style={{ height: stageHeight } as React.CSSProperties}
       >
-        {/* Dashed concentric orbits — scaled to fit viewport */}
+        {/* Ripples sit behind both the core and the rotating performer system. */}
+        <div ref={pulseFieldRef} className={styles.rippleField} aria-hidden />
+
+        {/* Central hold-to-play core. Its transform is owned by the one rAF loop. */}
+        <div
+          className={styles.coreLayer}
+          style={{ width: coreSize, height: coreSize }}
+        >
+          <button
+            ref={coreRef}
+            type="button"
+            className={`${styles.coreButton} ${holding ? styles.holding : ""}`}
+            aria-label={holding ? "Release to pause Galaxia Prime" : "Hold to play Galaxia Prime"}
+            aria-describedby={instructionsId}
+            aria-pressed={holding}
+            onMouseDown={startHold}
+            onMouseUp={endHold}
+            onMouseLeave={endHold}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={endHold}
+            onTouchCancel={endHold}
+            onKeyDown={handleKeyDown}
+            onKeyUp={handleKeyUp}
+            onBlur={endHold}
+            onContextMenu={(event) => event.preventDefault()}
+            onDragStart={(event) => event.preventDefault()}
+          >
+            <span className={styles.coreInner}>
+              <Headphones className={styles.coreIcon} aria-hidden />
+              <span className={styles.coreTitle}>GALAXIA</span>
+              <span className={styles.coreSubtitle}>HOLD TO PLAY</span>
+            </span>
+          </button>
+          <span id={instructionsId} className={styles.hint} aria-hidden>
+            {holding ? "Release to ease back" : "Press and hold the core"}
+          </span>
+        </div>
+
+        <div
+          ref={systemRef}
+          className="orbit-system"
+          role="group"
+          aria-label="Artist records orbiting Galaxia"
+          style={{ zIndex: 2 }}
+        >
+        {/* Rings and records share the independently rotating system layer. */}
         {artists.map((a) => {
           const orbitS = Math.round(a.orbit * orbitScale)
           return (
@@ -273,52 +523,6 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
           )
         })}
 
-        {/* Central core — scaled on mobile to keep proportion */}
-        {(() => {
-          const coreSize = Math.round(192 * coreScale)
-          const pulseSize = Math.round(268 * coreScale)
-          return (
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-              <div className="relative" style={{ width: coreSize, height: coreSize } as React.CSSProperties}>
-                <div className="core-pulse" style={{ width: pulseSize, height: pulseSize, left: - (pulseSize - coreSize) / 2, top: - (pulseSize - coreSize) / 2 } as React.CSSProperties} aria-hidden />
-                <div
-                  className="relative rounded-full flex items-center justify-center"
-                  style={{
-                    width: coreSize,
-                    height: coreSize,
-                    background: `radial-gradient(circle at 30% 30%, #FFF7ED 0%, #FDE68A 18%, #F59E0B 42%, #EC4899 68%, #7C3AED 100%)`,
-                    boxShadow: `0 0 60px rgba(236,72,153,0.45), 0 0 120px rgba(139,92,246,0.30), inset -20px -30px 60px rgba(0,0,0,0.38)`,
-                    transform: "translateZ(0)",
-                    backfaceVisibility: "hidden" as any,
-                  }}
-                >
-                  <div className="text-center">
-                    <Headphones className="w-6 h-6 mx-auto text-white/90 mb-1" />
-                    <div className="font-orbitron font-black text-sm tracking-widest text-white/95" style={{ textShadow: "0 1px 12px rgba(0,0,0,0.6)" }}>
-                      GALAXIA
-                    </div>
-                    <div className="text-[9px] font-space uppercase tracking-[0.3em] text-white/70 mt-1">The Core</div>
-                  </div>
-                </div>
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10" style={{ width: coreSize + 64, height: coreSize + 64, opacity: 0.7 } as React.CSSProperties} aria-hidden />
-              </div>
-            </div>
-          )
-        })()}
-
-        <div
-          ref={systemRef}
-          className="orbit-system"
-          role="group"
-          aria-label="Artist records orbiting Galaxia"
-          onPointerDown={() => { pointerPausedRef.current = true }}
-          onFocusCapture={() => { focusPausedRef.current = true }}
-          onBlurCapture={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-              focusPausedRef.current = false
-            }
-          }}
-        >
         {/* The system rotates as one layer; the nested counter-rotation keeps
             every record artwork upright without changing its appearance. */}
         {artists.map((a) => {

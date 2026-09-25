@@ -364,22 +364,6 @@ body {
   pointer-events: none;
 }
 
-/* Core pulse — transform + opacity only, not box-shadow blur */
-.core-pulse {
-  position: absolute;
-  border-radius: 9999px;
-  background: radial-gradient(circle, rgba(236,72,153,0.42) 0%, rgba(139,92,246,0.28) 38%, rgba(34,211,238,0.12) 62%, transparent 74%);
-  filter: blur(22px);
-  will-change: transform, opacity;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  animation: corePulse 5s ease-in-out infinite;
-}
-@keyframes corePulse {
-  0%,100% { transform: scale(0.98); opacity: 0.82; }
-  50% { transform: scale(1.03); opacity: 1; }
-}
-
 /* Planet hover — GPU only scale + glow */
 .planet-btn {
   transform: translateZ(0);
@@ -463,10 +447,6 @@ body {
     filter: blur(10px);
     opacity: 0.5;
   }
-  .core-pulse {
-    animation: none;
-    opacity: 0.45;
-  }
   .star-layer-1,
   .star-layer-2,
   .star-layer-3,
@@ -489,7 +469,6 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .planet-label-icon,
   .orbit-stage .animate-pulse,
-  .core-pulse,
   .star-layer-1,
   .star-layer-2,
   .star-layer-3,

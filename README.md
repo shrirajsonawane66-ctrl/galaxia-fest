@@ -48,6 +48,9 @@ Plug Resend/SMTP in `src/app/api/verify/route.ts` after `booking` insert — sen
 - `POST /api/verify` verifies `razorpay_signature` HMAC, then RPC `increment_pass_sold` atomically — prevents oversell
 - `booking_items.unit_price` freezes price at purchase
 
+## Galaxia Core hold-to-play tuning
+The interactive core in `src/components/SolarSystem.tsx` is driven by one `requestAnimationFrame` loop. Its feel is tuned with `IDLE=6`, `MAX_SPEED=900`, `RAMP_PER_SEC=180`, `EASE=2.4`, `SYS_IDLE=4`, and `SYS_FOLLOW=0.6`. Held target speed grows as `IDLE + heldSeconds² * RAMP_PER_SEC`; normalized `speedFactor` drives ripple spacing (`0.62 - speedFactor * 0.5` seconds), ripple duration/scale, system speed, and audio playback rate. Reduced-motion users get no ripples and a `120` deg/sec cap. The looping track is served as the cacheable static asset `/audio/galaxia-prime.mp3`.
+
 ## Design fidelity
 Matches Cosmic Beat: `#050816`, glass `rgba(255,255,255,0.04) blur14`, `text-gradient-galaxy`, `shimmer-text 6s`, `grid-lines 60px`, `radial-nebula`, `noise overlay`, Orbitron + Space Grotesk + Inter, vinyl CSS + Framer Motion entrance `y40 0.8s ease [0.2,0.8,0.2,1]`.
 

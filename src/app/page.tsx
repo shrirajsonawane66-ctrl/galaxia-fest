@@ -222,7 +222,7 @@ export default function Home() {
               <Rocket className="w-5 h-5 mr-1" /> Reserve My Pass <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
             <Button size="lg" variant="outline" className="rounded-full" onClick={() => document.getElementById("artists")?.scrollIntoView({ behavior: "smooth" })}>
-              <Play className="w-4 h-4 mr-2 fill-white" /> Watch Highlights
+              <Play className="w-4 h-4 mr-2 fill-white" /> Enter the Core
             </Button>
           </motion.div>
 
@@ -302,11 +302,11 @@ export default function Home() {
           <Reveal className="text-center mb-10 md:mb-14">
             <div className="inline-flex items-center gap-3 mb-6">
               <div className="h-px w-10 bg-gradient-to-r from-transparent via-pink-500 to-transparent" />
-              <span className="text-xs font-space uppercase tracking-[0.4em] text-white/50">03 · Cosmic Line-Up</span>
+              <span className="text-xs font-space uppercase tracking-[0.4em] text-white/50">03 · Galaxia Core</span>
               <div className="h-px w-10 bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
             </div>
-            <h2 className="font-orbitron text-4xl md:text-6xl font-black leading-[1.05] mb-4">Every artist is a <span className="text-gradient-galaxy">record.</span></h2>
-            <p className="text-white/60 max-w-xl mx-auto">Six vinyl worlds orbit the Galaxia sun. Tap any record to meet the artist behind it.</p>
+            <h2 className="font-orbitron text-4xl md:text-6xl font-black leading-[1.05] mb-4">Hold the core. Every artist is a <span className="text-gradient-galaxy">record.</span></h2>
+            <p className="text-white/60 max-w-xl mx-auto">Press and hold the core to spin up Galaxia Prime. Release to let the cosmos settle, then tap any record to meet its artist.</p>
           </Reveal>
           <SolarSystem artists={artistsSeed as any} />
         </div>
