@@ -113,7 +113,7 @@ type ResponsiveLayout = {
 const MIN_PLANET_SIZE = 40
 const MOBILE_GUTTER = 12
 const TABLET_GUTTER = 24
-const INITIAL_LAYOUT: ResponsiveLayout = { orbitScale: 0.3, sizeScale: 0.45, coreScale: 0.36, orbitDuration: 5 }
+const INITIAL_LAYOUT: ResponsiveLayout = { orbitScale: 0.3, sizeScale: 0.45, coreScale: 0.36, orbitDuration: 10 }
 
 function getResponsiveLayout(stageWidth: number, maxOrbit: number, maxPlanet: number) {
   const sizeScale = stageWidth < 640
@@ -132,9 +132,9 @@ function getResponsiveLayout(stageWidth: number, maxOrbit: number, maxPlanet: nu
     ? Math.min(0.42, Math.max(0.32, stageWidth / 950))
     : sizeScale
   const orbitDuration = stageWidth < 640
-    ? 5
+    ? 10
     : stageWidth < 1024
-      ? 10
+      ? 15
       : null
 
   return { orbitScale, sizeScale, coreScale, orbitDuration }
@@ -143,7 +143,6 @@ function getResponsiveLayout(stageWidth: number, maxOrbit: number, maxPlanet: nu
 export default function SolarSystem({ artists }: { artists: Artist[] }) {
   const [open, setOpen] = useState<Artist | null>(null)
   const [layout, setLayout] = useState(INITIAL_LAYOUT)
-  const [isNearViewport, setIsNearViewport] = useState(true)
   const stageRef = useRef<HTMLDivElement>(null)
   const maxOrbit = Math.max(...artists.map((a) => a.orbit), 906)
   const maxPlanet = Math.max(...artists.map((a) => a.size), 0)
@@ -183,18 +182,6 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
     }
   }, [maxOrbit, maxPlanet])
 
-  useEffect(() => {
-    const stage = stageRef.current
-    if (!stage || !("IntersectionObserver" in window)) return
-
-    const observer = new IntersectionObserver(([entry]) => {
-      setIsNearViewport(entry.isIntersecting)
-    }, { rootMargin: "200px 0px" })
-
-    observer.observe(stage)
-    return () => observer.disconnect()
-  }, [])
-
   if (!artists.length) {
     return (
       <div className="text-center py-20 glass rounded-2xl">
@@ -211,7 +198,7 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
     <>
       <div
         ref={stageRef}
-        className={`orbit-stage${isNearViewport ? "" : " is-paused"}`}
+        className="orbit-stage"
         style={{ height: stageHeight } as React.CSSProperties}
       >
         {/* Dashed concentric orbits — scaled to fit viewport */}

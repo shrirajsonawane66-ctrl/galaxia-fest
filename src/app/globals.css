@@ -488,22 +488,8 @@ body {
 /* Dialog overlay */
 [data-radix-dialog-overlay] { background: rgba(5,8,22,0.8); backdrop-filter: blur(12px); }
 
-/* Stop compositor work while the system is outside the mobile viewport. */
-.orbit-stage.is-paused .orbit-spin,
-.orbit-stage.is-paused .planet-inner,
-.orbit-stage.is-paused .planet-cd-disc,
-.orbit-stage.is-paused .planet-label-icon,
-.orbit-stage.is-paused .core-pulse {
-  animation-play-state: paused;
-}
-
 /* ── Reduced motion — keep the system laid out, but stop all movement ── */
 @media (prefers-reduced-motion: reduce) {
-  .orbit-spin,
-  .planet-inner,
-  .vinyl-spin,
-  .cd-spin,
-  .planet-cd-disc,
   .planet-label-icon,
   .orbit-stage .animate-pulse,
   .core-pulse,
