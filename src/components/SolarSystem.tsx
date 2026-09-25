@@ -103,10 +103,17 @@ const PlanetCD = memo(function PlanetCD({ artist, size, spinning = true }: { art
   )
 })
 
+type ResponsiveLayout = {
+  orbitScale: number
+  sizeScale: number
+  coreScale: number
+  orbitDuration: number | null
+}
+
 const MIN_PLANET_SIZE = 40
 const MOBILE_GUTTER = 12
 const TABLET_GUTTER = 24
-const INITIAL_LAYOUT = { orbitScale: 0.3, sizeScale: 0.45, coreScale: 0.36, durationScale: 0.32 }
+const INITIAL_LAYOUT: ResponsiveLayout = { orbitScale: 0.3, sizeScale: 0.45, coreScale: 0.36, orbitDuration: 5 }
 
 function getResponsiveLayout(stageWidth: number, maxOrbit: number, maxPlanet: number) {
   const sizeScale = stageWidth < 640
@@ -124,13 +131,13 @@ function getResponsiveLayout(stageWidth: number, maxOrbit: number, maxPlanet: nu
   const coreScale = stageWidth < 640
     ? Math.min(0.42, Math.max(0.32, stageWidth / 950))
     : sizeScale
-  const durationScale = stageWidth < 640
-    ? 0.32
+  const orbitDuration = stageWidth < 640
+    ? 5
     : stageWidth < 1024
-      ? 0.5
-      : 1
+      ? 10
+      : null
 
-  return { orbitScale, sizeScale, coreScale, durationScale }
+  return { orbitScale, sizeScale, coreScale, orbitDuration }
 }
 
 export default function SolarSystem({ artists }: { artists: Artist[] }) {
@@ -154,7 +161,7 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
         current.orbitScale === nextLayout.orbitScale &&
         current.sizeScale === nextLayout.sizeScale &&
         current.coreScale === nextLayout.coreScale &&
-        current.durationScale === nextLayout.durationScale
+        current.orbitDuration === nextLayout.orbitDuration
           ? current
           : nextLayout
       ))
@@ -197,7 +204,7 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
     )
   }
 
-  const { orbitScale, sizeScale, coreScale, durationScale } = layout
+  const { orbitScale, sizeScale, coreScale, orbitDuration: orbitDurationOverride } = layout
   const stageHeight = Math.max(360, Math.round(maxOrbit * orbitScale + 180))
 
   return (
@@ -262,7 +269,7 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
         {/* Position, orbit, counter-rotation, and disc spin use separate elements
             so reduced-motion and initial layout never affect centering. */}
         {artists.map((a) => {
-          const orbitDuration = Math.max(24, a.duration * durationScale)
+          const orbitDuration = orbitDurationOverride ?? a.duration
           const delay = -(a.startAngle / 360) * orbitDuration
           const orbitS = Math.round(a.orbit * orbitScale)
           const sizeS = Math.max(MIN_PLANET_SIZE, Math.round(a.size * sizeScale))
