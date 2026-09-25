@@ -105,34 +105,54 @@ const PlanetCD = memo(function PlanetCD({ artist, size, spinning = true }: { art
 })
 
 type ResponsiveLayout = {
-  orbitScale: number
   sizeScale: number
-  coreScale: number
+  minOrbitDiameter: number
+  maxOrbitDiameter: number
 }
 
 const MIN_PLANET_SIZE = 40
 const MOBILE_GUTTER = 12
 const TABLET_GUTTER = 24
-const INITIAL_LAYOUT: ResponsiveLayout = { orbitScale: 0.3, sizeScale: 0.45, coreScale: 0.36 }
+const CORE_ORBIT_GAP = 16
+const INITIAL_LAYOUT: ResponsiveLayout = {
+  sizeScale: 0.36,
+  minOrbitDiameter: 218,
+  maxOrbitDiameter: 260,
+}
 
-function getResponsiveLayout(stageWidth: number, maxOrbit: number, maxPlanet: number) {
-  const sizeScale = stageWidth < 640
-    ? 0.45
-    : Math.min(1, Math.max(0.45, stageWidth / 1200))
-  const largestRenderedPlanet = Math.max(MIN_PLANET_SIZE, maxPlanet * sizeScale)
+function getResponsiveLayout(
+  stageWidth: number,
+  viewportWidth: number,
+  viewportHeight: number,
+  minOrbit: number,
+  maxOrbit: number,
+  minPlanet: number,
+  maxPlanet: number,
+) {
+  const smallerViewport = Math.max(1, Math.min(viewportWidth, viewportHeight))
   const gutter = stageWidth < 640 ? MOBILE_GUTTER : TABLET_GUTTER
+  const sizeScale = smallerViewport < 480
+    ? 0.36
+    : Math.min(1, Math.max(0.45, smallerViewport / 1100))
+  const coreDiameter = Math.min(200, Math.max(140, viewportWidth * 0.45))
+  const smallestRenderedPlanet = Math.max(MIN_PLANET_SIZE, minPlanet * sizeScale)
+  const largestRenderedPlanet = Math.max(MIN_PLANET_SIZE, maxPlanet * sizeScale)
 
-  // Fit the complete outer system, not just the orbit line. The previous
-  // calculation left the planet's radius outside the viewport on phones.
-  const orbitScale = Math.min(1, Math.max(
-    0.12,
-    (stageWidth - gutter * 2 - largestRenderedPlanet) / maxOrbit,
-  ))
-  const coreScale = stageWidth < 640
-    ? Math.min(0.42, Math.max(0.32, stageWidth / 950))
-    : sizeScale
+  // The outer path is viewport-relative and includes room for the outer disc.
+  // The inner path starts beyond the core so mobile records never crowd it.
+  const viewportOrbitDiameter = smallerViewport * 0.82
+  const availableOrbitDiameter = stageWidth - gutter * 2 - largestRenderedPlanet
+  const maxOrbitDiameter = Math.min(
+    maxOrbit,
+    viewportOrbitDiameter,
+    availableOrbitDiameter,
+  )
+  const minOrbitDiameter = Math.min(
+    maxOrbitDiameter,
+    coreDiameter + smallestRenderedPlanet + CORE_ORBIT_GAP,
+  )
 
-  return { orbitScale, sizeScale, coreScale }
+  return { sizeScale, minOrbitDiameter, maxOrbitDiameter }
 }
 
 /**
@@ -161,7 +181,7 @@ const EASE = 2.4
 const SYS_IDLE = 10
 const SYS_FOLLOW = 0.85
 const REDUCED_MAX_SPEED = 120
-const GALAXIA_PRIME_AUDIO = "/audio/galaxia-prime.mp3"
+const GALAXIA_PRIME_AUDIO = "/audio/galaxia-prime.mp3?v=galaxia-prime-9ed66b1a"
 
 type CorePhysics = {
   angle: number
@@ -193,9 +213,18 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
     rippleAccumulator: 0,
   })
   const instructionsId = useId()
-  const { orbitScale, sizeScale, coreScale } = layout
+  const { sizeScale, minOrbitDiameter, maxOrbitDiameter } = layout
+  const minOrbit = Math.min(...artists.map((a) => a.orbit), 288)
   const maxOrbit = Math.max(...artists.map((a) => a.orbit), 906)
+  const minPlanet = Math.min(...artists.map((a) => a.size), MIN_PLANET_SIZE)
   const maxPlanet = Math.max(...artists.map((a) => a.size), 0)
+  const rawOrbitSpan = Math.max(1, maxOrbit - minOrbit)
+  const getRenderedOrbitDiameter = (orbit: number) => {
+    const progress = Math.min(1, Math.max(0, (orbit - minOrbit) / rawOrbitSpan))
+    return Math.round(
+      minOrbitDiameter + progress * (maxOrbitDiameter - minOrbitDiameter),
+    )
+  }
 
   const getAudioTrack = useCallback(() => {
     if (typeof Audio === "undefined") return null
@@ -228,25 +257,30 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
     const physics = physicsRef.current
     if (physics.holding) return
 
-    // Audio starts inside the input event call stack. Do not move this behind
-    // state, a timeout, an effect, or an await: browsers require the gesture.
+    // Keep reset + play() in the originating pointer/key event call stack.
+    // This runs before React state or effects, which is required by iOS Safari.
     const track = getAudioTrack()
+    if (track) {
+      try {
+        track.currentTime = 0
+      } catch {
+        // A not-yet-seekable track still starts safely from its default position.
+      }
+      track.playbackRate = 1
+      try {
+        const playRequest = track.play()
+        void playRequest.catch(() => {
+          // The visual interaction still works if this browser blocks playback.
+        })
+      } catch {
+        // Keep the hold interaction available if a media format is unsupported.
+      }
+    }
+
     physics.holding = true
     physics.holdStart = performance.now()
     physics.target = IDLE
     setHolding(true)
-
-    if (!track) return
-    try {
-      track.currentTime = 0
-      track.playbackRate = 1
-      const playRequest = track.play()
-      void playRequest.catch(() => {
-        // The visual interaction still works if this browser blocks playback.
-      })
-    } catch {
-      // Keep the hold interaction available if a media format is unsupported.
-    }
   }, [getAudioTrack])
 
   const endHold = useCallback(() => {
@@ -270,9 +304,24 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
     endHold()
   }, [endHold])
 
-  const handleTouchStart = useCallback((event: React.TouchEvent<HTMLButtonElement>) => {
+  const handlePointerDown = useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
     event.preventDefault()
+    // play() is reached synchronously before state, haptics, or capture work.
     startHold()
+
+    if (typeof navigator !== "undefined" && typeof navigator.vibrate === "function") {
+      try {
+        navigator.vibrate(10)
+      } catch {
+        // Haptics are optional and may be blocked by browser policy.
+      }
+    }
+
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId)
+    } catch {
+      // Some embedded WebViews expose Pointer Events without capture support.
+    }
   }, [startHold])
 
   useEffect(() => {
@@ -281,13 +330,24 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
 
     const updateLayout = () => {
       const stageWidth = stage.getBoundingClientRect().width
-      if (!stageWidth) return
+      const viewport = window.visualViewport
+      const viewportWidth = viewport?.width || window.innerWidth
+      const viewportHeight = viewport?.height || window.innerHeight
+      if (!stageWidth || !viewportWidth || !viewportHeight) return
 
-      const nextLayout = getResponsiveLayout(stageWidth, maxOrbit, maxPlanet)
+      const nextLayout = getResponsiveLayout(
+        stageWidth,
+        viewportWidth,
+        viewportHeight,
+        minOrbit,
+        maxOrbit,
+        minPlanet,
+        maxPlanet,
+      )
       setLayout((current) => (
-        current.orbitScale === nextLayout.orbitScale &&
         current.sizeScale === nextLayout.sizeScale &&
-        current.coreScale === nextLayout.coreScale
+        current.minOrbitDiameter === nextLayout.minOrbitDiameter &&
+        current.maxOrbitDiameter === nextLayout.maxOrbitDiameter
           ? current
           : nextLayout
       ))
@@ -295,19 +355,21 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
 
     updateLayout()
 
-    if (typeof ResizeObserver === "function") {
-      const observer = new ResizeObserver(updateLayout)
-      observer.observe(stage)
-      return () => observer.disconnect()
-    }
-
+    const observer = typeof ResizeObserver === "function"
+      ? new ResizeObserver(updateLayout)
+      : null
+    observer?.observe(stage)
     window.addEventListener("resize", updateLayout, { passive: true })
+    window.addEventListener("orientationchange", updateLayout, { passive: true })
     window.visualViewport?.addEventListener("resize", updateLayout, { passive: true })
+
     return () => {
+      observer?.disconnect()
       window.removeEventListener("resize", updateLayout)
+      window.removeEventListener("orientationchange", updateLayout)
       window.visualViewport?.removeEventListener("resize", updateLayout)
     }
-  }, [maxOrbit, maxPlanet])
+  }, [minOrbit, maxOrbit, minPlanet, maxPlanet])
 
   useEffect(() => {
     const stage = stageRef.current
@@ -449,8 +511,7 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
     )
   }
 
-  const stageHeight = Math.max(360, Math.round(maxOrbit * orbitScale + 180))
-  const coreSize = Math.round(192 * coreScale)
+  const stageHeight = Math.max(420, Math.round(maxOrbitDiameter + 180))
 
   return (
     <>
@@ -463,10 +524,7 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
         <div ref={pulseFieldRef} className={styles.rippleField} aria-hidden />
 
         {/* Central hold-to-play core. Its transform is owned by the one rAF loop. */}
-        <div
-          className={styles.coreLayer}
-          style={{ width: coreSize, height: coreSize }}
-        >
+        <div className={styles.coreLayer}>
           <button
             ref={coreRef}
             type="button"
@@ -474,12 +532,11 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
             aria-label={holding ? "Release to pause Galaxia Prime" : "Hold to play Galaxia Prime"}
             aria-describedby={instructionsId}
             aria-pressed={holding}
-            onMouseDown={startHold}
-            onMouseUp={endHold}
-            onMouseLeave={endHold}
-            onTouchStart={handleTouchStart}
-            onTouchEnd={endHold}
-            onTouchCancel={endHold}
+            onPointerDown={handlePointerDown}
+            onPointerUp={endHold}
+            onPointerCancel={endHold}
+            onPointerLeave={endHold}
+            onLostPointerCapture={endHold}
             onKeyDown={handleKeyDown}
             onKeyUp={handleKeyUp}
             onBlur={endHold}
@@ -506,7 +563,7 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
         >
         {/* Rings and records share the independently rotating system layer. */}
         {artists.map((a) => {
-          const orbitS = Math.round(a.orbit * orbitScale)
+          const orbitS = getRenderedOrbitDiameter(a.orbit)
           return (
             <div
               key={`orbit-${a.id}`}
@@ -526,7 +583,7 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
         {/* The system rotates as one layer; the nested counter-rotation keeps
             every record artwork upright without changing its appearance. */}
         {artists.map((a) => {
-          const orbitS = Math.round(a.orbit * orbitScale)
+          const orbitS = getRenderedOrbitDiameter(a.orbit)
           const sizeS = Math.max(MIN_PLANET_SIZE, Math.round(a.size * sizeScale))
           return (
             <div

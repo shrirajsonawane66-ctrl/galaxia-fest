@@ -399,13 +399,17 @@ body {
    FIX: previous `transform: scale()` + `content-visibility:auto` + `contain: paint`
    clipped planets on mobile (layout 906px orbit vs 343px viewport = 280px overflow each side)
    + parent `overflow-hidden` hid outer planets completely.
-   New: no transform, overflow visible, height auto with aspect, JS scales orbit/size to fit.
+   New: no transform/clipping; JS maps the raw orbit range into viewport-relative
+   min/max diameters while reserving space for the core and outer performer.
 */
 .orbit-stage {
   position: relative;
+  box-sizing: border-box;
   width: 100%;
   max-width: 1280px;
   margin-inline: auto;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   height: 960px;
   contain: layout;
   overflow: visible;

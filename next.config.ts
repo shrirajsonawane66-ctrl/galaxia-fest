@@ -40,7 +40,18 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/(.*)\\.(js|css|woff|woff2|ttf|otf|eot|svg|png|jpg|jpeg|gif|webp|avif|ico|mp3)",
+        // The soundtrack can be replaced in place. Revalidate by ETag instead
+        // of allowing an immutable response to preserve the previous MP3.
+        source: "/audio/:path*.mp3",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=0, must-revalidate",
+          },
+        ],
+      },
+      {
+        source: "/(.*)\\.(js|css|woff|woff2|ttf|otf|eot|svg|png|jpg|jpeg|gif|webp|avif|ico)",
         headers: [
           {
             key: "Cache-Control",

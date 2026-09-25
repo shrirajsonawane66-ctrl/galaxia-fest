@@ -1,5 +1,7 @@
 .coreLayer {
   position: absolute;
+  width: clamp(140px, 45vw, 200px);
+  height: clamp(140px, 45vw, 200px);
   top: 50%;
   left: 50%;
   z-index: 3;
@@ -22,6 +24,8 @@
   color: #0c0620;
   cursor: pointer;
   touch-action: none;
+  overscroll-behavior: none;
+  -webkit-touch-callout: none;
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
