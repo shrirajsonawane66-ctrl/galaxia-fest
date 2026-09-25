@@ -158,8 +158,8 @@ const IDLE = 6
 const MAX_SPEED = 900
 const RAMP_PER_SEC = 180
 const EASE = 2.4
-const SYS_IDLE = 4
-const SYS_FOLLOW = 0.6
+const SYS_IDLE = 10
+const SYS_FOLLOW = 0.85
 const REDUCED_MAX_SPEED = 120
 const GALAXIA_PRIME_AUDIO = "/audio/galaxia-prime.mp3"
 
