@@ -233,34 +233,36 @@ body {
   pointer-events: none;
 }
 
-/* ── Orbit system — pivot + counter-rotate, GPU only ── */
-/* FIX: removed `contain: paint` which clipped planets to half/wedge (paint containment clips overflow to padding box) */
+/* ── Orbit system — separate positioning and animation layers ── */
 .orbit-pivot {
   position: absolute;
   top: 50%; left: 50%;
-  will-change: transform;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  /* contain: layout only — no paint, so planet at edge is not clipped */
+  transform: translate(-50%, -50%);
   contain: layout;
+}
+.orbit-spin {
+  position: absolute;
+  inset: 0;
+  transform: rotate(var(--start-angle, 0deg));
+  will-change: transform;
+  backface-visibility: hidden;
   animation-name: orbit;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
 @keyframes orbit {
-  from { transform: translate(-50%,-50%) rotate(0deg); }
-  to { transform: translate(-50%,-50%) rotate(360deg); }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 .orbit-planet {
   position: absolute;
   top: 50%; left: 100%;
-  transform: translate(-50%,-50%);
-  will-change: transform;
+  transform: translate(-50%, -50%);
   backface-visibility: hidden;
 }
 .planet-inner {
+  transform: rotate(var(--counter-angle, 0deg));
   will-change: transform;
-  transform: translateZ(0);
   backface-visibility: hidden;
   animation-name: counterOrbit;
   animation-timing-function: linear;
@@ -272,7 +274,8 @@ body {
 }
 /* Vinyl/CD spin — separate, faster (4-8s) */
 .vinyl-spin,
-.cd-spin {
+.cd-spin,
+.planet-label-icon {
   will-change: transform;
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -382,7 +385,6 @@ body {
 
 /* Planet hover — GPU only scale + glow */
 .planet-btn {
-  will-change: transform;
   transform: translateZ(0);
   backface-visibility: hidden;
   transition: transform 300ms cubic-bezier(0.2,0.8,0.2,1), filter 300ms ease;
@@ -443,11 +445,38 @@ body {
     margin-bottom: 0;
   }
 }
-/* Mobile: labels always visible (no hover), tap still opens dialog */
-@media (pointer: coarse), (max-width: 1024px) {
+/* Long names cannot fit beside a record at phone/tablet orbit positions.
+   The records remain tappable and each dialog contains the full artist name. */
+@media (max-width: 1024px) {
+  .planet-label {
+    display: none;
+  }
+}
+/* Touch screens without a hover state still get names when there is room. */
+@media (pointer: coarse) and (min-width: 1025px) {
   .planet-label {
     opacity: 1 !important;
     transform: translate(-50%, 0) !important;
+  }
+}
+
+/* Keep mobile compositor pressure low so the record orbits stay smooth. */
+@media (max-width: 640px) {
+  .planet-cd-glow {
+    filter: blur(10px);
+    opacity: 0.5;
+  }
+  .core-pulse {
+    animation: none;
+    opacity: 0.45;
+  }
+  .star-layer-1,
+  .star-layer-2,
+  .star-layer-3,
+  .nebula-1,
+  .nebula-2,
+  .nebula-3 {
+    animation: none;
   }
 }
 
@@ -459,13 +488,24 @@ body {
 /* Dialog overlay */
 [data-radix-dialog-overlay] { background: rgba(5,8,22,0.8); backdrop-filter: blur(12px); }
 
-/* ── Reduced motion — pause all orbits/pulses/star drifts ── */
+/* Stop compositor work while the system is outside the mobile viewport. */
+.orbit-stage.is-paused .orbit-spin,
+.orbit-stage.is-paused .planet-inner,
+.orbit-stage.is-paused .planet-cd-disc,
+.orbit-stage.is-paused .planet-label-icon,
+.orbit-stage.is-paused .core-pulse {
+  animation-play-state: paused;
+}
+
+/* ── Reduced motion — keep the system laid out, but stop all movement ── */
 @media (prefers-reduced-motion: reduce) {
-  .orbit-pivot,
+  .orbit-spin,
   .planet-inner,
   .vinyl-spin,
   .cd-spin,
   .planet-cd-disc,
+  .planet-label-icon,
+  .orbit-stage .animate-pulse,
   .core-pulse,
   .star-layer-1,
   .star-layer-2,

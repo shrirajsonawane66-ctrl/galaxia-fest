@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect, memo } from "react"
+import { useState, useEffect, memo, useRef } from "react"
 import { Disc3, Star, Ticket, Music4, Headphones } from "lucide-react"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -103,36 +103,84 @@ const PlanetCD = memo(function PlanetCD({ artist, size, spinning = true }: { art
   )
 })
 
+const MIN_PLANET_SIZE = 40
+const MOBILE_GUTTER = 12
+const TABLET_GUTTER = 24
+const INITIAL_LAYOUT = { orbitScale: 0.3, sizeScale: 0.45, coreScale: 0.36 }
+
+function getResponsiveLayout(stageWidth: number, maxOrbit: number, maxPlanet: number) {
+  const sizeScale = stageWidth < 640
+    ? 0.45
+    : Math.min(1, Math.max(0.45, stageWidth / 1200))
+  const largestRenderedPlanet = Math.max(MIN_PLANET_SIZE, maxPlanet * sizeScale)
+  const gutter = stageWidth < 640 ? MOBILE_GUTTER : TABLET_GUTTER
+
+  // Fit the complete outer system, not just the orbit line. The previous
+  // calculation left the planet's radius outside the viewport on phones.
+  const orbitScale = Math.min(1, Math.max(
+    0.12,
+    (stageWidth - gutter * 2 - largestRenderedPlanet) / maxOrbit,
+  ))
+  const coreScale = stageWidth < 640
+    ? Math.min(0.42, Math.max(0.32, stageWidth / 950))
+    : sizeScale
+
+  return { orbitScale, sizeScale, coreScale }
+}
+
 export default function SolarSystem({ artists }: { artists: Artist[] }) {
   const [open, setOpen] = useState<Artist | null>(null)
-  const [scale, setScale] = useState(1)
-  const [sizeScale, setSizeScale] = useState(1)
+  const [layout, setLayout] = useState(INITIAL_LAYOUT)
+  const [isNearViewport, setIsNearViewport] = useState(true)
+  const stageRef = useRef<HTMLDivElement>(null)
+  const maxOrbit = Math.max(...artists.map((a) => a.orbit), 906)
+  const maxPlanet = Math.max(...artists.map((a) => a.size), 0)
 
   useEffect(() => {
-    const maxOrbit = Math.max(...artists.map((a) => a.orbit), 906)
-    const compute = () => {
-      const w = window.innerWidth
-      const containerW = Math.min(w - 32, 1280) // px-4 = 32
-      let s = 1
-      if (w < 640) {
-        // mobile: fit max orbit inside container with padding, clamp to keep readable
-        s = (containerW - 24) / maxOrbit
-        s = Math.max(0.34, Math.min(0.55, s))
-      } else if (w < 1024) {
-        s = (containerW - 40) / maxOrbit
-        s = Math.max(0.68, Math.min(1, s))
-      } else {
-        s = 1
-      }
-      setScale(s)
-      // keep planets readable on mobile — don't shrink as much as orbits
-      const ss = s < 0.7 ? Math.max(0.52, s * 1.42) : s
-      setSizeScale(Math.min(1, ss))
+    const stage = stageRef.current
+    if (!stage) return
+
+    const updateLayout = () => {
+      const stageWidth = stage.getBoundingClientRect().width
+      if (!stageWidth) return
+
+      const nextLayout = getResponsiveLayout(stageWidth, maxOrbit, maxPlanet)
+      setLayout((current) => (
+        current.orbitScale === nextLayout.orbitScale &&
+        current.sizeScale === nextLayout.sizeScale &&
+        current.coreScale === nextLayout.coreScale
+          ? current
+          : nextLayout
+      ))
     }
-    compute()
-    window.addEventListener("resize", compute)
-    return () => window.removeEventListener("resize", compute)
-  }, [artists])
+
+    updateLayout()
+
+    if (typeof ResizeObserver === "function") {
+      const observer = new ResizeObserver(updateLayout)
+      observer.observe(stage)
+      return () => observer.disconnect()
+    }
+
+    window.addEventListener("resize", updateLayout, { passive: true })
+    window.visualViewport?.addEventListener("resize", updateLayout, { passive: true })
+    return () => {
+      window.removeEventListener("resize", updateLayout)
+      window.visualViewport?.removeEventListener("resize", updateLayout)
+    }
+  }, [maxOrbit, maxPlanet])
+
+  useEffect(() => {
+    const stage = stageRef.current
+    if (!stage || !("IntersectionObserver" in window)) return
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsNearViewport(entry.isIntersecting)
+    }, { rootMargin: "200px 0px" })
+
+    observer.observe(stage)
+    return () => observer.disconnect()
+  }, [])
 
   if (!artists.length) {
     return (
@@ -143,15 +191,19 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
     )
   }
 
-  const maxOrbit = Math.max(...artists.map((a) => a.orbit), 906)
-  const stageHeight = Math.round(maxOrbit * scale + 220)
+  const { orbitScale, sizeScale, coreScale } = layout
+  const stageHeight = Math.max(360, Math.round(maxOrbit * orbitScale + 180))
 
   return (
     <>
-      <div className="orbit-stage" style={{ height: stageHeight } as React.CSSProperties}>
+      <div
+        ref={stageRef}
+        className={`orbit-stage${isNearViewport ? "" : " is-paused"}`}
+        style={{ height: stageHeight } as React.CSSProperties}
+      >
         {/* Dashed concentric orbits — scaled to fit viewport */}
         {artists.map((a) => {
-          const orbitS = Math.round(a.orbit * scale)
+          const orbitS = Math.round(a.orbit * orbitScale)
           return (
             <div
               key={`orbit-${a.id}`}
@@ -170,8 +222,8 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
 
         {/* Central core — scaled on mobile to keep proportion */}
         {(() => {
-          const coreSize = Math.round(192 * (scale < 0.7 ? Math.max(0.7, sizeScale) : 1))
-          const pulseSize = Math.round(268 * (scale < 0.7 ? Math.max(0.7, sizeScale) : 1))
+          const coreSize = Math.round(192 * coreScale)
+          const pulseSize = Math.round(268 * coreScale)
           return (
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
               <div className="relative" style={{ width: coreSize, height: coreSize } as React.CSSProperties}>
@@ -201,11 +253,12 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
           )
         })()}
 
-        {/* Planets — pivot (orbit) → counter → PlanetCD (spin) — responsive: scales to fit mobile viewport */}
-        {artists.map((a, i) => {
-          const delay = -(a.startAngle / 360) * a.duration - i * 0.9
-          const orbitS = Math.round(a.orbit * scale)
-          const sizeS = Math.round(a.size * sizeScale)
+        {/* Position, orbit, counter-rotation, and disc spin use separate elements
+            so reduced-motion and initial layout never affect centering. */}
+        {artists.map((a) => {
+          const delay = -(a.startAngle / 360) * a.duration
+          const orbitS = Math.round(a.orbit * orbitScale)
+          const sizeS = Math.max(MIN_PLANET_SIZE, Math.round(a.size * sizeScale))
           return (
             <div
               key={a.id}
@@ -213,41 +266,49 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
               style={{
                 width: orbitS,
                 height: orbitS,
-                animationDuration: `${a.duration}s`,
-                animationDelay: `${delay}s`,
+                "--start-angle": `${a.startAngle}deg`,
+                "--counter-angle": `${-a.startAngle}deg`,
               } as React.CSSProperties}
             >
-              <div className="orbit-planet">
-                <div
-                  className="planet-inner"
-                  style={{
-                    animationDuration: `${a.duration}s`,
-                    animationDelay: `${delay}s`,
-                  } as React.CSSProperties}
-                >
-                  <button
-                    aria-label={`Open ${a.name} — ${a.genre}`}
-                    onClick={() => setOpen(a)}
-                    className="planet-btn group relative outline-none focus:ring-2 focus:ring-white/40 rounded-full"
-                    style={{ width: sizeS, height: sizeS }}
+              <div
+                className="orbit-spin"
+                style={{
+                  animationDuration: `${a.duration}s`,
+                  animationDelay: `${delay}s`,
+                } as React.CSSProperties}
+              >
+                <div className="orbit-planet">
+                  <div
+                    className="planet-inner"
+                    style={{
+                      animationDuration: `${a.duration}s`,
+                      animationDelay: `${delay}s`,
+                    } as React.CSSProperties}
                   >
-                    <PlanetCD artist={a} size={sizeS} spinning />
-                    <span className="planet-label absolute left-1/2 -translate-x-1/2 top-full mt-3 whitespace-nowrap z-10 pointer-events-none">
-                      <span
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass text-[10px] font-space uppercase tracking-[0.3em] border border-white/10"
-                        style={{
-                          color: a.accent,
-                          background: "rgba(10,10,28,0.72)",
-                          backdropFilter: "blur(10px)",
-                          textShadow: "0 1px 8px rgba(0,0,0,0.7)",
-                          boxShadow: `0 0 14px ${a.glow}`,
-                        }}
-                      >
-                        <Disc3 className="w-3 h-3 animate-spin" style={{ animationDuration: "3s" }} />
-                        {a.name}
+                    <button
+                      aria-label={`Open ${a.name} — ${a.genre}`}
+                      onClick={() => setOpen(a)}
+                      className="planet-btn group relative outline-none focus:ring-2 focus:ring-white/40 rounded-full"
+                      style={{ width: sizeS, height: sizeS }}
+                    >
+                      <PlanetCD artist={a} size={sizeS} spinning />
+                      <span className="planet-label absolute left-1/2 -translate-x-1/2 top-full mt-3 whitespace-nowrap z-10 pointer-events-none">
+                        <span
+                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass text-[10px] font-space uppercase tracking-[0.3em] border border-white/10"
+                          style={{
+                            color: a.accent,
+                            background: "rgba(10,10,28,0.72)",
+                            backdropFilter: "blur(10px)",
+                            textShadow: "0 1px 8px rgba(0,0,0,0.7)",
+                            boxShadow: `0 0 14px ${a.glow}`,
+                          }}
+                        >
+                          <Disc3 className="planet-label-icon w-3 h-3" style={{ animationDuration: "3s" }} />
+                          {a.name}
+                        </span>
                       </span>
-                    </span>
-                  </button>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
