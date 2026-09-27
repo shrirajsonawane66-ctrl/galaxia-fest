@@ -37,7 +37,7 @@ export default function AdminLogin() {
           </div>
           {err && <div className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-3 py-2">{err}</div>}
           <Button type="submit" variant="galaxy" className="w-full rounded-full h-11">Login <ArrowRight className="w-4 h-4" /></Button>
-          <div className="text-[11px] text-white/30 font-space text-center">Supabase Auth in production — demo uses local check. RLS protects mutations server-side.</div>
+          <div className="text-[11px] text-white/30 font-space text-center">Demo uses local check.</div>
         </form>
         <div className="text-center mt-4"><a href="/" className="text-xs text-white/40 hover:text-white">← Back to Galaxia site</a></div>
       </div>

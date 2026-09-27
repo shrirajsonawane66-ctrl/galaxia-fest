@@ -28,7 +28,7 @@ export default function BookingsAdmin() {
     <div className="space-y-6">
       <div>
         <h1 className="font-orbitron font-black text-2xl">Bookings</h1>
-        <p className="text-white/50 text-sm font-space">Search / filter / export. In prod: Supabase + RLS, payment_status, booking_status, etc.</p>
+        <p className="text-white/50 text-sm font-space">Search / filter / export. Demo mode — localStorage.</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-3">

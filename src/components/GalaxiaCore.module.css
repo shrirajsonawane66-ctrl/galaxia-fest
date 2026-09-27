@@ -40,7 +40,7 @@
     0 0 120px 20px rgba(139, 92, 246, 0.24),
     inset -18px -24px 48px rgba(0, 0, 0, 0.3);
   pointer-events: auto;
-  transform: translateZ(0);
+  transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   will-change: transform;
   transition: box-shadow 200ms ease;
@@ -130,20 +130,21 @@
   left: 50%;
   width: 200px;
   height: 200px;
+  visibility: hidden;
   border: 2px solid hsla(330, 90%, 65%, 0.55);
   border-radius: 9999px;
   opacity: 0.85;
-  transform: translate(-50%, -50%) scale(1);
+  transform: translate3d(-50%, -50%, 0) scale(1);
   box-shadow: 0 0 24px hsla(320, 90%, 60%, 0.35) inset;
+  contain: layout style paint;
   pointer-events: none;
-  animation: rippleGrow var(--duration, 1.2s) ease-out forwards;
+  backface-visibility: hidden;
   will-change: transform, opacity;
 }
 
-@keyframes rippleGrow {
-  to {
-    transform: translate(-50%, -50%) scale(var(--scale, 2.2));
-    opacity: 0;
+@media (max-width: 480px) {
+  .ripple {
+    box-shadow: 0 0 12px hsla(320, 90%, 60%, 0.3) inset;
   }
 }
 

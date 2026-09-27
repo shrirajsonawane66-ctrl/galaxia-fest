@@ -1,9 +1,19 @@
 "use client"
-import { supabaseAnon } from "./supabase"
 
 export type GalaxiaUser = { id: string; email: string; name?: string }
 
 const LS_KEY = "galaxia_user"
+const USERS_KEY = "galaxia_users"
+
+function getUsers(): any[] {
+  if (typeof window === "undefined") return []
+  try { return JSON.parse(localStorage.getItem(USERS_KEY) || "[]") } catch { return [] }
+}
+
+function saveUsers(users: any[]) {
+  if (typeof window === "undefined") return
+  localStorage.setItem(USERS_KEY, JSON.stringify(users))
+}
 
 export function getUser(): GalaxiaUser | null {
   if (typeof window === "undefined") return null
@@ -19,33 +29,18 @@ export function setUser(u: GalaxiaUser | null) {
 }
 
 export async function signUp(email: string, password: string, name?: string) {
-  if (supabaseAnon) {
-    const { data, error } = await supabaseAnon.auth.signUp({ email, password, options: { data: { name } } })
-    if (error) throw new Error(error.message)
-    const user = data.user ? { id: data.user.id, email: data.user.email || email, name } : null
-    if (user) setUser(user)
-    return user
-  }
-  // fallback demo: store in local users list
-  const users: any[] = JSON.parse(localStorage.getItem("galaxia_users") || "[]")
+  const users = getUsers()
   if (users.find(u => u.email === email)) throw new Error("User already exists")
   const u = { id: "u_" + Date.now(), email, password, name }
   users.push(u)
-  localStorage.setItem("galaxia_users", JSON.stringify(users))
+  saveUsers(users)
   const out = { id: u.id, email, name }
   setUser(out)
   return out
 }
 
 export async function signIn(email: string, password: string) {
-  if (supabaseAnon) {
-    const { data, error } = await supabaseAnon.auth.signInWithPassword({ email, password })
-    if (error) throw new Error(error.message)
-    const user = data.user ? { id: data.user.id, email: data.user.email || email, name: (data.user.user_metadata as any)?.name } : null
-    if (user) setUser(user)
-    return user
-  }
-  const users: any[] = JSON.parse(localStorage.getItem("galaxia_users") || "[]")
+  const users = getUsers()
   const u = users.find(x => x.email === email && x.password === password)
   if (!u) throw new Error("Invalid email or password")
   const out = { id: u.id, email: u.email, name: u.name }
@@ -54,8 +49,5 @@ export async function signIn(email: string, password: string) {
 }
 
 export async function signOut() {
-  if (supabaseAnon) {
-    await supabaseAnon.auth.signOut()
-  }
   setUser(null)
 }

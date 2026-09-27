@@ -8,7 +8,7 @@ export default function SettingsAdmin() {
   const [ev, setEv] = useState(eventSeed)
   const [saved, setSaved] = useState("")
   useEffect(()=>{ const s=localStorage.getItem("galaxia_event"); if(s) setEv(JSON.parse(s)) },[])
-  const save = ()=>{ localStorage.setItem("galaxia_event", JSON.stringify(ev)); setSaved("Saved locally — production writes to Supabase events table."); setTimeout(()=>setSaved(""),3000) }
+  const save = ()=>{ localStorage.setItem("galaxia_event", JSON.stringify(ev)); setSaved("Saved locally."); setTimeout(()=>setSaved(""),3000) }
 
   const Field = ({ label, k, placeholder }:{label:string,k:keyof typeof ev,placeholder?:string}) => (
     <div>
@@ -21,7 +21,7 @@ export default function SettingsAdmin() {
     <div className="space-y-6 max-w-3xl">
       <div>
         <h1 className="font-orbitron font-black text-2xl">Event Settings</h1>
-        <p className="text-white/50 text-sm font-space">Edit title, venue, contact, socials, SEO. Public site reads from Supabase; fallback is this seed.</p>
+        <p className="text-white/50 text-sm font-space">Edit title, venue, contact, socials, SEO. Demo mode — localStorage.</p>
       </div>
 
       <div className="glass rounded-3xl p-6 space-y-4 border border-white/10">

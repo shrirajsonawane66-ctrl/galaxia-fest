@@ -62,8 +62,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {/* Preconnect to image CDNs — saves ~100-300ms DNS+TLS */}
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
-        {/* DNS prefetch for Supabase if used */}
-        <link rel="dns-prefetch" href="https://*.supabase.co" />
       </head>
       <body className="antialiased bg-[#050816] text-white overflow-x-hidden">
         {children}

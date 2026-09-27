@@ -16,7 +16,7 @@ export default function PassesAdmin() {
 
   const save = () => {
     localStorage.setItem("galaxia_passes", JSON.stringify(passes))
-    setSaved("Saved locally. In production this writes to Supabase with RLS + price history.")
+    setSaved("Saved locally.")
     setTimeout(()=>setSaved(""), 4000)
   }
 

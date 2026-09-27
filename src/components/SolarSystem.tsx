@@ -182,6 +182,10 @@ const SYS_IDLE = 10
 const SYS_FOLLOW = 0.85
 const REDUCED_MAX_SPEED = 120
 const GALAXIA_PRIME_AUDIO = "/audio/galaxia-prime.mp3?v=galaxia-prime-9ed66b1a"
+const RIPPLE_POOL_SIZE = 6
+const RIPPLE_POOL_KEYS = Array.from({ length: RIPPLE_POOL_SIZE }, (_, index) => index)
+const AUDIO_RATE_EPSILON = 0.01
+const IDLE_SPEED_EPSILON = 0.05
 
 type CorePhysics = {
   angle: number
@@ -191,6 +195,12 @@ type CorePhysics = {
   holdStart: number
   systemAngle: number
   rippleAccumulator: number
+}
+
+type RipplePoolItem = {
+  element: HTMLSpanElement
+  animation: Animation
+  active: boolean
 }
 
 export default function SolarSystem({ artists }: { artists: Artist[] }) {
@@ -203,6 +213,12 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
   const pulseFieldRef = useRef<HTMLDivElement>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const reducedMotionRef = useRef(false)
+  const ripplePoolRef = useRef<RipplePoolItem[]>([])
+  const activeRippleCountRef = useRef(0)
+  const rippleCursorRef = useRef(0)
+  const hasRenderedIdleRippleRef = useRef(false)
+  const lastAudioRateRef = useRef(1)
+  const resumeLoopRef = useRef<() => void>(() => undefined)
   const physicsRef = useRef<CorePhysics>({
     angle: 0,
     speed: IDLE,
@@ -244,7 +260,6 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
     return () => {
       physicsRef.current.holding = false
       physicsRef.current.target = IDLE
-      pulseFieldRef.current?.replaceChildren()
       if (!track) return
       track.pause()
       track.removeAttribute("src")
@@ -260,6 +275,7 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
     // Keep reset + play() in the originating pointer/key event call stack.
     // This runs before React state or effects, which is required by iOS Safari.
     const track = getAudioTrack()
+    lastAudioRateRef.current = 1
     if (track) {
       try {
         track.currentTime = 0
@@ -281,6 +297,7 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
     physics.holdStart = performance.now()
     physics.target = IDLE
     setHolding(true)
+    resumeLoopRef.current()
   }, [getAudioTrack])
 
   const endHold = useCallback(() => {
@@ -383,7 +400,13 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
       reducedMotionRef.current = motionQuery.matches
       if (motionQuery.matches) {
         physicsRef.current.rippleAccumulator = 0
-        pulseField.replaceChildren()
+        ripplePoolRef.current.forEach((item) => {
+          item.active = false
+          item.animation.pause()
+          item.element.style.visibility = "hidden"
+        })
+        activeRippleCountRef.current = 0
+        rippleCursorRef.current = 0
       }
     }
     syncMotionPreference()
@@ -391,9 +414,39 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
 
     const physics = physicsRef.current
     const track = audioRef.current
+    const uprightNodes = Array.from(system.querySelectorAll<HTMLElement>(".planet-upright"))
     let isVisible = true
     let animationFrame: number | null = null
     let lastTime = performance.now()
+
+    // Six DOM nodes and six Animation objects are created once, then reused for
+    // the lifetime of the component. No pulse allocates or destroys DOM.
+    const ripplePool: RipplePoolItem[] = []
+    for (const element of Array.from(pulseField.children)) {
+      if (!(element instanceof HTMLSpanElement) || typeof element.animate !== "function") continue
+      element.style.visibility = "hidden"
+      const animation = element.animate(
+        [
+          { transform: "translate3d(-50%, -50%, 0) scale(1)", opacity: 0.85 },
+          { transform: "translate3d(-50%, -50%, 0) scale(2.1)", opacity: 0 },
+        ],
+        { duration: 1300, easing: "ease-out", fill: "both" },
+      )
+      const item: RipplePoolItem = { element, animation, active: false }
+      animation.pause()
+      animation.currentTime = 0
+      animation.onfinish = () => {
+        if (!item.active || animation.playState !== "finished") return
+        item.active = false
+        activeRippleCountRef.current = Math.max(0, activeRippleCountRef.current - 1)
+        element.style.visibility = "hidden"
+      }
+      ripplePool.push(item)
+    }
+    ripplePoolRef.current = ripplePool
+    activeRippleCountRef.current = 0
+    rippleCursorRef.current = 0
+    hasRenderedIdleRippleRef.current = ripplePool.length === 0
 
     const currentMaxSpeed = () => (
       reducedMotionRef.current ? REDUCED_MAX_SPEED : MAX_SPEED
@@ -405,13 +458,35 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
     }
 
     const spawnRipple = (factor: number) => {
-      const ripple = document.createElement("div")
-      ripple.className = styles.ripple
+      if (!ripplePool.length) return
+      const item = ripplePool[rippleCursorRef.current % ripplePool.length]
+      rippleCursorRef.current += 1
+
       // Exact prototype tuning: faster and larger as the core accelerates.
-      ripple.style.setProperty("--duration", `${1.3 - factor * 0.75}s`)
-      ripple.style.setProperty("--scale", `${2.1 + factor * 1.3}`)
-      pulseField.appendChild(ripple)
-      ripple.addEventListener("animationend", () => ripple.remove(), { once: true })
+      // The pooled Animation is reused; only its existing KeyframeEffect changes.
+      const effect = item.animation.effect as KeyframeEffect | null
+      if (!effect) return
+      effect.setKeyframes([
+        { transform: "translate3d(-50%, -50%, 0) scale(1)", opacity: 0.85 },
+        {
+          transform: `translate3d(-50%, -50%, 0) scale(${2.1 + factor * 1.3})`,
+          opacity: 0,
+        },
+      ])
+      effect.updateTiming({
+        duration: `${1.3 - factor * 0.75}s`,
+        easing: "ease-out",
+        fill: "both",
+      })
+
+      if (!item.active) {
+        item.active = true
+        activeRippleCountRef.current += 1
+      }
+      item.element.style.visibility = "visible"
+      item.animation.currentTime = 0
+      item.animation.play()
+      if (!physics.holding) hasRenderedIdleRippleRef.current = true
     }
 
     const frame = (now: number) => {
@@ -430,15 +505,26 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
       // Ease on release too: target returns to IDLE, but speed never snaps.
       physics.speed += (physics.target - physics.speed) * Math.min(1, EASE * dt)
       physics.angle = (physics.angle + physics.speed * dt) % 360
-      core.style.transform = `rotate(${physics.angle}deg)`
+      core.style.transform = `translate3d(0, 0, 0) rotate(${physics.angle}deg)`
 
       const systemSpeed = SYS_IDLE + (physics.speed - IDLE) * SYS_FOLLOW
       physics.systemAngle = (physics.systemAngle + systemSpeed * dt) % 360
-      system.style.transform = `rotate(${physics.systemAngle}deg)`
-      system.style.setProperty("--counter-rotation", `${-physics.systemAngle}deg`)
+      system.style.transform = `translate3d(0, 0, 0) rotate(${physics.systemAngle}deg)`
+      // Counter-rotate each node directly. Writing an inherited custom property
+      // on the system every frame forced style recalculation across the subtree.
+      const counterRotation = -physics.systemAngle
+      for (const node of uprightNodes) {
+        node.style.transform = `translate3d(0, 0, 0) rotate(${counterRotation}deg)`
+      }
 
       const factor = speedFactor()
-      if (track) track.playbackRate = 1 + factor * 0.5
+      if (track) {
+        const nextRate = 1 + factor * 0.5
+        if (Math.abs(nextRate - lastAudioRateRef.current) > AUDIO_RATE_EPSILON) {
+          track.playbackRate = nextRate
+          lastAudioRateRef.current = nextRate
+        }
+      }
 
       if (!reducedMotionRef.current) {
         const rippleGap = 0.62 - factor * 0.5
@@ -449,6 +535,23 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
         }
       }
 
+      const speedSettled =
+        Math.abs(physics.speed - IDLE) <= IDLE_SPEED_EPSILON &&
+        Math.abs(physics.target - IDLE) <= IDLE_SPEED_EPSILON
+      const idleVisualSettled =
+        reducedMotionRef.current ||
+        ripplePool.length === 0 ||
+        hasRenderedIdleRippleRef.current
+
+      if (
+        !physics.holding &&
+        speedSettled &&
+        activeRippleCountRef.current === 0 &&
+        idleVisualSettled
+      ) {
+        return
+      }
+
       animationFrame = requestAnimationFrame(frame)
     }
 
@@ -457,6 +560,8 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
       lastTime = performance.now()
       animationFrame = requestAnimationFrame(frame)
     }
+
+    resumeLoopRef.current = startLoop
 
     const stopLoop = () => {
       if (animationFrame === null) return
@@ -494,6 +599,19 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
 
     return () => {
       stopLoop()
+      if (resumeLoopRef.current === startLoop) {
+        resumeLoopRef.current = () => undefined
+      }
+      ripplePool.forEach((item) => {
+        item.animation.onfinish = null
+        item.animation.cancel()
+        item.element.style.visibility = "hidden"
+        item.active = false
+      })
+      ripplePoolRef.current = []
+      activeRippleCountRef.current = 0
+      hasRenderedIdleRippleRef.current = false
+      lastAudioRateRef.current = 1
       observer?.disconnect()
       motionQuery.removeEventListener("change", syncMotionPreference)
       window.removeEventListener("blur", endHold)
@@ -520,8 +638,12 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
         className="orbit-stage"
         style={{ height: stageHeight } as React.CSSProperties}
       >
-        {/* Ripples sit behind both the core and the rotating performer system. */}
-        <div ref={pulseFieldRef} className={styles.rippleField} aria-hidden />
+        {/* Six pooled nodes sit behind the core; pulses only restart WAAPI. */}
+        <div ref={pulseFieldRef} className={styles.rippleField} aria-hidden>
+          {RIPPLE_POOL_KEYS.map((index) => (
+            <span key={index} className={styles.ripple} />
+          ))}
+        </div>
 
         {/* Central hold-to-play core. Its transform is owned by the one rAF loop. */}
         <div className={styles.coreLayer}>

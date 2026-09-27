@@ -30,7 +30,7 @@ export default function ArtistsAdmin() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-orbitron font-black text-2xl">Artists</h1>
-          <p className="text-white/50 text-sm font-space">Add / edit / delete / reorder. Images via URL or upload (Supabase Storage in prod).</p>
+          <p className="text-white/50 text-sm font-space">Add / edit / delete / reorder. Images via URL.</p>
         </div>
         <Button variant="galaxy" className="rounded-full" onClick={()=>{ setEditing({ id:"", name:"", genre:"", role:"", year:"2025", bio:"", image_url:"https://images.unsplash.com/photo-1595152772835-219674b2a8a6?auto=format&fit=crop&w=600&q=80", display_order: artists.length+1, featured:false, size:96, orbit:300, duration:60, startAngle:0, spin:5, label:"#8B5CF6", glow:"rgba(139,92,246,0.6)", accent:"#C084FC" } as any); setIsNew(true)}}><Plus className="w-4 h-4" /> Add Artist</Button>
       </div>
@@ -68,7 +68,7 @@ export default function ArtistsAdmin() {
               <label className="flex items-center gap-2 text-xs font-space"><input type="checkbox" checked={(editing as any).featured} onChange={e=>setEditing({...editing, featured:e.target.checked} as any)} /> Featured</label>
             </div>
             {/* image upload stub */}
-            <div className="text-xs text-white/40 font-space">Upload to Supabase Storage in production: bucket <code>artist-images</code>. For demo paste URL above or use <a href="https://images.unsplash.com" target="_blank" className="text-cyan-300">Unsplash</a>.</div>
+            <div className="text-xs text-white/40 font-space">For demo paste URL above or use <a href="https://images.unsplash.com" target="_blank" className="text-cyan-300">Unsplash</a>.</div>
             <div className="flex gap-2">
               <Button variant="galaxy" className="rounded-full flex-1" onClick={()=>save(editing)}><Save className="w-4 h-4"/> Save</Button>
               <Button variant="outline" className="rounded-full flex-1" onClick={()=>{setEditing(null); setIsNew(false)}}>Cancel</Button>

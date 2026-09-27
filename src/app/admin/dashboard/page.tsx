@@ -21,7 +21,7 @@ export default function Dashboard() {
     <div className="space-y-6">
       <div>
         <h1 className="font-orbitron font-black text-2xl">Dashboard</h1>
-        <p className="text-white/50 text-sm font-space">Live from Supabase (fallback: localStorage demo).</p>
+        <p className="text-white/50 text-sm font-space">Demo mode — using localStorage.</p>
       </div>
 
       <div className="grid md:grid-cols-4 gap-4">
@@ -81,11 +81,6 @@ export default function Dashboard() {
           )}
           <Link href="/admin/bookings" className="text-xs text-cyan-300 hover:text-white mt-3 inline-block">View all bookings →</Link>
         </div>
-      </div>
-
-      <div className="glass rounded-2xl p-6 border border-amber-400/20 bg-amber-500/5">
-        <h3 className="font-space font-semibold text-amber-200 text-sm">Supabase Setup Required for Production</h3>
-        <p className="text-xs text-white/60 mt-1 leading-relaxed">This dashboard reads from <code className="bg-white/10 px-1 rounded">localStorage</code> in demo. Connect Supabase (see <code>.env.example</code> + <code>supabase/migrations</code>) to get live DB, RLS, and Atomic inventory via RPC <code>increment_pass_sold</code>. Admin mutations already check for <code>supabaseService</code> before writing.</p>
       </div>
     </div>
   )

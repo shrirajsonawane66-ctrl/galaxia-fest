@@ -70,7 +70,7 @@ export default function AuthModal({ open, onOpenChange, initial = "signin" as "s
               {loading ? "Please wait…" : mode === "signin" ? "Sign In" : "Create Account"} <ArrowRight className="w-4 h-4" />
             </Button>
             <div className="text-[11px] text-center font-space text-white/30">
-              {mode === "signin" ? "Demo: any email/pass works after you sign up. Supabase Auth when configured." : "Password stored locally for demo — use Supabase in production."}
+              {mode === "signin" ? "Demo: any email/pass works after you sign up. Local storage auth." : "Password stored locally for demo."}
             </div>
           </form>
         </div>
