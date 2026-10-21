@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { passesSeed } from "@/lib/data"
 import { formatINR } from "@/lib/utils"
-import { Save, AlertTriangle } from "lucide-react"
+import { Save, AlertTriangle, Trash2 } from "lucide-react"
 
 export default function PassesAdmin() {
   const [passes, setPasses] = useState(passesSeed)
@@ -22,6 +22,17 @@ export default function PassesAdmin() {
 
   const update = (id: string, patch: any) => setPasses(prev => prev.map(p => p.id===id ? {...p, ...patch} : p))
 
+  const remove = (id: string) => {
+    const pass = passes.find(p => p.id===id)
+    if (!confirm(`Delete "${pass?.name}" pass? Existing bookings are unaffected.`)) return
+    const next = passes.filter(p => p.id!==id)
+    setPasses(next)
+    // persist immediately so the removal takes effect without needing Save
+    localStorage.setItem("galaxia_passes", JSON.stringify(next))
+    setSaved("Pass deleted.")
+    setTimeout(()=>setSaved(""), 4000)
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -33,9 +44,12 @@ export default function PassesAdmin() {
       <div className="grid md:grid-cols-3 gap-6">
         {passes.map(p => (
           <div key={p.id} className="glass rounded-3xl p-6 border border-white/10 space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <div className="font-orbitron font-black">{p.name}</div>
-              <span className="text-[10px] px-2 py-1 rounded-full bg-white/10 font-space uppercase tracking-widest">{p.slug}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] px-2 py-1 rounded-full bg-white/10 font-space uppercase tracking-widest">{p.slug}</span>
+                <Button size="sm" variant="ghost" className="rounded-full" onClick={()=>remove(p.id)} aria-label={`Delete ${p.name} pass`}><Trash2 className="w-4 h-4 text-red-400" /></Button>
+              </div>
             </div>
             <div>
               <label className="text-xs font-space uppercase tracking-widest text-white/50">Price (INR)</label>
@@ -67,6 +81,13 @@ export default function PassesAdmin() {
           </div>
         ))}
       </div>
+
+      {passes.length===0 && (
+        <div className="glass rounded-3xl p-8 border border-white/10 text-center space-y-3">
+          <div className="text-white/50 font-space text-sm">All passes have been deleted.</div>
+          <Button variant="outline" className="rounded-full" onClick={()=>{ const fresh = passesSeed.map(p=>({...p})); setPasses(fresh); localStorage.setItem("galaxia_passes", JSON.stringify(fresh)); setSaved("Default passes restored."); setTimeout(()=>setSaved(""),4000) }}>Restore default passes</Button>
+        </div>
+      )}
 
       <div className="flex items-center gap-3">
         <Button onClick={save} variant="galaxy" className="rounded-full"><Save className="w-4 h-4" /> Save All</Button>
