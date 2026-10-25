@@ -44,3 +44,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# AI skills / agent config (keep local, don't bloat repo)
+.opencode/
+.agents/
+.claude/
+agent/
