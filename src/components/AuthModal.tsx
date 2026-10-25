@@ -41,10 +41,10 @@ export default function AuthModal({ open, onOpenChange, initial = "signin" as "s
           <DialogHeader>
             <DialogTitle className="font-orbitron flex items-center gap-2">
               <Image
-                src="/images/galaxia-logo.png"
+                src="/brand/galaxia-logo.png"
                 alt="Galaxia i-Fest"
-                width={1200}
-                height={851}
+                width={1600}
+                height={1136}
                 sizes="48px"
                 className="h-8 w-auto shrink-0"
               />

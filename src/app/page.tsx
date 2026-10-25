@@ -126,7 +126,9 @@ export default function Home() {
 
       {/* HERO */}
       <section className="relative z-10 flex min-h-screen items-center justify-center overflow-hidden px-5 pb-28 pt-32 md:px-8">
-        <div className="pointer-events-none absolute inset-0 opacity-70 [background-image:radial-gradient(ellipse_at_center,rgba(140,123,255,.16),transparent_62%)]" />
+        {/* Feathered centre darkening: keeps the navy/periwinkle edges intact while
+            giving the cream-and-red logo a calmer field to sit against. */}
+        <div className="pointer-events-none absolute inset-0 [background-image:radial-gradient(ellipse_58%_48%_at_50%_45%,rgba(2,6,20,0.24)_0%,rgba(2,6,20,0.14)_45%,rgba(2,6,20,0.04)_68%,transparent_82%)]" />
         <div className="relative mx-auto flex w-full max-w-5xl flex-col items-center text-center">
           <p
             className="hero-reveal text-[10px] font-medium uppercase tracking-[0.3em] text-cream/55 sm:text-xs"
@@ -139,15 +141,16 @@ export default function Home() {
             className="hero-logo-reveal mt-2 w-full"
             style={{ animationDelay: "0.4s" }}
           >
-            <div className="hero-float mx-auto w-[74vw] max-w-[430px] md:max-w-[520px]">
+            <div className="hero-float mx-auto w-[72vw] max-w-[290px] sm:w-[42vw] sm:max-w-[320px] lg:w-[36vw] lg:max-w-[380px]">
               <h1 className="w-full">
                 <Image
-                  src="/images/galaxia-logo.png"
+                  src="/brand/galaxia-logo.png"
                   alt="Galaxia i-Fest"
-                  width={1200}
-                  height={851}
+                  width={1600}
+                  height={1136}
                   priority
-                  sizes="(min-width: 768px) 520px, 74vw"
+                  fetchPriority="high"
+                  sizes="(min-width: 1024px) 380px, (min-width: 640px) 42vw, 72vw"
                   className="h-auto w-full drop-shadow-[0_0_60px_rgba(229,18,31,0.22)]"
                 />
               </h1>
@@ -424,11 +427,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-space uppercase tracking-widest text-white/40">
           <div className="flex items-center gap-3">
             <Image
-              src="/images/galaxia-logo.png"
+              src="/brand/galaxia-logo.png"
               alt="Galaxia i-Fest"
-              width={1200}
-              height={851}
-              sizes="32px"
+              width={1600}
+              height={1136}
+              sizes="48px"
               className="h-7 w-auto shrink-0"
             />
             <span>© 2025 Galaxia · {eventSeed.college_name} · Built among the stars</span>

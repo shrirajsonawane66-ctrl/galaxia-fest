@@ -117,10 +117,10 @@ export function SiteNav({ onGetPasses }: { onGetPasses?: () => void }) {
           <div className="flex min-w-0 flex-1 items-center justify-start">
             <Link href="/" aria-label="Galaxia i-Fest home" className="shrink-0">
               <Image
-                src="/images/galaxia-logo.png"
+                src="/brand/galaxia-logo.png"
                 alt="Galaxia i-Fest"
-                width={1200}
-                height={851}
+                width={1600}
+                height={1136}
                 priority
                 sizes="(min-width: 768px) 68px, 56px"
                 className="h-10 w-auto md:h-12"

@@ -81,10 +81,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className="w-64 shrink-0 border-r border-white/10 bg-black/20 backdrop-blur-xl sticky top-0 h-screen overflow-y-auto hidden md:flex flex-col">
         <div className="p-6 border-b border-white/10 flex items-center gap-2.5">
           <Image
-            src="/images/galaxia-logo.png"
+            src="/brand/galaxia-logo.png"
             alt="Galaxia i-Fest"
-            width={1200}
-            height={851}
+            width={1600}
+            height={1136}
             sizes="48px"
             className="h-8 w-auto shrink-0"
           />
@@ -124,10 +124,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="md:hidden sticky top-0 z-40 bg-[#06123a]/85 backdrop-blur border-b border-white/10 px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Image
-              src="/images/galaxia-logo.png"
+              src="/brand/galaxia-logo.png"
               alt="Galaxia i-Fest"
-              width={1200}
-              height={851}
+              width={1600}
+              height={1136}
               sizes="32px"
               className="h-7 w-auto shrink-0"
             />
