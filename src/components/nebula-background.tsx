@@ -1,33 +1,22 @@
-"use client";
-
-import * as React from "react";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
 
 const GRAIN =
   "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")";
 
+/**
+ * Site-wide nebula backdrop.
+ *
+ * This is intentionally a server component: the slow drift is pure CSS, so the
+ * background adds no client JavaScript and no hydration boundary to the root
+ * layout. It renders on every route and stays fixed while the page scrolls.
+ */
 export function NebulaBackground() {
-  const reduceMotion = useReducedMotion();
-
   return (
     <div
       aria-hidden
       className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#06123a]"
     >
-      <motion.div
-        className="absolute inset-[-4%]"
-        animate={
-          reduceMotion
-            ? undefined
-            : {
-                scale: [1, 1.05, 1],
-                x: [0, 14, 0],
-                y: [0, -10, 0],
-              }
-        }
-        transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
-      >
+      <div className="nebula-drift absolute inset-[-4%]">
         <Image
           src="/images/bg-nebula.svg"
           alt=""
@@ -37,7 +26,7 @@ export function NebulaBackground() {
           sizes="100vw"
           className="object-cover object-center"
         />
-      </motion.div>
+      </div>
 
       {/* Readability overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/15" />

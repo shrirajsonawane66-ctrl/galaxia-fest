@@ -169,6 +169,7 @@ export default function Home() {
                   width={1200}
                   height={851}
                   priority
+                  sizes="(min-width: 768px) 520px, 74vw"
                   className="h-auto w-full drop-shadow-[0_0_60px_rgba(229,18,31,0.22)]"
                 />
               </h1>

@@ -23,7 +23,7 @@ const spaceGrotesk = Space_Grotesk({
 const orbitron = Orbitron({
   subsets: ["latin"],
   variable: "--font-orbitron",
-  weight: ["400", "500", "700", "800", "900"],
+  weight: ["400", "700", "900"],
   display: "swap",
   preload: false, // only used for headings; avoid blocking LCP
   fallback: ["system-ui", "Arial"],

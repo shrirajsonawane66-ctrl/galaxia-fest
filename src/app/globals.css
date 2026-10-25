@@ -103,6 +103,18 @@ body {
   50% { transform: translateY(-8px); }
 }
 
+/* ── Site-wide nebula backdrop — pure CSS drift (no client JS) ── */
+.nebula-drift {
+  transform: translate3d(0, 0, 0) scale(1);
+  animation: nebulaDrift 26s ease-in-out infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+@keyframes nebulaDrift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(14px, -10px, 0) scale(1.05); }
+}
+
 /* ── Nebula — transform/opacity only (GPU) ── */
 .nebula {
   position: absolute;
@@ -461,7 +473,8 @@ body {
   .star-layer-3,
   .nebula-1,
   .nebula-2,
-  .nebula-3 {
+  .nebula-3,
+  .nebula-drift {
     animation: none;
   }
 }
@@ -482,6 +495,7 @@ body {
   .star-layer-2,
   .star-layer-3,
   .nebula-1, .nebula-2, .nebula-3,
+  .nebula-drift,
   .pulse-ring,
   .shimmer-text {
     animation: none !important;

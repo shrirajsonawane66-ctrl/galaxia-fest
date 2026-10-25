@@ -83,6 +83,7 @@ export function SiteNav({ onGetPasses }: { onGetPasses?: () => void }) {
               width={1200}
               height={851}
               priority
+              sizes="(min-width: 768px) 68px, 56px"
               className="h-10 w-auto md:h-12"
             />
           </Link>
