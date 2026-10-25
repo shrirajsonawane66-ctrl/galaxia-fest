@@ -64,18 +64,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (!ready) {
     return (
-      <div className="min-h-screen bg-[#050816] flex items-center justify-center text-white/50">
+      <div className="min-h-screen flex items-center justify-center text-white/50">
         Checking admin session…
       </div>
     )
   }
 
   if (!isAdmin) {
-    return <div className="min-h-screen bg-[#050816] flex items-center justify-center text-white/50">Access denied</div>
+    return <div className="min-h-screen flex items-center justify-center text-white/50">Access denied</div>
   }
 
   return (
-    <div className="min-h-screen bg-[#050816] text-white flex">
+    <div className="min-h-screen text-white flex">
       <Toaster theme="dark" position="top-right" richColors />
       <aside className="w-64 shrink-0 border-r border-white/10 bg-black/20 backdrop-blur-xl sticky top-0 h-screen overflow-y-auto hidden md:flex flex-col">
         <div className="p-6 border-b border-white/10 flex items-center gap-2">
@@ -115,7 +115,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Mobile nav */}
       <div className="flex-1 flex flex-col min-w-0">
-        <div className="md:hidden sticky top-0 z-40 bg-[#050816]/90 backdrop-blur border-b border-white/10 px-4 py-3 flex items-center justify-between">
+        <div className="md:hidden sticky top-0 z-40 bg-[#06123a]/85 backdrop-blur border-b border-white/10 px-4 py-3 flex items-center justify-between">
           <span className="font-orbitron font-black text-sm">GALAXIA Admin</span>
           <button onClick={async () => { await signOutAdmin(); router.replace("/admin/login") }} className="text-xs text-white/60">Logout</button>
         </div>

@@ -3,7 +3,6 @@ import { useEffect, useState, useRef } from "react"
 import { motion, useInView, useReducedMotion } from "framer-motion"
 import Image from "next/image"
 import { ArrowRight, Rocket, Play, Star, Users, Building2, Music4, Trophy, Ticket, Crown, Zap, ShieldCheck, ChevronDown } from "lucide-react"
-import NebulaBackground from "@/components/nebula-background"
 import SiteNav from "@/components/site-nav"
 import SolarSystem from "@/components/SolarSystem"
 import { Button } from "@/components/ui/button"
@@ -120,7 +119,6 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen overflow-hidden text-cream">
-      <NebulaBackground />
       <SiteNav onGetPasses={() => setBookingOpen(true)} />
       <div className="noise fixed inset-0 z-[1]" />
 

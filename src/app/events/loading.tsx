@@ -1,10 +1,8 @@
-import NebulaBackground from "@/components/nebula-background";
 import SiteNav from "@/components/site-nav";
 
 export default function EventsLoading() {
   return (
     <div className="relative min-h-screen overflow-hidden text-cream">
-      <NebulaBackground />
       <SiteNav />
       <main className="relative z-10 mx-auto max-w-7xl px-5 pb-24 pt-32 md:px-8 md:pt-40">
         <div className="h-6 w-24 animate-pulse rounded-full bg-white/10" />

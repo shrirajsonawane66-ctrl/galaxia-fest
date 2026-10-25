@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import NebulaBackground from "@/components/nebula-background";
 import SiteNav from "@/components/site-nav";
 import { EventsBrowser } from "@/components/events/events-browser";
 import { listPublishedEvents } from "@/lib/events/store";
@@ -30,7 +29,6 @@ export default async function EventsPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden text-cream">
-      <NebulaBackground />
       <SiteNav />
       <div className="noise pointer-events-none fixed inset-0 z-[1]" />
 

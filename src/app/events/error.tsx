@@ -15,7 +15,7 @@ export default function EventsError({
   }, [error]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-navy px-6 text-center text-cream">
+    <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center text-cream">
       <h1 className="font-orbitron text-2xl font-bold">Could not load events</h1>
       <p className="mt-3 max-w-md text-sm text-cream/60">
         Something went wrong while fetching the schedule. Please try again.

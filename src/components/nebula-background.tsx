@@ -13,7 +13,7 @@ export function NebulaBackground() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#06123a]"
+      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#06123a]"
     >
       <motion.div
         className="absolute inset-[-4%]"

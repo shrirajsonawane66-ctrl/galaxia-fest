@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk, Orbitron } from "next/font/google";
 import "./globals.css";
 import { IntroVideo } from "@/components/ui/intro-video";
+import NebulaBackground from "@/components/nebula-background";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,7 +34,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#050816",
+  themeColor: "#06123a",
   colorScheme: "dark",
 };
 
@@ -64,7 +65,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Preconnect to image CDNs — saves ~100-300ms DNS+TLS */}
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
       </head>
-      <body className="antialiased bg-[#050816] text-white overflow-x-hidden">
+      <body className="antialiased text-white overflow-x-hidden">
+        <NebulaBackground />
         <IntroVideo src="/videos/intro.mp4" poster="/videos/intro-poster.jpg" />
         {children}
       </body>
