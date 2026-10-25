@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState, useRef } from "react"
-import { motion, useInView, useReducedMotion } from "framer-motion"
+import { motion, useInView } from "framer-motion"
 import Image from "next/image"
 import { ArrowRight, Rocket, Play, Star, Users, Building2, Music4, Trophy, Ticket, Crown, Zap, ShieldCheck, ChevronDown } from "lucide-react"
 import SiteNav from "@/components/site-nav"
@@ -12,6 +12,9 @@ import { siteConfig } from "@/lib/site-config"
 import { formatINR, genRef } from "@/lib/utils"
 import { getUser, type GalaxiaUser } from "@/lib/userAuth"
 import Link from "next/link"
+
+// Pin the locale so the server and browser format the same digits.
+const numberFormatter = new Intl.NumberFormat("en-IN")
 
 function Counter({ to, suffix = "", duration = 1.6 }: { to: number; suffix?: string; duration?: number }) {
   const ref = useRef<HTMLSpanElement>(null)
@@ -35,7 +38,7 @@ function Counter({ to, suffix = "", duration = 1.6 }: { to: number; suffix?: str
     }
     requestAnimationFrame(step)
   }, [inView, to, duration, reduced])
-  return <span ref={ref}>{val.toLocaleString()}{suffix}</span>
+  return <span ref={ref}>{numberFormatter.format(val)}{suffix}</span>
 }
 
 function Reveal({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
@@ -70,7 +73,6 @@ export default function Home() {
   const [errors, setErrors] = useState<Record<string,string>>({})
   const [successRef, setSuccessRef] = useState<string | null>(null)
   const [openFaq, setOpenFaq] = useState<string | null>(null)
-  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
     setUser(getUser())
@@ -126,46 +128,22 @@ export default function Home() {
       <section className="relative z-10 flex min-h-screen items-center justify-center overflow-hidden px-5 pb-28 pt-32 md:px-8">
         <div className="pointer-events-none absolute inset-0 opacity-70 [background-image:radial-gradient(ellipse_at_center,rgba(140,123,255,.16),transparent_62%)]" />
         <div className="relative mx-auto flex w-full max-w-5xl flex-col items-center text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={reduceMotion ? { duration: 0 } : { delay: 0.2, duration: 0.7 }}
-            className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 backdrop-blur"
-          >
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-fest-red opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-fest-red" />
-            </span>
-            <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-cream/80 sm:text-[11px]">
-              {siteConfig.dateLabel} · {siteConfig.venueShort}
-            </span>
-          </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={reduceMotion ? { duration: 0 } : { delay: 0.3, duration: 0.7 }}
-            className="mt-6 text-[10px] font-medium uppercase tracking-[0.3em] text-cream/55 sm:text-xs"
+          <p
+            className="hero-reveal text-[10px] font-medium uppercase tracking-[0.3em] text-cream/55 sm:text-xs"
+            style={{ animationDelay: "0.25s" }}
           >
             {siteConfig.tagline}
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 28, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={reduceMotion ? { duration: 0 } : { delay: 0.4, duration: 0.9, ease: [0.2, 0.8, 0.2, 1] }}
-            className="mt-2 w-full"
+          <div
+            className="hero-logo-reveal mt-2 w-full"
+            style={{ animationDelay: "0.4s" }}
           >
-            <motion.div
-              animate={reduceMotion ? undefined : { y: [0, -8, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="mx-auto w-[74vw] max-w-[430px] md:max-w-[520px]"
-            >
+            <div className="hero-float mx-auto w-[74vw] max-w-[430px] md:max-w-[520px]">
               <h1 className="w-full">
-                <span className="sr-only">Galaxia i-Fest 2025</span>
                 <Image
                   src="/images/galaxia-logo.png"
-                  alt=""
+                  alt="Galaxia i-Fest"
                   width={1200}
                   height={851}
                   priority
@@ -173,32 +151,26 @@ export default function Home() {
                   className="h-auto w-full drop-shadow-[0_0_60px_rgba(229,18,31,0.22)]"
                 />
               </h1>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={reduceMotion ? { duration: 0 } : { delay: 0.6, duration: 0.8 }}
-            className="mt-2 max-w-xl text-sm leading-relaxed text-cream/75 sm:text-base"
+          <p
+            className="hero-reveal mt-2 max-w-xl text-sm leading-relaxed text-cream/75 sm:text-base"
+            style={{ animationDelay: "0.6s" }}
           >
             {siteConfig.description}
-          </motion.p>
+          </p>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={reduceMotion ? { duration: 0 } : { delay: 0.75, duration: 0.8 }}
-            className="mt-3 text-xs tracking-wide text-cream/45"
+          <p
+            className="hero-reveal mt-3 text-xs tracking-wide text-cream/45"
+            style={{ animationDelay: "0.75s" }}
           >
             {siteConfig.presentedBy}
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={reduceMotion ? { duration: 0 } : { delay: 0.85, duration: 0.8 }}
-            className="mt-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row"
+          <div
+            className="hero-reveal mt-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row"
+            style={{ animationDelay: "0.85s" }}
           >
             <Button
               size="lg"
@@ -215,23 +187,19 @@ export default function Home() {
             >
               <Play className="mr-2 h-4 w-4 fill-cream" /> Enter the Core
             </Button>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={reduceMotion ? { duration: 0 } : { delay: 1.1, duration: 0.8 }}
-            className="absolute -bottom-16 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2"
-          >
-            <span className="text-[9px] font-medium uppercase tracking-[0.5em] text-cream/40">Scroll</span>
-            <div className="flex h-9 w-5 items-start justify-center rounded-full border border-cream/25 p-1.5">
-              <motion.div
-                animate={reduceMotion ? undefined : { y: [0, 10, 0] }}
-                transition={{ duration: 1.7, repeat: Infinity }}
-                className="h-1.5 w-1 rounded-full bg-cream/70"
-              />
+          <div className="absolute -bottom-16 left-1/2 -translate-x-1/2">
+            <div
+              className="hero-reveal flex flex-col items-center gap-2"
+              style={{ animationDelay: "1.1s" }}
+            >
+              <span className="text-[9px] font-medium uppercase tracking-[0.5em] text-cream/40">Scroll</span>
+              <div className="flex h-9 w-5 items-start justify-center rounded-full border border-cream/25 p-1.5">
+                <div className="hero-scroll-dot h-1.5 w-1 rounded-full bg-cream/70" />
+              </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -454,12 +422,22 @@ export default function Home() {
 
       <footer className="relative z-10 py-10 px-6 border-t border-white/5">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-space uppercase tracking-widest text-white/40">
-          <div>© 2025 Galaxia · {eventSeed.college_name} · Built among the stars</div>
+          <div className="flex items-center gap-3">
+            <Image
+              src="/images/galaxia-logo.png"
+              alt="Galaxia i-Fest"
+              width={1200}
+              height={851}
+              sizes="32px"
+              className="h-7 w-auto shrink-0"
+            />
+            <span>© 2025 Galaxia · {eventSeed.college_name} · Built among the stars</span>
+          </div>
           <div className="flex items-center gap-6">
             <a href={eventSeed.instagram_url} className="hover:text-white transition">Instagram</a>
             <a href={eventSeed.youtube_url} className="hover:text-white transition">YouTube</a>
             <a href={eventSeed.x_url} className="hover:text-white transition">X</a>
-            <Link href="/admin" className="hover:text-white">Admin</Link>
+            <Link href="/admin" prefetch={false} className="hover:text-white">Admin</Link>
           </div>
         </div>
       </footer>

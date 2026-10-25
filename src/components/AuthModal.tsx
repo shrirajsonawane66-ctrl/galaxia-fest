@@ -1,9 +1,10 @@
 "use client"
 import { useState } from "react"
+import Image from "next/image"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { signIn, signUp } from "@/lib/userAuth"
-import { Sparkles, ArrowRight, Mail, Lock, User } from "lucide-react"
+import { ArrowRight, Mail, Lock, User } from "lucide-react"
 
 export default function AuthModal({ open, onOpenChange, initial = "signin" as "signin" | "signup", onSuccess }: { open: boolean; onOpenChange: (o: boolean) => void; initial?: "signin" | "signup"; onSuccess?: () => void }) {
   const [mode, setMode] = useState<"signin" | "signup">(initial)
@@ -27,8 +28,8 @@ export default function AuthModal({ open, onOpenChange, initial = "signin" as "s
       onOpenChange(false)
       onSuccess?.()
       setName(""); setEmail(""); setPassword("")
-    } catch (e: any) {
-      setErr(e.message || "Failed")
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Failed")
     } finally { setLoading(false) }
   }
 
@@ -39,8 +40,15 @@ export default function AuthModal({ open, onOpenChange, initial = "signin" as "s
         <div className="p-6">
           <DialogHeader>
             <DialogTitle className="font-orbitron flex items-center gap-2">
-              <span className="w-8 h-8 rounded-full bg-gradient-to-br from-fuchsia-500 to-cyan-400 flex items-center justify-center"><Sparkles className="w-4 h-4 text-white" /></span>
-              {mode === "signin" ? "Welcome back" : "Create account"}
+              <Image
+                src="/images/galaxia-logo.png"
+                alt="Galaxia i-Fest"
+                width={1200}
+                height={851}
+                sizes="48px"
+                className="h-8 w-auto shrink-0"
+              />
+              <span>{mode === "signin" ? "Welcome back" : "Create account"}</span>
             </DialogTitle>
             <p className="text-xs font-space text-white/50">Galaxia • Western College of Business Management</p>
           </DialogHeader>

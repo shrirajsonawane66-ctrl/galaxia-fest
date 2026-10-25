@@ -1,8 +1,9 @@
 "use client"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { LayoutDashboard, Ticket, Users, Calendar, Settings, LogOut, BookOpen, HelpCircle, Sparkles, CalendarDays } from "lucide-react"
+import { LayoutDashboard, Ticket, Users, Calendar, Settings, LogOut, BookOpen, HelpCircle, CalendarDays } from "lucide-react"
 import { Toaster } from "sonner"
 import { getAdminSession, signOutAdmin, onAuthStateChange } from "@/lib/adminAuth"
 
@@ -78,10 +79,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen text-white flex">
       <Toaster theme="dark" position="top-right" richColors />
       <aside className="w-64 shrink-0 border-r border-white/10 bg-black/20 backdrop-blur-xl sticky top-0 h-screen overflow-y-auto hidden md:flex flex-col">
-        <div className="p-6 border-b border-white/10 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-fuchsia-500 to-cyan-400 flex items-center justify-center">
-            <Sparkles className="w-4 h-4" />
-          </div>
+        <div className="p-6 border-b border-white/10 flex items-center gap-2.5">
+          <Image
+            src="/images/galaxia-logo.png"
+            alt="Galaxia i-Fest"
+            width={1200}
+            height={851}
+            sizes="48px"
+            className="h-8 w-auto shrink-0"
+          />
           <div>
             <div className="font-orbitron font-black text-sm">GALAXIA</div>
             <div className="text-xs text-white/40 font-space">Admin Panel</div>
@@ -116,7 +122,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Mobile nav */}
       <div className="flex-1 flex flex-col min-w-0">
         <div className="md:hidden sticky top-0 z-40 bg-[#06123a]/85 backdrop-blur border-b border-white/10 px-4 py-3 flex items-center justify-between">
-          <span className="font-orbitron font-black text-sm">GALAXIA Admin</span>
+          <div className="flex items-center gap-2">
+            <Image
+              src="/images/galaxia-logo.png"
+              alt="Galaxia i-Fest"
+              width={1200}
+              height={851}
+              sizes="32px"
+              className="h-7 w-auto shrink-0"
+            />
+            <span className="font-orbitron font-black text-sm">Admin</span>
+          </div>
           <button onClick={async () => { await signOutAdmin(); router.replace("/admin/login") }} className="text-xs text-white/60">Logout</button>
         </div>
         <div className="md:hidden overflow-x-auto border-b border-white/10 bg-black/20">
