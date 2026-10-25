@@ -1,16 +1,17 @@
 "use client"
 import { useEffect, useState, useRef } from "react"
-import { motion, useInView } from "framer-motion"
-import { ArrowRight, Sparkles, Rocket, Play, Star, Users, Building2, Music4, Trophy, Ticket, Crown, Zap, ShieldCheck, ChevronDown, LogOut, User2 } from "lucide-react"
-import GalaxyBackground from "@/components/GalaxyBackground"
-import { Component as NavyGlowBackground } from "@/components/ui/background-snippets"
+import { motion, useInView, useReducedMotion } from "framer-motion"
+import Image from "next/image"
+import { ArrowRight, Rocket, Play, Star, Users, Building2, Music4, Trophy, Ticket, Crown, Zap, ShieldCheck, ChevronDown } from "lucide-react"
+import NebulaBackground from "@/components/nebula-background"
+import SiteNav from "@/components/site-nav"
 import SolarSystem from "@/components/SolarSystem"
-import AuthModal from "@/components/AuthModal"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { eventSeed, passesSeed, artistsSeed, scheduleSeed, faqsSeed, statsSeed } from "@/lib/data"
+import { siteConfig } from "@/lib/site-config"
 import { formatINR, genRef } from "@/lib/utils"
-import { getUser, signOut, type GalaxiaUser } from "@/lib/userAuth"
+import { getUser, type GalaxiaUser } from "@/lib/userAuth"
 import Link from "next/link"
 
 function Counter({ to, suffix = "", duration = 1.6 }: { to: number; suffix?: string; duration?: number }) {
@@ -62,10 +63,7 @@ function Reveal({ children, delay = 0, className = "" }: { children: React.React
 }
 
 export default function Home() {
-  const [scrolled, setScrolled] = useState(false)
   const [bookingOpen, setBookingOpen] = useState(false)
-  const [authOpen, setAuthOpen] = useState(false)
-  const [authMode, setAuthMode] = useState<"signin" | "signup">("signin")
   const [user, setUser] = useState<GalaxiaUser | null>(null)
   const [selectedPass, setSelectedPass] = useState<string>(passesSeed[1].id)
   const [qty, setQty] = useState(1)
@@ -73,20 +71,8 @@ export default function Home() {
   const [errors, setErrors] = useState<Record<string,string>>({})
   const [successRef, setSuccessRef] = useState<string | null>(null)
   const [openFaq, setOpenFaq] = useState<string | null>(null)
+  const reduceMotion = useReducedMotion()
 
-  useEffect(() => {
-    let ticking = false
-    const onScroll = () => {
-      if (ticking) return
-      ticking = true
-      requestAnimationFrame(() => {
-        setScrolled(window.scrollY > 30)
-        ticking = false
-      })
-    }
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
   useEffect(() => {
     setUser(getUser())
     const onAuth = () => setUser(getUser())
@@ -95,7 +81,8 @@ export default function Home() {
     return () => { window.removeEventListener("galaxia-auth-change", onAuth); window.removeEventListener("storage", onAuth) }
   }, [])
   useEffect(() => {
-    if (user && !form.email) setForm(f => ({ ...f, email: user.email, name: user.name || f.name }))
+    if (!user) return
+    setForm(f => (f.email ? f : { ...f, email: user.email, name: user.name || f.name }))
   }, [user])
 
   const activePass = passesSeed.find(p => p.id === selectedPass) || passesSeed[1]
@@ -132,110 +119,123 @@ export default function Home() {
   }
 
   return (
-    <NavyGlowBackground>
-    <main className="relative min-h-screen bg-[#050816] text-white overflow-hidden">
-      <GalaxyBackground />
+    <main className="relative min-h-screen overflow-hidden text-cream">
+      <NebulaBackground />
+      <SiteNav onGetPasses={() => setBookingOpen(true)} />
       <div className="noise fixed inset-0 z-[1]" />
 
-      {/* NAV */}
-      <motion.nav
-        initial={{ y: -30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? "py-3" : "py-6"}`}
-      >
-        <div className={`mx-auto max-w-7xl px-6 flex items-center justify-between transition-all ${scrolled ? "glass rounded-full py-2 px-4" : ""}`}>
-          <a href="#" className="flex items-center gap-2 group">
-            <div className="relative w-9 h-9">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-fuchsia-500 via-purple-500 to-cyan-400 blur-md opacity-70 group-hover:opacity-100 transition" />
-              <div className="relative w-9 h-9 rounded-full bg-[#050816] border border-white/20 flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-cyan-300" />
-              </div>
-            </div>
-            <span className="font-orbitron font-black tracking-wider text-lg" style={{ textShadow: "0 1px 12px rgba(0,0,0,0.6)" }}>G<span className="text-gradient-galaxy">ALAXIA</span></span>
-          </a>
-          <div className="hidden md:flex items-center gap-8 text-sm font-space text-white/70">
-            <a href="#about" className="hover:text-white transition">About</a>
-            <a href="#stats" className="hover:text-white transition">Stats</a>
-            <a href="#artists" className="hover:text-white transition">Performers</a>
-            <a href="#passes" className="hover:text-white transition">Passes</a>
-            <a href="#faq" className="hover:text-white transition">FAQ</a>
-          </div>
-          <div className="flex items-center gap-2">
-            <Link href="/admin" className="hidden lg:inline-flex text-xs font-space uppercase tracking-widest text-white/30 hover:text-white px-2">Admin</Link>
-            {user ? (
-              <>
-                <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-space text-white/60 max-w-[140px] truncate"><User2 className="w-3.5 h-3.5" />{user.email}</span>
-                <Link href="/booking/success" className="hidden sm:inline-flex text-xs font-space text-cyan-300 hover:text-white">My Tickets</Link>
-                <Button size="sm" variant="outline" className="rounded-full h-8 px-3 text-xs" onClick={async () => { await signOut(); setUser(null) }}><LogOut className="w-3.5 h-3.5" /> Sign Out</Button>
-                <Button size="sm" variant="galaxy" onClick={() => setBookingOpen(true)} className="hidden sm:inline-flex">
-                  Get Passes <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button size="sm" variant="outline" className="rounded-full h-8 px-4 text-xs hidden sm:inline-flex" onClick={() => { setAuthMode("signin"); setAuthOpen(true) }}>
-                  Sign In
-                </Button>
-                <Button size="sm" variant="galaxy" className="rounded-full h-8 px-4 text-xs hidden sm:inline-flex" onClick={() => { setAuthMode("signup"); setAuthOpen(true) }}>
-                  Sign Up
-                </Button>
-                {/* mobile: single sign in */}
-                <Button size="sm" variant="outline" className="rounded-full h-8 px-3 text-xs sm:hidden" onClick={() => { setAuthMode("signin"); setAuthOpen(true) }}>
-                  Sign In
-                </Button>
-                <Button size="sm" variant="galaxy" onClick={() => setBookingOpen(true)}>
-                  Get Passes <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      </motion.nav>
-
       {/* HERO */}
-      <section className="relative z-10 min-h-screen flex items-center justify-center px-6 pt-24">
-        <div className="absolute inset-0 grid-lines opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" />
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="absolute w-[600px] h-[600px] md:w-[900px] md:h-[900px] rounded-full border border-white/[0.06]" />
-          <div className="absolute w-[850px] h-[850px] md:w-[1200px] md:h-[1200px] rounded-full border border-white/[0.04]" />
-        </div>
-        <div className="relative max-w-6xl mx-auto text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass mb-8">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-fuchsia-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-fuchsia-500" />
+      <section className="relative z-10 flex min-h-screen items-center justify-center overflow-hidden px-5 pb-28 pt-32 md:px-8">
+        <div className="pointer-events-none absolute inset-0 opacity-70 [background-image:radial-gradient(ellipse_at_center,rgba(140,123,255,.16),transparent_62%)]" />
+        <div className="relative mx-auto flex w-full max-w-5xl flex-col items-center text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={reduceMotion ? { duration: 0 } : { delay: 0.2, duration: 0.7 }}
+            className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 backdrop-blur"
+          >
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-fest-red opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-fest-red" />
             </span>
-            <span className="text-xs font-space uppercase tracking-[0.35em] text-white/80">{eventSeed.date} · {eventSeed.venue}</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-cream/80 sm:text-[11px]">
+              {siteConfig.dateLabel} · {siteConfig.venueShort}
+            </span>
           </motion.div>
 
-          <motion.h1 initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.45 }} className="font-orbitron font-black uppercase leading-[0.9] tracking-tight" style={{ textShadow: "0 2px 24px rgba(0,0,0,0.65), 0 0 48px rgba(139,92,246,0.25)" }}>
-            <span className="block text-[15vw] md:text-[10vw] shimmer-text">{eventSeed.title}</span>
-            <span className="block text-lg md:text-2xl mt-4 font-space font-light tracking-[0.5em] text-white/80" style={{ textShadow: "0 1px 16px rgba(0,0,0,0.7)" }}>{eventSeed.subtitle}</span>
-          </motion.h1>
-
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="mt-8 max-w-2xl mx-auto text-white/60 text-base md:text-lg leading-relaxed">
-            {eventSeed.description} <br />
-            <span className="text-white/40 text-sm font-space">Presented by {eventSeed.college_name}</span>
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={reduceMotion ? { duration: 0 } : { delay: 0.3, duration: 0.7 }}
+            className="mt-6 text-[10px] font-medium uppercase tracking-[0.3em] text-cream/55 sm:text-xs"
+          >
+            {siteConfig.tagline}
           </motion.p>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.85 }} className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" className="bg-white text-[#050816] hover:bg-white/90 font-space font-semibold rounded-full shadow" onClick={() => setBookingOpen(true)}>
-              <Rocket className="w-5 h-5 mr-1" /> Reserve My Pass <ArrowRight className="w-4 h-4 ml-2" />
+          <motion.div
+            initial={{ opacity: 0, y: 28, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={reduceMotion ? { duration: 0 } : { delay: 0.4, duration: 0.9, ease: [0.2, 0.8, 0.2, 1] }}
+            className="mt-2 w-full"
+          >
+            <motion.div
+              animate={reduceMotion ? undefined : { y: [0, -8, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="mx-auto w-[74vw] max-w-[430px] md:max-w-[520px]"
+            >
+              <h1 className="w-full">
+                <span className="sr-only">Galaxia i-Fest 2025</span>
+                <Image
+                  src="/images/galaxia-logo.png"
+                  alt=""
+                  width={1200}
+                  height={851}
+                  priority
+                  className="h-auto w-full drop-shadow-[0_0_60px_rgba(229,18,31,0.22)]"
+                />
+              </h1>
+            </motion.div>
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={reduceMotion ? { duration: 0 } : { delay: 0.6, duration: 0.8 }}
+            className="mt-2 max-w-xl text-sm leading-relaxed text-cream/75 sm:text-base"
+          >
+            {siteConfig.description}
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={reduceMotion ? { duration: 0 } : { delay: 0.75, duration: 0.8 }}
+            className="mt-3 text-xs tracking-wide text-cream/45"
+          >
+            {siteConfig.presentedBy}
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={reduceMotion ? { duration: 0 } : { delay: 0.85, duration: 0.8 }}
+            className="mt-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row"
+          >
+            <Button
+              size="lg"
+              className="w-full rounded-full bg-fest-red font-semibold text-white shadow-[0_0_24px_rgba(229,18,31,.45)] hover:bg-red-glow sm:w-auto"
+              onClick={() => setBookingOpen(true)}
+            >
+              <Rocket className="mr-1 h-5 w-5" /> Reserve My Pass <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
-            <Button size="lg" variant="outline" className="rounded-full" onClick={() => document.getElementById("artists")?.scrollIntoView({ behavior: "smooth" })}>
-              <Play className="w-4 h-4 mr-2 fill-white" /> Enter the Core
+            <Button
+              size="lg"
+              variant="outline"
+              className="w-full rounded-full border-cream/40 text-cream hover:bg-white/10 sm:w-auto"
+              onClick={() => document.getElementById("artists")?.scrollIntoView({ behavior: "smooth" })}
+            >
+              <Play className="mr-2 h-4 w-4 fill-cream" /> Enter the Core
             </Button>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }} className="absolute -bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-            <span className="text-[10px] font-space uppercase tracking-[0.5em] text-white/40">Scroll</span>
-            <div className="w-6 h-10 rounded-full border border-white/20 flex items-start justify-center p-1.5">
-              <motion.div animate={{ y: [0, 12, 0] }} transition={{ duration: 1.6, repeat: Infinity }} className="w-1 h-2 rounded-full bg-white/70" />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={reduceMotion ? { duration: 0 } : { delay: 1.1, duration: 0.8 }}
+            className="absolute -bottom-16 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2"
+          >
+            <span className="text-[9px] font-medium uppercase tracking-[0.5em] text-cream/40">Scroll</span>
+            <div className="flex h-9 w-5 items-start justify-center rounded-full border border-cream/25 p-1.5">
+              <motion.div
+                animate={reduceMotion ? undefined : { y: [0, 10, 0] }}
+                transition={{ duration: 1.7, repeat: Infinity }}
+                className="h-1.5 w-1 rounded-full bg-cream/70"
+              />
             </div>
           </motion.div>
         </div>
       </section>
+
 
       {/* ABOUT */}
       <section id="about" className="relative z-10 py-24 md:py-32 px-6">
@@ -310,7 +310,7 @@ export default function Home() {
             <h2 className="font-orbitron text-4xl md:text-6xl font-black leading-[1.05] mb-4">Hold the core. Every artist is a <span className="text-gradient-galaxy">record.</span></h2>
             <p className="text-white/60 max-w-xl mx-auto">Press and hold the core to spin up Galaxia Prime. Release to let the cosmos settle, then tap any record to meet its artist.</p>
           </Reveal>
-          <SolarSystem artists={artistsSeed as any} />
+          <SolarSystem artists={artistsSeed} />
         </div>
       </section>
 
@@ -537,8 +537,6 @@ export default function Home() {
         </DialogContent>
       </Dialog>
 
-      <AuthModal open={authOpen} onOpenChange={setAuthOpen} initial={authMode} onSuccess={() => setUser(getUser())} />
-
       {/* SUCCESS */}
       <Dialog open={!!successRef} onOpenChange={(o)=>!o && setSuccessRef(null)}>
         <DialogContent className="sm:max-w-md text-center">
@@ -564,6 +562,5 @@ export default function Home() {
         </DialogContent>
       </Dialog>
     </main>
-    </NavyGlowBackground>
   )
 }

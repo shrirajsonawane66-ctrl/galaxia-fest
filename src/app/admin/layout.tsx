@@ -2,8 +2,8 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { LayoutDashboard, Ticket, Users, Calendar, Settings, LogOut, BookOpen, HelpCircle, Image as ImageIcon, Sparkles } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
+import { LayoutDashboard, Ticket, Users, Calendar, Settings, LogOut, BookOpen, HelpCircle, Sparkles, CalendarDays } from "lucide-react"
+import { Toaster } from "sonner"
 import { getAdminSession, signOutAdmin, onAuthStateChange } from "@/lib/adminAuth"
 
 export const dynamic = "force-dynamic"
@@ -14,6 +14,7 @@ const nav = [
   { href: "/admin/passes", label: "Passes / Prices", icon: Ticket },
   { href: "/admin/artists", label: "Artists", icon: Users },
   { href: "/admin/schedule", label: "Schedule", icon: Calendar },
+  { href: "/admin/events", label: "Events", icon: CalendarDays },
   { href: "/admin/faqs", label: "FAQs", icon: HelpCircle },
   { href: "/admin/settings", label: "Event Settings", icon: Settings },
 ]
@@ -75,6 +76,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-screen bg-[#050816] text-white flex">
+      <Toaster theme="dark" position="top-right" richColors />
       <aside className="w-64 shrink-0 border-r border-white/10 bg-black/20 backdrop-blur-xl sticky top-0 h-screen overflow-y-auto hidden md:flex flex-col">
         <div className="p-6 border-b border-white/10 flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-fuchsia-500 to-cyan-400 flex items-center justify-center">

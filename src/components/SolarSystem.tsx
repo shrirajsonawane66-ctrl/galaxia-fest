@@ -53,9 +53,9 @@ const PlanetCD = memo(function PlanetCD({ artist, size, spinning = true }: { art
           width: size,
           height: size,
           // per-planet glow via CSS variable — themeable
-          ["--glow" as any]: artist.glow,
-          ["--accent" as any]: artist.accent,
-        } as React.CSSProperties
+          "--glow": artist.glow,
+          "--accent": artist.accent,
+        } as React.CSSProperties & { "--glow": string; "--accent": string }
       }
     >
       {/* Glow — outside disc, not clipped, not spinning */}
@@ -254,19 +254,21 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
   }, [])
 
   useEffect(() => {
-    const track = getAudioTrack()
-    track?.load()
-
+    const physics = physicsRef.current
+    // Create the audio element lazily inside the hold gesture. Instantiating it
+    // on mount would request the track before the visitor interacts, which is
+    // both wasteful and a guaranteed 404 when the optional file is not shipped.
     return () => {
-      physicsRef.current.holding = false
-      physicsRef.current.target = IDLE
+      physics.holding = false
+      physics.target = IDLE
+      const track = audioRef.current
       if (!track) return
       track.pause()
       track.removeAttribute("src")
       track.load()
-      if (audioRef.current === track) audioRef.current = null
+      audioRef.current = null
     }
-  }, [getAudioTrack])
+  }, [])
 
   const startHold = useCallback(() => {
     const physics = physicsRef.current

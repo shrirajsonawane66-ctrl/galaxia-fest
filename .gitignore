@@ -50,3 +50,10 @@ next-env.d.ts
 .agents/
 .claude/
 agent/
+
+# local event store + uploads
+.data/
+/public/uploads/
+
+# source art supplied locally (copies used by the app live in public/)
+/theme/

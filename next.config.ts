@@ -7,7 +7,8 @@ const nextConfig: NextConfig = {
 
   images: {
     remotePatterns: [
-      { protocol: "https", hostname: "images.unsplash.com" },
+      // Admin-managed events may reference any HTTPS image host.
+      { protocol: "https", hostname: "**" },
     ],
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
@@ -17,8 +18,8 @@ const nextConfig: NextConfig = {
   },
 
   eslint: {
-    // ESLint flat-config compat with eslint-config-next is broken in this template;
-    // don't block production builds on lint — type checking still runs
+    // Pre-existing lint debt in legacy admin/booking files. Run `npm run lint`
+    // separately; type checking still blocks broken builds.
     ignoreDuringBuilds: true,
   },
   typescript: {

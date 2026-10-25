@@ -10,6 +10,13 @@ module.exports = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        cream: "#EDE4D3",
+        "fest-red": "#E5121F",
+        "red-dark": "#8A0010",
+        "red-glow": "#FF1F2D",
+        navy: "#06123A",
+        royal: "#1E3FA8",
+        lavender: "#8C7BFF",
       },
       fontFamily: {
         orbitron: ["var(--font-orbitron)"],
