@@ -111,7 +111,7 @@ export function SiteNav({ onGetPasses }: { onGetPasses?: () => void }) {
       >
         <nav
           aria-label="Primary"
-          className="mx-auto flex max-w-7xl items-center gap-3 px-5 md:px-8"
+          className="mx-auto flex max-w-7xl items-center gap-3 px-5 pt-[env(safe-area-inset-top)] md:px-8"
         >
           {/* Left region — logo */}
           <div className="flex min-w-0 flex-1 items-center justify-start">
