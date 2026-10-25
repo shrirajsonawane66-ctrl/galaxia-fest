@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk, Orbitron } from "next/font/google";
 import "./globals.css";
+import { IntroVideo } from "@/components/ui/intro-video";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
       </head>
       <body className="antialiased bg-[#050816] text-white overflow-x-hidden">
+        <IntroVideo src="/videos/intro.mp4" poster="/videos/intro-poster.jpg" />
         {children}
       </body>
     </html>

@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react"
 import { motion, useInView } from "framer-motion"
 import { ArrowRight, Sparkles, Rocket, Play, Star, Users, Building2, Music4, Trophy, Ticket, Crown, Zap, ShieldCheck, ChevronDown, LogOut, User2 } from "lucide-react"
 import GalaxyBackground from "@/components/GalaxyBackground"
+import { Component as NavyGlowBackground } from "@/components/ui/background-snippets"
 import SolarSystem from "@/components/SolarSystem"
 import AuthModal from "@/components/AuthModal"
 import { Button } from "@/components/ui/button"
@@ -131,6 +132,7 @@ export default function Home() {
   }
 
   return (
+    <NavyGlowBackground>
     <main className="relative min-h-screen bg-[#050816] text-white overflow-hidden">
       <GalaxyBackground />
       <div className="noise fixed inset-0 z-[1]" />
@@ -562,5 +564,6 @@ export default function Home() {
         </DialogContent>
       </Dialog>
     </main>
+    </NavyGlowBackground>
   )
 }
