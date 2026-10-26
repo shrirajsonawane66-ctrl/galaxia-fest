@@ -128,7 +128,7 @@ export default function Home() {
       <section className="relative z-10 flex min-h-screen items-center justify-center overflow-hidden px-5 pb-28 pt-32 md:px-8">
         {/* Feathered centre darkening: keeps the navy/periwinkle edges intact while
             giving the cream-and-red logo a calmer field to sit against. */}
-        <div className="pointer-events-none absolute inset-0 [background-image:radial-gradient(ellipse_58%_48%_at_50%_45%,rgba(2,6,20,0.24)_0%,rgba(2,6,20,0.14)_45%,rgba(2,6,20,0.04)_68%,transparent_82%)]" />
+        <div className="pointer-events-none absolute inset-0 [background-image:radial-gradient(ellipse_58%_48%_at_50%_45%,rgba(2,6,20,0.18)_0%,rgba(2,6,20,0.10)_45%,rgba(2,6,20,0.03)_68%,transparent_82%)]" />
         <div className="relative mx-auto flex w-full max-w-5xl flex-col items-center text-center">
           <p
             className="hero-reveal text-[10px] font-medium uppercase tracking-[0.3em] text-cream/55 sm:text-xs"
