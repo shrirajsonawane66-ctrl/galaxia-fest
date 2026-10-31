@@ -1,9 +1,11 @@
 import type { NextConfig } from "next";
+import bundleAnalyzer from "@next/bundle-analyzer";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
   reactStrictMode: true,
+  productionBrowserSourceMaps: false,
 
   images: {
     remotePatterns: [
@@ -36,8 +38,13 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // Cache static assets aggressively; keep dynamic routes fresh
+  // Cache static assets aggressively in production; keep dynamic routes fresh.
+  // Never apply the immutable header in development: dev chunk URLs are stable
+  // (e.g. /_next/static/chunks/app/page.js), so a year-long cache would keep
+  // serving modules from an older build and crash with "reading 'call'".
   async headers() {
+    const isProduction = process.env.NODE_ENV === "production"
+
     return [
       {
         // The soundtrack can be replaced in place. Revalidate by ETag instead
@@ -50,15 +57,38 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      {
-        source: "/(.*)\\.(js|css|woff|woff2|ttf|otf|eot|svg|png|jpg|jpeg|gif|webp|avif|ico|mp4|webm)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
+      ...(isProduction
+        ? [
+            {
+              source: "/images/:path*",
+              headers: [
+                {
+                  key: "Cache-Control",
+                  value: "public, max-age=31536000, immutable",
+                },
+              ],
+            },
+            {
+              source: "/fonts/:path*",
+              headers: [
+                {
+                  key: "Cache-Control",
+                  value: "public, max-age=31536000, immutable",
+                },
+              ],
+            },
+            {
+              source:
+                "/(.*)\\.(js|css|woff|woff2|ttf|otf|eot|svg|png|jpg|jpeg|gif|webp|avif|ico|mp4|webm)",
+              headers: [
+                {
+                  key: "Cache-Control",
+                  value: "public, max-age=31536000, immutable",
+                },
+              ],
+            },
+          ]
+        : []),
       {
         source: "/(.*)",
         headers: [
@@ -76,4 +106,8 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
+
+export default withBundleAnalyzer(nextConfig);

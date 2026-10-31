@@ -1,31 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Space_Grotesk, Orbitron } from "next/font/google";
+import { Bricolage_Grotesque, Outfit } from "next/font/google";
 import "./globals.css";
 import { IntroVideo } from "@/components/ui/intro-video";
 import NebulaBackground from "@/components/nebula-background";
 
-const inter = Inter({
+const display = Bricolage_Grotesque({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-display",
+  // Variable font: one file covers every weight the type scale uses.
   display: "swap",
-  preload: true,
-  fallback: ["system-ui", "Arial"],
+  // Not preloaded: the wordmark above the fold is an image, so the display face
+  // is only needed further down the page and should not compete with the LCP
+  // image for the first round trip.
+  preload: false,
+  fallback: ["ui-sans-serif", "system-ui", "sans-serif"],
   adjustFontFallback: true,
 });
-const spaceGrotesk = Space_Grotesk({
+const body = Outfit({
   subsets: ["latin"],
-  variable: "--font-space",
+  variable: "--font-body",
+  // Variable font: one file covers 400–700 instead of four static instances.
   display: "swap",
   preload: true,
-  fallback: ["system-ui", "Arial"],
-  adjustFontFallback: true,
-});
-const orbitron = Orbitron({
-  subsets: ["latin"],
-  variable: "--font-orbitron",
-  weight: ["400", "700", "900"],
-  display: "swap",
-  preload: false, // only used for headings; avoid blocking LCP
   fallback: ["system-ui", "Arial"],
   adjustFontFallback: true,
 });
@@ -60,14 +56,23 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} ${orbitron.variable}`}>
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      className={`${display.variable} ${body.variable}`}
+    >
       <head>
         {/* Preconnect to image CDNs — saves ~100-300ms DNS+TLS */}
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
       </head>
-      <body className="antialiased text-white overflow-x-hidden">
+      <body className="overflow-x-clip font-sans antialiased">
         <NebulaBackground />
-        <IntroVideo src="/videos/intro.mp4" poster="/videos/intro-poster.jpg" />
+        <IntroVideo
+          src="/videos/intro.mp4"
+          mobileSrc="/videos/intro-480.mp4"
+          poster="/videos/intro-poster.jpg"
+          allowSkip
+        />
         {children}
       </body>
     </html>

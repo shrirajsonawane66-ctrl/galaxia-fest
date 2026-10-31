@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { motion, useReducedMotion } from "framer-motion";
 import { CalendarX2, Filter } from "lucide-react";
 import { EventCard } from "@/components/ui/card-14";
 import { buildIcs, dayLabel, formatEventTime, sortEvents } from "@/lib/events/format";
@@ -32,8 +31,10 @@ function actionFor(event: EventRecord): (() => void) | undefined {
   return undefined;
 }
 
+const filterFocus =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F4EDE0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#06123A]";
+
 export function EventsBrowser({ events }: { events: EventRecord[] }) {
-  const reduceMotion = useReducedMotion();
   const [day, setDay] = React.useState("all");
   const [category, setCategory] = React.useState("all");
 
@@ -59,17 +60,18 @@ export function EventsBrowser({ events }: { events: EventRecord[] }) {
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-wrap gap-2" role="tablist" aria-label="Filter events by day">
+        <div className="flex gap-2 overflow-x-auto pr-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:flex-wrap md:overflow-visible md:pr-0" role="tablist" aria-label="Filter events by day">
           <button
             type="button"
             role="tab"
             aria-selected={day === "all"}
             onClick={() => setDay("all")}
             className={cn(
-              "rounded-full border px-4 py-2 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream/70",
+              "min-h-11 min-w-11 shrink-0 justify-center rounded-full border px-4 py-2 text-sm font-medium transition-colors md:min-h-0 md:min-w-0",
+              filterFocus,
               day === "all"
-                ? "border-fest-red bg-fest-red text-white shadow-[0_0_18px_rgba(229,18,31,.35)]"
-                : "border-white/15 bg-white/5 text-cream/65 hover:bg-white/10"
+                ? "border-[#E5121F] bg-[#E5121F] text-white"
+                : "border-white/10 bg-white/[0.04] text-[var(--text-body)] hover:border-white/25"
             )}
           >
             All
@@ -82,10 +84,11 @@ export function EventsBrowser({ events }: { events: EventRecord[] }) {
               aria-selected={day === item.value}
               onClick={() => setDay(item.value)}
               className={cn(
-                "rounded-full border px-4 py-2 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream/70",
+                "min-h-11 min-w-11 shrink-0 justify-center rounded-full border px-4 py-2 text-sm font-medium transition-colors md:min-h-0 md:min-w-0",
+                filterFocus,
                 day === item.value
-                  ? "border-fest-red bg-fest-red text-white shadow-[0_0_18px_rgba(229,18,31,.35)]"
-                  : "border-white/15 bg-white/5 text-cream/65 hover:bg-white/10"
+                  ? "border-[#E5121F] bg-[#E5121F] text-white"
+                  : "border-white/10 bg-white/[0.04] text-[var(--text-body)] hover:border-white/25"
               )}
             >
               {item.label}
@@ -93,18 +96,19 @@ export function EventsBrowser({ events }: { events: EventRecord[] }) {
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-cream/40">
-            <Filter className="h-3.5 w-3.5" aria-hidden /> Category
+        <div className="flex items-center gap-2 overflow-x-auto pr-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:flex-wrap md:overflow-visible md:pr-0">
+          <span className="type-small inline-flex shrink-0 items-center gap-1.5">
+            <Filter className="h-4 w-4" aria-hidden /> Category
           </span>
           <button
             type="button"
             onClick={() => setCategory("all")}
             className={cn(
-              "rounded-full border px-3 py-1.5 text-[11px] transition",
+              "min-h-11 min-w-11 shrink-0 justify-center rounded-full border px-3 py-1.5 text-sm transition-colors md:min-h-0 md:min-w-0",
+              filterFocus,
               category === "all"
-                ? "border-lavender/60 bg-lavender/20 text-cream"
-                : "border-white/10 bg-white/5 text-cream/55 hover:bg-white/10"
+                ? "border-[#FF3B4B]/60 bg-[#FF3B4B]/15 text-[var(--text-strong)]"
+                : "border-white/10 bg-white/[0.04] text-[var(--text-muted)] hover:border-white/25"
             )}
           >
             All
@@ -115,10 +119,11 @@ export function EventsBrowser({ events }: { events: EventRecord[] }) {
               type="button"
               onClick={() => setCategory(item)}
               className={cn(
-                "rounded-full border px-3 py-1.5 text-[11px] transition",
+                "min-h-11 min-w-11 shrink-0 justify-center rounded-full border px-3 py-1.5 text-sm transition-colors md:min-h-0 md:min-w-0",
+                filterFocus,
                 category === item
-                  ? "border-lavender/60 bg-lavender/20 text-cream"
-                  : "border-white/10 bg-white/5 text-cream/55 hover:bg-white/10"
+                  ? "border-[#FF3B4B]/60 bg-[#FF3B4B]/15 text-[var(--text-strong)]"
+                  : "border-white/10 bg-white/[0.04] text-[var(--text-muted)] hover:border-white/25"
               )}
             >
               {item}
@@ -128,9 +133,9 @@ export function EventsBrowser({ events }: { events: EventRecord[] }) {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-6 py-20 text-center backdrop-blur">
-          <CalendarX2 className="h-8 w-8 text-cream/30" aria-hidden />
-          <p className="mt-4 text-sm text-cream/60">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] px-6 py-20 text-center">
+          <CalendarX2 className="h-8 w-8 text-[var(--text-muted)]" aria-hidden />
+          <p className="type-body mt-4">
             {day !== "all" || category !== "all"
               ? "No events match these filters."
               : "No events announced yet. Check back soon."}
@@ -142,41 +147,34 @@ export function EventsBrowser({ events }: { events: EventRecord[] }) {
                 setDay("all");
                 setCategory("all");
               }}
-              className="mt-5 rounded-full border border-white/20 px-4 py-2 text-xs text-cream/80 hover:bg-white/10"
+              className={cn(
+                "mt-5 inline-flex min-h-11 items-center rounded-full border border-white/20 px-4 py-2 text-sm text-[var(--text-body)] transition-colors hover:border-white/35 hover:text-[var(--text-strong)] md:min-h-0",
+                filterFocus
+              )}
             >
               Clear filters
             </button>
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((event, index) => {
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
+          {filtered.map((event) => {
             const action = actionFor(event);
             return (
-              <motion.div
+              <EventCard
                 key={event.id}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={
-                  reduceMotion
-                    ? { duration: 0 }
-                    : { duration: 0.5, delay: index * 0.05, ease: [0.2, 0.8, 0.2, 1] }
-                }
-              >
-                <EventCard
-                  heading={event.heading}
-                  description={event.description}
-                  date={toDate(event.date)}
-                  imageUrl={event.imageUrl}
-                  imageAlt={event.imageAlt}
-                  eventName={event.eventName}
-                  location={event.location}
-                  time={formatEventTime(event)}
-                  actionLabel={event.actionType === "none" ? undefined : event.actionLabel}
-                  onActionClick={action}
-                  featured={event.featured}
-                />
-              </motion.div>
+                heading={event.heading}
+                description={event.description}
+                date={toDate(event.date)}
+                imageUrl={event.imageUrl}
+                imageAlt={event.imageAlt}
+                eventName={event.eventName}
+                location={event.location}
+                time={formatEventTime(event)}
+                actionLabel={event.actionType === "none" ? undefined : event.actionLabel}
+                onActionClick={action}
+                featured={event.featured}
+              />
             );
           })}
         </div>

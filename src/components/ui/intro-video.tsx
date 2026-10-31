@@ -8,6 +8,10 @@ type Phase = "checking" | "gate" | "playing" | "leaving" | "done";
 export interface IntroVideoProps {
   /** MP4 (H.264) source, e.g. "/videos/intro.mp4" */
   src: string;
+  /** Smaller MP4 served to phones (picked with matchMedia, not <source media>) */
+  mobileSrc?: string;
+  /** Max viewport width that counts as a phone for mobileSrc (default 768) */
+  mobileMaxWidth?: number;
   /** Optional WebM source for smaller files */
   webmSrc?: string;
   /** Image shown before the video loads and behind the tap-to-enter button */
@@ -29,6 +33,8 @@ export interface IntroVideoProps {
 
 export function IntroVideo({
   src,
+  mobileSrc,
+  mobileMaxWidth = 768,
   webmSrc,
   poster,
   storageKey = "intro-video-seen",
@@ -42,19 +48,42 @@ export function IntroVideo({
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const [phase, setPhase] = React.useState<Phase>("checking");
   const [sound, setSound] = React.useState(false);
+  const [activeSrc, setActiveSrc] = React.useState(src);
   const watchdog = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const finished = React.useRef(false);
 
   /* Decide whether to show the intro */
   React.useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // A <source media="..."> is only evaluated before the element loads and
+    // breaks when the viewport changes, so pick the file up front instead.
+    if (mobileSrc && window.matchMedia(`(max-width: ${mobileMaxWidth}px)`).matches) {
+      setActiveSrc(mobileSrc);
+    } else {
+      setActiveSrc(src);
+    }
+    // The full intro is several hundred KB. On a data-saver or 3G-or-slower
+    // connection it would hold the whole site behind a 10s video, so those
+    // visitors go straight in.
+    const connection = (
+      navigator as Navigator & {
+        connection?: { saveData?: boolean; effectiveType?: string };
+      }
+    ).connection;
+    const slowConnection =
+      !!connection &&
+      (connection.saveData === true ||
+        (!!connection.effectiveType && connection.effectiveType !== "4g"));
     let seen = false;
     try {
       seen = oncePerSession && sessionStorage.getItem(storageKey) === "1";
     } catch {}
-    if (reduced || seen) setPhase("done");
-    else setPhase(requireTap ? "gate" : "playing");
-  }, [oncePerSession, requireTap, storageKey]);
+    if (reduced || seen || slowConnection) {
+      setPhase("done");
+    } else {
+      setPhase(requireTap ? "gate" : "playing");
+    }
+  }, [mobileMaxWidth, mobileSrc, oncePerSession, requireTap, src, storageKey]);
 
   /* Lock scroll while the overlay is up */
   React.useEffect(() => {
@@ -141,7 +170,7 @@ export function IntroVideo({
           onError={finish}
         >
           {webmSrc && <source src={webmSrc} type="video/webm" />}
-          <source src={src} type="video/mp4" />
+          <source src={activeSrc} type="video/mp4" />
         </video>
       )}
 
@@ -149,7 +178,7 @@ export function IntroVideo({
         <div className="absolute inset-0 flex items-center justify-center bg-black/40">
           <button
             onClick={handleEnter}
-            className="rounded-full border border-white/60 px-8 py-3 text-sm font-medium uppercase tracking-[0.3em] text-white backdrop-blur transition hover:bg-white hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            className="rounded-full border border-[#F4EDE0]/60 bg-black/40 px-8 py-3 text-[15px] font-medium text-[#F4EDE0] transition-colors hover:bg-[#F4EDE0] hover:text-[#050816] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F4EDE0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#06123A]"
           >
             Tap to enter
           </button>
@@ -159,7 +188,7 @@ export function IntroVideo({
       {allowSkip && phase === "playing" && (
         <button
           onClick={finish}
-          className="absolute bottom-6 right-6 rounded-full bg-white/10 px-4 py-2 text-xs uppercase tracking-widest text-white backdrop-blur hover:bg-white/20"
+          className="absolute bottom-6 right-6 rounded-full bg-black/50 px-4 py-2 text-sm text-[#F4EDE0] transition-colors hover:bg-black/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F4EDE0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#06123A]"
         >
           Skip
         </button>

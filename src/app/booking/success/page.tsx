@@ -26,69 +26,69 @@ function SuccessInner() {
 
   if (!data) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6">
-        <div className="glass rounded-2xl p-10 text-center max-w-md w-full">
-          <Ticket className="w-10 h-10 mx-auto text-white/40 mb-4" />
-          <h1 className="font-orbitron font-black text-xl mb-2">No ticket found</h1>
-          <p className="text-white/60 text-sm mb-6">Book a pass to get your GAL-XXXXXX reference.</p>
-          <Link href="/#passes"><Button variant="galaxy" className="rounded-full">Browse Passes</Button></Link>
+      <div className="flex min-h-[100svh] items-center justify-center p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:p-6">
+        <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center sm:p-10">
+          <Ticket className="mx-auto mb-4 h-10 w-10 text-[var(--text-muted)]" />
+          <h1 className="font-display text-2xl font-bold text-[var(--text-strong)]">No ticket found</h1>
+          <p className="type-body mb-6 mt-2">Book a pass to get your GAL-XXXXXX reference.</p>
+          <Link href="/#passes"><Button variant="galaxy" className="min-h-11 w-full rounded-full sm:min-h-0 sm:w-auto">Browse passes</Button></Link>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen text-white flex items-center justify-center p-6">
+    <div className="flex min-h-[100svh] items-center justify-center p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] text-[var(--text-body)] sm:p-6">
       <div className="noise fixed inset-0 pointer-events-none opacity-20" />
       <div className="relative w-full max-w-xl">
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-space uppercase tracking-widest text-cyan-300">Booking Confirmed</div>
-          <h1 className="font-orbitron font-black text-3xl mt-3">GALAXIA <span className="text-gradient-galaxy">Ticket</span></h1>
-          <p className="text-white/50 text-sm mt-2">{eventSeed.college_name} • {eventSeed.date}</p>
+        <div className="mb-6 text-center">
+          <div className="type-small inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[var(--text-strong)]">Booking confirmed</div>
+          <h1 className="type-h2 mt-3">Galaxia ticket</h1>
+          <p className="type-small mt-2">{eventSeed.college_name} • {eventSeed.date}</p>
         </div>
 
-        <div className="glass rounded-3xl overflow-hidden border border-white/10">
-          <div className="h-2 bg-gradient-to-r from-fuchsia-500 via-purple-500 to-cyan-400" />
-          <div className="p-8 space-y-6">
-            <div className="flex gap-6">
-              <div className="flex-1">
-                <div className="text-xs font-space uppercase tracking-[0.3em] text-white/40">Booking Reference</div>
-                <div className="font-mono font-black text-2xl tracking-[0.2em] text-cyan-300 mt-1">{data.ref}</div>
-                <div className="text-xs font-space text-white/50 mt-1">{data.pass} × {data.qty} • ₹{data.total}</div>
-                <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                  <div className="flex items-center gap-2 text-white/70"><User className="w-4 h-4 text-white/40" /> {data.name}</div>
-                  <div className="flex items-center gap-2 text-white/70"><Mail className="w-4 h-4 text-white/40" /> {data.email}</div>
-                  <div className="flex items-center gap-2 text-white/70"><Phone className="w-4 h-4 text-white/40" /> {data.phone}</div>
-                  <div className="flex items-center gap-2 text-white/70"><Calendar className="w-4 h-4 text-white/40" /> {eventSeed.date}</div>
-                  <div className="col-span-2 flex items-center gap-2 text-white/70"><MapPin className="w-4 h-4 text-white/40" /> {eventSeed.venue}</div>
+        <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+          <div className="h-2 bg-[#E5121F]" />
+          <div className="space-y-6 p-5 sm:p-8">
+            <div className="flex flex-col gap-6 sm:flex-row">
+              <div className="min-w-0 flex-1">
+                <div className="type-small">Booking reference</div>
+                <div className="mt-1 break-words font-mono text-2xl font-bold tracking-[0.12em] text-[var(--accent)]">{data.ref}</div>
+                <div className="type-small mt-1">{data.pass} × {data.qty} • ₹{data.total}</div>
+                <div className="mt-4 grid grid-cols-1 gap-3 text-base sm:grid-cols-2 sm:text-sm">
+                  <div className="flex items-center gap-2 text-[var(--text-body)]"><User className="h-4 w-4 shrink-0 text-[var(--text-muted)]" /> <span className="min-w-0 break-words">{data.name}</span></div>
+                  <div className="flex items-center gap-2 text-[var(--text-body)]"><Mail className="h-4 w-4 shrink-0 text-[var(--text-muted)]" /> <span className="min-w-0 break-words">{data.email}</span></div>
+                  <div className="flex items-center gap-2 text-[var(--text-body)]"><Phone className="h-4 w-4 shrink-0 text-[var(--text-muted)]" /> {data.phone}</div>
+                  <div className="flex items-center gap-2 text-[var(--text-body)]"><Calendar className="h-4 w-4 shrink-0 text-[var(--text-muted)]" /> {eventSeed.date}</div>
+                  <div className="flex items-center gap-2 text-[var(--text-body)] sm:col-span-2"><MapPin className="h-4 w-4 shrink-0 text-[var(--text-muted)]" /> {eventSeed.venue}</div>
                 </div>
               </div>
-              <div className="w-36 h-36 rounded-2xl bg-[#050816] border border-white/10 p-2 flex items-center justify-center shrink-0">
-                {qr ? <img src={qr} alt="QR" className="w-full h-full rounded-xl" /> : <div className="text-[10px] text-white/30">QR {data.ref}</div>}
+              <div className="mx-auto flex h-36 w-36 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-[#050816] p-2 sm:mx-0">
+                {qr ? <img src={qr} alt="QR" className="h-full w-full rounded-xl" /> : <div className="text-[13px] text-[var(--text-muted)]">QR {data.ref}</div>}
               </div>
             </div>
 
-            <div className="border-t border-white/10 pt-4 flex items-center justify-between text-xs font-space">
-              <span className="text-white/40">Payment • Razorpay Test • PAID</span>
-              <span className="text-white/40">Valid for entry — show QR</span>
+            <div className="flex flex-col gap-1 border-t border-white/10 pt-4 text-sm sm:flex-row sm:items-center sm:justify-between">
+              <span className="text-[var(--text-muted)]">Payment • Razorpay test • Paid</span>
+              <span className="text-[var(--text-muted)]">Valid for entry — show QR</span>
             </div>
           </div>
-          <div className="bg-white text-[#050816] px-8 py-4 flex items-center justify-between">
-            <span className="font-space text-xs uppercase tracking-widest opacity-60">Western College of Business Management</span>
-            <Ticket className="w-5 h-5 opacity-40" />
+          <div className="flex items-start justify-between gap-2 bg-[#F4EDE0] px-5 py-4 text-[#050816] sm:items-center sm:px-8">
+            <span className="text-sm opacity-70">Western College of Business Management</span>
+            <Ticket className="h-5 w-5 shrink-0 opacity-40" />
           </div>
         </div>
 
-        <div className="flex gap-3 justify-center mt-6">
-          <Link href="/"><Button variant="outline" className="rounded-full">Back Home</Button></Link>
-          <Button className="rounded-full bg-white text-[#050816]" onClick={() => window.print()}>Print Ticket</Button>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <Link href="/" className="w-full sm:w-auto"><Button variant="outline" className="min-h-11 w-full rounded-full sm:min-h-0">Back home</Button></Link>
+          <Button className="min-h-11 w-full rounded-full bg-[#F4EDE0] text-[#050816] sm:min-h-0 sm:w-auto" onClick={() => window.print()}>Print ticket</Button>
         </div>
-        <p className="text-center text-[11px] font-space text-white/30 mt-4">This ticket was generated in test-mode. Server verification via /api/verify would happen in production.</p>
+        <p className="type-small mt-4 text-center">This ticket was generated in test-mode. Server verification via /api/verify would happen in production.</p>
       </div>
     </div>
   )
 }
 
 export default function SuccessPage() {
-  return <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-white/50">Loading ticket…</div>}><SuccessInner /></Suspense>
+  return <Suspense fallback={<div className="flex min-h-[100svh] items-center justify-center text-[var(--text-muted)]">Loading ticket…</div>}><SuccessInner /></Suspense>
 }

@@ -12,21 +12,21 @@ export default function SettingsAdmin() {
 
   const Field = ({ label, k, placeholder }:{label:string,k:keyof typeof ev,placeholder?:string}) => (
     <div>
-      <label className="text-xs font-space uppercase tracking-widest text-white/50">{label}</label>
-      <input value={(ev as any)[k]} onChange={e=>setEv({...ev, [k]: e.target.value})} placeholder={placeholder} className="mt-1 w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2.5 text-sm focus:outline-none focus:border-fuchsia-400/40" />
+      <label className="text-sm font-space text-[var(--text-muted)]">{label}</label>
+      <input value={(ev as any)[k]} onChange={e=>setEv({...ev, [k]: e.target.value})} placeholder={placeholder} className="mt-1 w-full min-h-11 rounded-lg bg-white/5 border border-white/10 px-3 py-2.5 text-sm focus:outline-none focus:border-[#F4EDE0]/50 md:min-h-0" />
     </div>
   )
 
   return (
     <div className="space-y-6 max-w-3xl">
       <div>
-        <h1 className="font-orbitron font-black text-2xl">Event Settings</h1>
-        <p className="text-white/50 text-sm font-space">Edit title, venue, contact, socials, SEO. Demo mode — localStorage.</p>
+        <h1 className="font-display text-2xl font-bold text-[var(--text-strong)] sm:text-3xl">Event Settings</h1>
+        <p className="text-[var(--text-muted)] text-sm font-space">Edit title, venue, contact, socials, SEO. Demo mode — localStorage.</p>
       </div>
 
-      <div className="glass rounded-3xl p-6 space-y-4 border border-white/10">
-        <h3 className="font-orbitron font-bold">Branding / Hero</h3>
-        <div className="grid md:grid-cols-2 gap-4">
+      <div className="glass rounded-2xl p-4 space-y-4 border border-white/10 sm:p-6">
+        <h3 className="font-sans font-semibold">Branding / Hero</h3>
+        <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Event Title" k="title" />
           <Field label="Subtitle" k="subtitle" />
           <Field label="Date" k="date" />
@@ -36,15 +36,15 @@ export default function SettingsAdmin() {
         </div>
         <Field label="Description" k="description" />
         <Field label="About Title" k="about_title" />
-        <div className="grid md:grid-cols-2 gap-4">
-          <div><label className="text-xs font-space uppercase tracking-widest text-white/50">About Text 1</label><textarea value={ev.about_text1} onChange={e=>setEv({...ev, about_text1:e.target.value})} rows={3} className="mt-1 w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-sm" /></div>
-          <div><label className="text-xs font-space uppercase tracking-widest text-white/50">About Text 2</label><textarea value={ev.about_text2} onChange={e=>setEv({...ev, about_text2:e.target.value})} rows={3} className="mt-1 w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-sm" /></div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div><label className="text-sm font-space text-[var(--text-muted)]">About Text 1</label><textarea value={ev.about_text1} onChange={e=>setEv({...ev, about_text1:e.target.value})} rows={3} className="mt-1 w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm" /></div>
+          <div><label className="text-sm font-space text-[var(--text-muted)]">About Text 2</label><textarea value={ev.about_text2} onChange={e=>setEv({...ev, about_text2:e.target.value})} rows={3} className="mt-1 w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm" /></div>
         </div>
       </div>
 
-      <div className="glass rounded-3xl p-6 space-y-4 border border-white/10">
-        <h3 className="font-orbitron font-bold">Contact / Socials</h3>
-        <div className="grid md:grid-cols-2 gap-4">
+      <div className="glass rounded-2xl p-4 space-y-4 border border-white/10 sm:p-6">
+        <h3 className="font-sans font-semibold">Contact / Socials</h3>
+        <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Address" k="address" />
           <Field label="Contact Email" k="contact_email" />
           <Field label="Contact Phone" k="contact_phone" />
@@ -55,9 +55,9 @@ export default function SettingsAdmin() {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        <Button variant="galaxy" className="rounded-full" onClick={save}><Save className="w-4 h-4"/> Save Event</Button>
-        {saved && <span className="text-xs text-emerald-300">{saved}</span>}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <Button variant="galaxy" className="min-h-11 w-full rounded-full font-ui tracking-normal sm:min-h-0 sm:w-auto" onClick={save}><Save className="w-4 h-4"/> Save Event</Button>
+        {saved && <span className="text-sm text-emerald-300">{saved}</span>}
       </div>
     </div>
   )

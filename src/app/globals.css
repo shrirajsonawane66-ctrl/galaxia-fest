@@ -6,101 +6,216 @@
   --space-black: #050816;
   --background: #050816;
   --foreground: #ffffff;
+
+  /* Flat text palette — no gradients, no glow. */
+  --text-strong: #f4ede0;
+  --text-body: rgba(244, 237, 224, 0.82);
+  --text-muted: rgba(244, 237, 224, 0.62);
+  --accent: #ff3b4b;
+
+  /* Brand actions */
+  --brand-red: #e5121f;
+  --brand-red-hover: #ff1f2d;
+
+  /* Legacy aliases kept so existing markup keeps resolving to the flat palette. */
+  --cream: var(--text-strong);
+  --fest-red: var(--brand-red);
+  --fest-red-dark: #7a0010;
+  --fest-red-mid: #b10c1a;
+  --fest-red-bright: var(--brand-red-hover);
+  --fest-red-soft: var(--accent);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(139,92,246,0.3) transparent;
+  scrollbar-color: rgba(244, 237, 224, 0.22) transparent;
 }
 
 html {
   scroll-behavior: smooth;
   background: #06123a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-synthesis: none;
+  /* Safety net only: individual layouts are fixed so nothing needs clipping. */
+  overflow-x: clip;
 }
 
 body {
   /* The site-wide nebula (rendered in the root layout) paints above this.
      Keep the body transparent so the fixed background is never covered. */
   background: transparent;
-  color: #ffffff;
-  font-family: var(--font-inter), system-ui, sans-serif;
-  overflow-x: hidden;
+  color: var(--text-body);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  overflow-x: clip;
 }
 
-/* Fonts */
-.font-orbitron { font-family: var(--font-orbitron), sans-serif; }
-.font-space { font-family: var(--font-space), sans-serif; }
-.font-inter { font-family: var(--font-inter), sans-serif; }
+/* No grey flash on tap and no text that can poke out of its card. */
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
 
-/* Glass */
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  overflow-wrap: anywhere;
+}
+
+/* iOS Safari zooms the page when a focused field is under 16px. */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+
+/* Fonts — Bricolage Grotesque (display) + Outfit (body/UI) only. */
+@layer components {
+.font-display {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-synthesis: none;
+  text-transform: none;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+
+/* Force body/UI typography when an element also carries .font-display. */
+.font-ui {
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  font-synthesis: none;
+  text-transform: none;
+  letter-spacing: normal;
+  line-height: 1.25;
+}
+
+.font-space,
+.font-inter {
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ── Type scale ───────────────────────────────────────────────────────────
+   Base values below are the phone scale (fluid, min 2.75rem h1). From 768px
+   up the original desktop sizes are restored unchanged, so the tablet and
+   desktop rendering is byte-for-byte the same as before. */
+.type-h1 {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.75rem, 11vw, 6.5rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--text-strong);
+  text-wrap: balance;
+}
+
+.type-h2 {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.25rem, 8.5vw, 4.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  color: var(--text-strong);
+  text-wrap: balance;
+}
+
+.type-h3 {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.25rem, 5vw, 1.75rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+}
+
+.type-stat {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  /* 3rem max on phones; the desktop rule below caps at 2.75rem so "50,000+"
+     still fits a five-column card. */
+  font-size: clamp(1.625rem, 6vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text-strong);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.type-lead {
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  font-size: clamp(1.0625rem, 4.2vw, 1.25rem);
+  line-height: 1.6;
+  color: var(--text-body);
+  max-width: 40rem;
+}
+
+/* The hero paragraph keeps the slightly looser leading it had originally. */
+.hero-lead {
+  line-height: 1.625;
+}
+
+@media (min-width: 768px) {
+  .type-h1 {
+    font-size: clamp(3rem, 8vw, 6.5rem);
+  }
+  .type-h2 {
+    font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+  }
+  .type-h3 {
+    font-size: clamp(1.375rem, 2vw, 1.75rem);
+  }
+  .type-stat {
+    font-size: clamp(2.25rem, 2.8vw, 2.75rem);
+  }
+  .type-lead {
+    font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+  }
+}
+
+.type-body {
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--text-body);
+}
+
+.type-small {
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: var(--text-muted);
+}
+
+/* Flat card surface — no blur, no gradient, no glow. */
 .glass {
-  background: rgba(255,255,255,0.04);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Gradients */
-.text-gradient-galaxy {
-  background: linear-gradient(90deg,#22D3EE 0%,#8B5CF6 40%,#EC4899 80%,#F472B6 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.text-cream {
+  color: var(--text-strong);
 }
-
-.shimmer-text {
-  background: linear-gradient(90deg,
-    #ffffff 0%,
-    #22D3EE 20%,
-    #8B5CF6 40%,
-    #EC4899 60%,
-    #22D3EE 80%,
-    #ffffff 100%
-  );
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: shimmer 6s linear infinite;
-}
-@keyframes shimmer {
-  from { background-position: 0% center; }
-  to   { background-position: 200% center; }
-}
-
-.radial-nebula {
-  background:
-    radial-gradient(60% 50% at 20% 30%, rgba(139,92,246,0.25) 0%, transparent 60%),
-    radial-gradient(50% 40% at 80% 20%, rgba(236,72,153,0.20) 0%, transparent 60%),
-    radial-gradient(70% 60% at 50% 90%, rgba(34,211,238,0.18) 0%, transparent 60%),
-    #050816;
-}
-
-.grid-lines {
-  background-image:
-    linear-gradient(rgba(139,92,246,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(139,92,246,0.06) 1px, transparent 1px);
-  background-size: 60px 60px;
 }
 
 .noise {
   background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.35 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  opacity: 0.05;
-  mix-blend-mode: overlay;
+  opacity: 0.04;
   pointer-events: none;
-}
-
-@keyframes pulseRing {
-  0% { transform: translate(-50%,-50%) scale(0.9); opacity: 0.8; }
-  100% { transform: translate(-50%,-50%) scale(1.15); opacity: 0; }
-}
-.pulse-ring {
-  animation: pulseRing 2s ease-out infinite;
-}
-
-@keyframes floaty {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
 }
 
 /* ── Hero entrance — CSS-only so the logo and copy paint before hydration ──
@@ -110,51 +225,68 @@ body {
   opacity: 1;
   animation: heroReveal 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
+/* Hero logo: transform-only reveal so the LCP image is painted as soon as it
+   loads. Fading the logo from opacity 0 pushed LCP ~1s past the image load. */
 .hero-logo-reveal {
   opacity: 1;
-  animation: heroLogoReveal 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-.hero-float {
-  animation: heroFloat 6s ease-in-out 1.3s infinite;
-}
-.hero-scroll-dot {
-  animation: heroScrollDot 1.7s ease-in-out infinite;
+  animation: heroLogoReveal 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 @keyframes heroReveal {
   from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes heroLogoReveal {
-  from { opacity: 0; transform: translateY(28px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-@keyframes heroFloat {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-8px); }
-}
-@keyframes heroScrollDot {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(10px); }
+  from { transform: translateY(18px) scale(0.985); }
+  to   { transform: translateY(0) scale(1); }
 }
 
-/* Keep fixed-header anchors clear of the navbar. */
+/* Short phone viewports (≤700px tall, narrower than md): tighten the hero just
+   enough that the primary CTA still lands above the fold. Phones 800px+ tall and
+   every tablet/desktop width keep the regular spacing. */
+@media (max-width: 767px) and (max-height: 700px) {
+  .hero-compact {
+    padding-bottom: 2rem;
+  }
+  .hero-compact-stack {
+    gap: 0.875rem;
+  }
+  .hero-compact-logo {
+    width: min(60vw, 300px);
+  }
+  .hero-compact-lead {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+}
+
+/* Phones only: keep short card titles from breaking into a lone word.
+   h1/h2 already balance everywhere (as they did before); scoping h3 below md
+   keeps desktop card-title line breaks exactly as they were. */
+@media (max-width: 767px) {
+  .type-h3 {
+    text-wrap: balance;
+  }
+}
+
+/* Keep fixed-header anchors clear of the navbar (64px bar + breathing room). */
 section[id] {
-  scroll-margin-top: 6.5rem;
+  scroll-margin-top: 72px;
 }
 
-/* ── Site-wide nebula backdrop — pure CSS drift (no client JS) ── */
+@media (min-width: 768px) {
+  section[id] {
+    scroll-margin-top: 96px;
+  }
+}
+
+/* ── Site-wide nebula backdrop — static paint, no continuous compositing ── */
 .nebula-drift {
   transform: translate3d(0, 0, 0) scale(1);
-  animation: nebulaDrift 26s ease-in-out infinite;
-  will-change: transform;
   backface-visibility: hidden;
 }
-@keyframes nebulaDrift {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(14px, -10px, 0) scale(1.05); }
-}
 
-/* ── Nebula — transform/opacity only (GPU) ── */
+/* ── Optional CSS nebula (kept for the standalone GalaxyBackground) ──
+   Blue/lavender only. The site-wide backdrop uses /images/bg-nebula.svg. */
 .nebula {
   position: absolute;
   border-radius: 9999px;
@@ -167,19 +299,19 @@ section[id] {
 .nebula-1 {
   width: 72vw; height: 72vh;
   left: -12vw; top: 8vh;
-  background: radial-gradient(circle at 50% 50%, rgba(139,92,246,0.26) 0%, rgba(88,40,180,0.14) 42%, transparent 72%);
+  background: radial-gradient(circle at 50% 50%, rgba(56, 88, 220, 0.22) 0%, rgba(30, 63, 168, 0.14) 42%, transparent 72%);
   animation: nebulaFloat1 28s ease-in-out infinite;
 }
 .nebula-2 {
   width: 64vw; height: 64vh;
   right: -10vw; top: -6vh;
-  background: radial-gradient(circle at 50% 50%, rgba(236,72,153,0.22) 0%, transparent 68%);
+  background: radial-gradient(circle at 50% 50%, rgba(140, 123, 255, 0.18) 0%, transparent 68%);
   animation: nebulaFloat2 32s ease-in-out infinite;
 }
 .nebula-3 {
   width: 80vw; height: 50vh;
   left: 10vw; bottom: -12vh;
-  background: radial-gradient(circle at 50% 50%, rgba(34,211,238,0.16) 0%, rgba(20,80,120,0.07) 55%, transparent 72%);
+  background: radial-gradient(circle at 50% 50%, rgba(237, 228, 211, 0.08) 0%, rgba(30, 63, 168, 0.08) 55%, transparent 72%);
   animation: nebulaFloat3 26s ease-in-out infinite;
 }
 @keyframes nebulaFloat1 {
@@ -207,7 +339,6 @@ section[id] {
   backface-visibility: hidden;
   pointer-events: none;
 }
-/* Layer 1 — tinier, dimmer, slowest (far) */
 .star-layer-1 {
   opacity: 0.42;
   background-image:
@@ -228,7 +359,6 @@ section[id] {
   background-size: 520px 520px;
   animation: starDrift1 120s linear infinite;
 }
-/* Layer 2 — medium, mid opacity, mid speed */
 .star-layer-2 {
   opacity: 0.34;
   background-image:
@@ -246,7 +376,6 @@ section[id] {
   background-size: 720px 720px;
   animation: starDrift2 84s linear infinite;
 }
-/* Layer 3 — largest, brightest, fastest (near) — sparse to stay cheap */
 .star-layer-3 {
   opacity: 0.22;
   background-image:
@@ -279,10 +408,10 @@ section[id] {
 }
 .stage-beams {
   background:
-    linear-gradient(to top, rgba(139,92,246,0.10) 0%, transparent 62%),
-    radial-gradient(60% 90% at 30% 100%, rgba(139,92,246,0.18) 0%, transparent 60%),
-    radial-gradient(50% 80% at 70% 100%, rgba(236,72,153,0.14) 0%, transparent 60%),
-    radial-gradient(40% 70% at 50% 100%, rgba(34,211,238,0.10) 0%, transparent 60%);
+    linear-gradient(to top, rgba(56, 88, 220, 0.10) 0%, transparent 62%),
+    radial-gradient(60% 90% at 30% 100%, rgba(56, 88, 220, 0.18) 0%, transparent 60%),
+    radial-gradient(50% 80% at 70% 100%, rgba(140, 123, 255, 0.14) 0%, transparent 60%),
+    radial-gradient(40% 70% at 50% 100%, rgba(237,228,211,0.08) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -324,7 +453,6 @@ section[id] {
   will-change: transform;
   backface-visibility: hidden;
 }
-/* Vinyl/CD spin — separate, faster (4-8s) */
 .vinyl-spin,
 .cd-spin,
 .planet-label-icon {
@@ -341,7 +469,6 @@ section[id] {
 }
 
 /* ── Planet CD — layered vinyl look, fully circular (fix wedge) ── */
-/* Root: border-radius + isolation ensures circular clipping without clip-path/mask wedge */
 .planet-cd {
   position: relative;
   border-radius: 9999px;
@@ -361,10 +488,10 @@ section[id] {
   position: absolute;
   inset: 0;
   border-radius: 9999px;
-  overflow: hidden; /* critical: same element as border-radius => no wedge */
+  overflow: hidden;
   contain: layout style paint;
   background: radial-gradient(circle at 50% 50%, #0f111a 0%, #0a0a0f 44%, #050508 100%);
-  box-shadow: inset 0 0 18px rgba(0,0,0,0.9), inset 0 0 0 1px rgba(255,255,255,0.06), 0 0 22px color-mix(in srgb, var(--glow, rgba(139,92,246,0.6)) 55%, transparent);
+  box-shadow: inset 0 0 18px rgba(0,0,0,0.9), inset 0 0 0 1px rgba(255,255,255,0.06), 0 0 22px color-mix(in srgb, var(--glow, rgba(56,88,220,0.6)) 55%, transparent);
   transform: translateZ(0);
   backface-visibility: hidden;
 }
@@ -387,9 +514,9 @@ section[id] {
   position: absolute;
   inset: 31%;
   border-radius: 9999px;
-  overflow: hidden; /* same element as border-radius — photo clipped circularly, not wedge */
-  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--accent, #8B5CF6) 70%, white), var(--glow) 62%, #050816 130%);
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.45), 0 0 10px color-mix(in srgb, var(--glow) 35%, transparent);
+  overflow: hidden;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--accent, #8c7bff) 70%, white), var(--glow, #1e3fa8) 62%, #050816 130%);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.45), 0 0 10px color-mix(in srgb, var(--glow, rgba(56,88,220,0.35)) 35%, transparent);
   border: 1px solid rgba(255,255,255,0.07);
 }
 .cd-center-hole {
@@ -415,26 +542,23 @@ section[id] {
     transparent 144deg,
     transparent 360deg
   );
-  mix-blend-mode: overlay;
   opacity: 0.58;
   pointer-events: none;
 }
 
-/* Planet hover — GPU only scale + glow */
+/* Planet hover — interactive scale only, no filter on the text inside. */
 .planet-btn {
   transform: translateZ(0);
   backface-visibility: hidden;
-  transition: transform 300ms cubic-bezier(0.2,0.8,0.2,1), filter 300ms ease;
+  transition: transform 300ms cubic-bezier(0.2,0.8,0.2,1);
 }
 @media (hover: hover) and (pointer: fine) {
   .planet-btn:hover {
     transform: scale(1.08);
-    filter: brightness(1.12);
   }
   .planet-btn:hover .planet-glow,
   .planet-btn:hover .planet-cd-glow {
     opacity: 1 !important;
-    filter: blur(22px) brightness(1.25);
   }
   .planet-btn:hover .planet-label {
     opacity: 1;
@@ -451,13 +575,7 @@ section[id] {
   transform: translate(-50%,0);
 }
 
-/* Orbit stage — responsive, no transform-scale clipping
-   FIX: previous `transform: scale()` + `content-visibility:auto` + `contain: paint`
-   clipped planets on mobile (layout 906px orbit vs 343px viewport = 280px overflow each side)
-   + parent `overflow-hidden` hid outer planets completely.
-   New: no transform/clipping; JS maps the raw orbit range into viewport-relative
-   min/max diameters while reserving space for the core and outer performer.
-*/
+/* Orbit stage — responsive, no transform-scale clipping */
 .orbit-stage {
   position: relative;
   box-sizing: border-box;
@@ -486,14 +604,11 @@ section[id] {
     margin-bottom: 0;
   }
 }
-/* Long names cannot fit beside a record at phone/tablet orbit positions.
-   The records remain tappable and each dialog contains the full artist name. */
 @media (max-width: 1024px) {
   .planet-label {
     display: none;
   }
 }
-/* Touch screens without a hover state still get names when there is room. */
 @media (pointer: coarse) and (min-width: 1025px) {
   .planet-label {
     opacity: 1 !important;
@@ -501,7 +616,6 @@ section[id] {
   }
 }
 
-/* Keep mobile compositor pressure low so the record orbits stay smooth. */
 @media (max-width: 640px) {
   .planet-cd-glow {
     filter: blur(10px);
@@ -520,27 +634,46 @@ section[id] {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.35); border-radius: 999px; }
+::-webkit-scrollbar-thumb { background: rgba(244,237,224,0.22); border-radius: 999px; }
 ::-webkit-scrollbar-track { background: #06123a; }
 
 /* Dialog overlay */
-[data-radix-dialog-overlay] { background: rgba(5,8,22,0.8); backdrop-filter: blur(12px); }
+[data-radix-dialog-overlay] { background: rgba(5,8,22,0.9); }
+
+/* Visible focus for every interactive element. */
+:where(a, button, input, select, textarea, [role="tab"], [tabindex]):focus-visible {
+  outline: 2px solid var(--text-strong);
+  outline-offset: 2px;
+}
+
+/* ── Mobile navigation sheet — slides in from the right ─────────────────── */
+@keyframes sheetIn {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes sheetFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.sheet-panel[data-state="open"] {
+  animation: sheetIn 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.sheet-overlay[data-state="open"] {
+  animation: sheetFade 200ms ease-out both;
+}
 
 /* ── Reduced motion — keep the system laid out, but stop all movement ── */
 @media (prefers-reduced-motion: reduce) {
   .planet-label-icon,
-  .orbit-stage .animate-pulse,
   .star-layer-1,
   .star-layer-2,
   .star-layer-3,
   .nebula-1, .nebula-2, .nebula-3,
   .nebula-drift,
-  .pulse-ring,
-  .shimmer-text,
   .hero-reveal,
   .hero-logo-reveal,
-  .hero-float,
-  .hero-scroll-dot {
+  .sheet-panel,
+  .sheet-overlay {
     animation: none !important;
   }
   .hero-reveal,

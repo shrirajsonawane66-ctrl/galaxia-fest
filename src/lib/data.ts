@@ -81,7 +81,7 @@ export const artistsSeed = [
     display_order: 1,
     featured: false,
     // inner-most — smallest, deliberate concentric, collision-safe (core + gap)
-    size: 48, orbit: 288, duration: 118, startAngle: 200, spin: 7, label: "#14F195", glow: "rgba(20,241,149,0.72)", accent: "#6EE7B7",
+    size: 48, orbit: 288, duration: 118, startAngle: 200, spin: 7, label: "#FF4D58", glow: "rgba(255,77,88,0.72)", accent: "#FFB3A8",
   },
   {
     id: "neha",
@@ -96,7 +96,7 @@ export const artistsSeed = [
     youtube_url: "#",
     display_order: 2,
     featured: false,
-    size: 58, orbit: 373, duration: 102, startAngle: 260, spin: 6, label: "#00E5FF", glow: "rgba(0,229,255,0.70)", accent: "#67E8F9",
+    size: 58, orbit: 373, duration: 102, startAngle: 260, spin: 6, label: "#E5121F", glow: "rgba(229,18,31,0.70)", accent: "#FF8086",
   },
   {
     id: "apdhillon",
@@ -111,7 +111,7 @@ export const artistsSeed = [
     youtube_url: "#",
     display_order: 3,
     featured: false,
-    size: 78, orbit: 473, duration: 84, startAngle: 320, spin: 5.5, label: "#FF6B9E", glow: "rgba(255,107,158,0.68)", accent: "#FDA4AF",
+    size: 78, orbit: 473, duration: 84, startAngle: 320, spin: 5.5, label: "#FF1F2D", glow: "rgba(255,31,45,0.72)", accent: "#FFC1B5",
   },
   {
     id: "raftaar",
@@ -126,7 +126,7 @@ export const artistsSeed = [
     youtube_url: "#",
     display_order: 4,
     featured: true,
-    size: 92, orbit: 590, duration: 72, startAngle: 140, spin: 4.2, label: "#8B5CF6", glow: "rgba(139,92,246,0.72)", accent: "#C084FC",
+    size: 92, orbit: 590, duration: 72, startAngle: 140, spin: 4.2, label: "#EDE4D3", glow: "rgba(237,228,211,0.55)", accent: "#EDE4D3",
   },
   {
     id: "diljit",
@@ -141,8 +141,8 @@ export const artistsSeed = [
     youtube_url: "#",
     display_order: 5,
     featured: true,
-    // large outer-mid — distinct amber glow for Punjabi global pop
-    size: 132, orbit: 734, duration: 96, startAngle: 60, spin: 4.8, label: "#FFB800", glow: "rgba(255,184,0,0.74)", accent: "#FCD34D",
+    // large outer-mid — distinct soft-red glow for Punjabi global pop
+    size: 132, orbit: 734, duration: 96, startAngle: 60, spin: 4.8, label: "#FF1F2D", glow: "rgba(255,77,88,0.68)", accent: "#FFD1C4",
   },
   {
     id: "arijit",
@@ -157,8 +157,8 @@ export const artistsSeed = [
     youtube_url: "#",
     display_order: 6,
     featured: true,
-    // outermost — largest, 3.08x vs smallest (148/48), saturated magenta
-    size: 148, orbit: 906, duration: 118, startAngle: 20, spin: 5.2, label: "#FF1A75", glow: "rgba(255,26,117,0.72)", accent: "#F9A8D4",
+    // outermost — largest, 3.08x vs smallest (148/48), saturated red
+    size: 148, orbit: 906, duration: 118, startAngle: 20, spin: 5.2, label: "#FF1F2D", glow: "rgba(255,31,45,0.60)", accent: "#FF9A90",
   },
 ]
 

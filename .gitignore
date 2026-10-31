@@ -57,3 +57,14 @@ agent/
 
 # source art supplied locally (copies used by the app live in public/)
 /theme/
+
+# original art kept outside the deployed public folder
+/_originals/
+
+# local audit artifacts (screenshots + reports)
+/mobile-audit/
+
+# local run logs
+*.log
+.tmp-*
+

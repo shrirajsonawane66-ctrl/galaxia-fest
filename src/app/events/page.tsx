@@ -28,25 +28,19 @@ export default async function EventsPage() {
   const events = await listPublishedEvents();
 
   return (
-    <div className="relative min-h-screen overflow-hidden text-cream">
+    <div className="relative min-h-[100svh] overflow-x-clip text-[var(--text-body)]">
       <SiteNav />
       <div className="noise pointer-events-none fixed inset-0 z-[1]" />
 
-      <main className="relative z-10 mx-auto max-w-7xl px-5 pb-24 pt-32 md:px-8 md:pt-40">
-        <div className="max-w-2xl">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-cream/75 backdrop-blur">
-            <span className="h-1.5 w-1.5 rounded-full bg-fest-red" />
-            Events
-          </span>
-          <h1 className="mt-6 font-orbitron text-4xl font-black uppercase leading-tight tracking-tight text-cream sm:text-5xl md:text-6xl">
-            Event Schedule
-          </h1>
-          <p className="mt-4 text-sm leading-relaxed text-cream/60 sm:text-base">
+      <main className="relative z-10 mx-auto w-full max-w-7xl px-5 pb-16 pt-[calc(64px+env(safe-area-inset-top)+24px)] sm:px-6 sm:pb-24 sm:pt-32 md:px-10 md:pb-32 md:pt-40">
+        <div className="max-w-4xl">
+          <h1 className="type-h1">Event schedule</h1>
+          <p className="type-lead mt-6">
             Find what&apos;s happening across all three days.
           </p>
         </div>
 
-        <div className="mt-10">
+        <div className="mt-12 md:mt-16">
           <EventsBrowser events={events} />
         </div>
       </main>

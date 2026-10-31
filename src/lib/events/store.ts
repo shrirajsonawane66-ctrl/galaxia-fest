@@ -2,6 +2,7 @@ import "server-only";
 
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { unstable_cache } from "next/cache";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { sampleEvents } from "./seed";
 import { sortEvents } from "./format";
@@ -127,7 +128,7 @@ async function writeLocal(events: EventRecord[]): Promise<void> {
 /* Public API                                                          */
 /* ------------------------------------------------------------------ */
 
-export async function listPublishedEvents(): Promise<EventRecord[]> {
+async function loadPublishedEvents(): Promise<EventRecord[]> {
   const supabase = getSupabaseAdmin();
   if (!supabase) {
     const local = await readLocal();
@@ -145,6 +146,17 @@ export async function listPublishedEvents(): Promise<EventRecord[]> {
   if (error) throw new Error(`Could not load events: ${error.message}`);
   return (data ?? []).map((row) => fromRow(row as EventRow));
 }
+
+/**
+ * Cached read for the public site and public API. Every admin mutation calls
+ * revalidateTag(EVENTS_TAG), so edits still appear immediately; the 60s window
+ * only bounds staleness if a write bypasses the API routes.
+ */
+export const listPublishedEvents = unstable_cache(
+  loadPublishedEvents,
+  ["published-events"],
+  { tags: [EVENTS_TAG], revalidate: 60 }
+);
 
 export async function listAllEvents(): Promise<EventRecord[]> {
   const supabase = getSupabaseAdmin();

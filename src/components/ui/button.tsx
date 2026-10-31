@@ -4,22 +4,22 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F4EDE0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#06123A] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-white text-[#050816] hover:bg-white/90 shadow",
-        destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
-        outline: "border border-white/20 bg-transparent hover:bg-white/10 text-white",
-        secondary: "bg-white/10 text-white hover:bg-white/15",
-        ghost: "hover:bg-white/10 hover:text-white",
-        link: "text-primary underline-offset-4 hover:underline",
-        galaxy: "bg-gradient-to-r from-fuchsia-500 to-purple-500 hover:from-fuchsia-400 hover:to-purple-400 border-0 text-white shadow rounded-full",
+        default: "bg-white text-[#050816] hover:bg-white/90",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-[#F4EDE0]/40 bg-transparent text-[#F4EDE0] hover:bg-white/10",
+        secondary: "bg-white/10 text-[#F4EDE0] hover:bg-white/15",
+        ghost: "hover:bg-white/10 hover:text-[#F4EDE0]",
+        link: "text-[#FF3B4B] underline-offset-4 hover:underline",
+        galaxy: "rounded-full border-0 bg-[#E5121F] font-semibold text-white hover:bg-[#FF1F2D]",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-full px-4 text-xs",
-        lg: "h-14 rounded-full px-8 text-base",
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-lg px-3 text-xs",
+        lg: "h-[52px] rounded-full px-7 text-base font-semibold",
         icon: "h-9 w-9",
       },
     },

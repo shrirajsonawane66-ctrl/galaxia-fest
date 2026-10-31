@@ -625,8 +625,8 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
   if (!artists.length) {
     return (
       <div className="text-center py-20 glass rounded-2xl">
-        <Music4 className="w-10 h-10 mx-auto text-white/40 mb-3" />
-        <p className="text-white/60 font-space">Artists will appear here once added in Admin.</p>
+        <Music4 className="mx-auto mb-3 h-10 w-10 text-[var(--text-muted)]" />
+        <p className="font-space text-[var(--text-body)]">Artists will appear here once added in Admin.</p>
       </div>
     )
   }
@@ -733,14 +733,7 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
                         <PlanetCD artist={a} size={sizeS} spinning />
                         <span className="planet-label absolute left-1/2 -translate-x-1/2 top-full mt-3 whitespace-nowrap z-10 pointer-events-none">
                           <span
-                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass text-[10px] font-space uppercase tracking-[0.3em] border border-white/10"
-                            style={{
-                              color: a.accent,
-                              background: "rgba(10,10,28,0.72)",
-                              backdropFilter: "blur(10px)",
-                              textShadow: "0 1px 8px rgba(0,0,0,0.7)",
-                              boxShadow: `0 0 14px ${a.glow}`,
-                            }}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-[#0a0a1c]/85 px-3 py-1 font-space text-[13px] text-[var(--text-strong)]"
                           >
                             <Disc3 className="planet-label-icon w-3 h-3" style={{ animationDuration: "3s" }} />
                             {a.name}
@@ -758,8 +751,8 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
       </div>
 
       <div className="lg:hidden flex justify-center mt-2">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-xs font-space">
-          <span className="w-2 h-2 rounded-full bg-fuchsia-400 animate-pulse" /> Tap a record
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 font-space text-[13px] text-[var(--text-body)]">
+          <span className="h-2 w-2 rounded-full bg-[var(--accent)]" /> Tap a record
         </div>
       </div>
 
@@ -770,25 +763,25 @@ export default function SolarSystem({ artists }: { artists: Artist[] }) {
               <div className="relative h-64 overflow-hidden">
                 <Image src={open.image_url} alt={open.name} fill sizes="(max-width: 448px) 100vw, 448px" style={{ objectFit: "cover" }} priority={false} />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050816] via-[#050816]/40 to-transparent" />
-                <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-space uppercase tracking-widest">
-                  <span className="w-1.5 h-1.5 rounded-full bg-fuchsia-400 animate-pulse" />
+                <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-white/10 bg-[#050816]/75 px-3 py-1 font-space text-[13px] text-[var(--text-body)]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
                   {open.year}
                 </div>
                 <div className="absolute bottom-4 left-4 right-4">
-                  <div className="text-xs font-space uppercase tracking-[0.3em] mb-1" style={{ color: open.accent, textShadow: "0 1px 12px rgba(0,0,0,0.8)" }}>
+                  <div className="mb-1 font-space text-[13px] text-[var(--accent)]">
                     {open.genre}
                   </div>
-                  <div className="font-orbitron font-black text-xl leading-none text-white" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8)" }}>
+                  <div className="type-h3">
                     {open.name}
                   </div>
-                  <div className="text-xs text-white/70 mt-1 font-space">{open.role}</div>
+                  <div className="mt-1 font-space text-[13px] text-[var(--text-muted)]">{open.role}</div>
                 </div>
                 <div className="absolute top-4 right-12 w-12 h-12">
                   <PlanetCD artist={open} size={48} spinning />
                 </div>
               </div>
               <div className="p-6 space-y-4">
-                <p className="text-sm text-white/70 leading-relaxed">{open.bio}</p>
+                <p className="type-body text-[15px]">{open.bio}</p>
                 <div className="flex gap-2">
                   <Button variant="galaxy" size="sm" onClick={() => setOpen(null)}>
                     <Ticket className="w-4 h-4" /> Book Pass
