@@ -6,7 +6,7 @@ import SiteNav from "@/components/site-nav"
 import { PerformersCurvedSection } from "@/components/performers/performers-curved-section"
 import { Button } from "@/components/ui/button"
 import { SectionTitle } from "@/components/ui/section-title"
-import { coreMembers, eventSeed, passesSeed, scheduleSeed, faqsSeed, statsSeed } from "@/lib/data"
+import { coreMembers, eventSeed, festival2026, passesSeed, scheduleSeed, faqsSeed, statsSeed } from "@/lib/data"
 import type { Performer } from "@/lib/performers"
 import { siteConfig } from "@/lib/site-config"
 import { formatINR } from "@/lib/utils"
@@ -252,6 +252,55 @@ export default function HomePage({ performers }: { performers: Performer[] }) {
                 </div>
               </div>
             </Reveal>
+          </div>
+
+          <div className="mt-16 border-t border-white/10 pt-12 md:mt-24 md:pt-16">
+            <div className="max-w-4xl">
+              <div className="type-small text-[#E5121F]">The 2026 edition</div>
+              <h2 className="type-h2 mt-3">{festival2026.title}</h2>
+              <div className="mt-6 space-y-4">
+                {festival2026.intro.map((paragraph) => (
+                  <p key={paragraph} className="type-body">{paragraph}</p>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-10 grid gap-6 lg:grid-cols-2">
+              <section
+                aria-labelledby="anantara-heading"
+                className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 sm:p-8"
+              >
+                <h3 id="anantara-heading" className="type-h3">{festival2026.anantara.title}</h3>
+                <div className="mt-4 space-y-4">
+                  {festival2026.anantara.paragraphs.map((paragraph) => (
+                    <p key={paragraph} className="type-body">{paragraph}</p>
+                  ))}
+                </div>
+                <p className="mt-6 text-base font-medium leading-relaxed text-[var(--text-strong)]">
+                  {festival2026.anantara.tagline}
+                </p>
+              </section>
+
+              <section
+                aria-labelledby="organisers-heading"
+                className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 sm:p-8"
+              >
+                <h3 id="organisers-heading" className="type-h3">{festival2026.organisedBy.label}</h3>
+                <p className="type-lead mt-4">{festival2026.organisedBy.society}</p>
+                <ul className="mt-4 space-y-3">
+                  {festival2026.organisedBy.institutions.map((institution) => (
+                    <li key={institution} className="flex gap-3">
+                      <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#E5121F]" />
+                      <span className="type-body">{institution}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-6 border-t border-white/10 pt-5">
+                  <div className="type-small text-[var(--text-strong)]">{festival2026.organisedBy.addressLabel}</div>
+                  <p className="type-body mt-2">{festival2026.organisedBy.address}</p>
+                </div>
+              </section>
+            </div>
           </div>
 
           <div className="mt-16 border-t border-white/10 pt-12 md:mt-24 md:pt-16">

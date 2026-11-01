@@ -21,6 +21,38 @@ export const eventSeed = {
   seo_description: "Galaxia is the premier college music festival by Western College of Business Management — a galactic fusion of sound, light, and celebration.",
 }
 
+export const festival2026 = {
+  title: "Galaxia i-Fest 2026",
+  intro: [
+    "Not every universe is found in the stars; some are born when young minds dare to shine.",
+    "Galaxia i-Fest is more than an intercollegiate festival; it is a universe of possibilities where young minds collide, ideas ignite, and talents take centre stage. Bringing together students from diverse colleges, it transforms competition into connection, passion into performance, and dreams into experiences worth remembering. From electrifying performances and thrilling sporting battles to creative showcases and mind-challenging competitions, every moment is an opportunity to break boundaries, discover new strengths, and shine beyond the ordinary. It is where individuality meets teamwork, innovation meets imagination, and every participant gets the chance to leave their mark.",
+    "Because Galaxia i-Fest isn't just about being part of the crowd—it's about finding your spotlight, creating your moment, and becoming a star in your own universe.",
+  ],
+  anantara: {
+    title: "About Anantara",
+    paragraphs: [
+      "What if the only limit to what we can become is the limit we believe exists? Anantara is a celebration of the infinite—a reminder that the universe of possibilities within us is far greater than we can imagine.",
+      "Rooted in the Sanskrit word Ananta, meaning endless or infinite, Anantara represents a world where creativity knows no boundaries, ambition has no ceiling, and every ending opens the door to a new beginning. It is a tribute to the courage to dream beyond the familiar, the curiosity to venture into the unknown, and the determination to turn possibilities into realities.",
+      "Here, ideas evolve into innovation, individuality finds strength in unity, and every talent becomes a spark capable of igniting something extraordinary.",
+      "Anantara invites young minds to challenge the conventional, redefine their limits, and discover that greatness often begins where certainty ends.",
+      "Because infinity is not merely about how far we can go; it is about how much more we can become. There is no final frontier to ambition, no endpoint to imagination, and no limit to the impact we can create when we dare to go beyond.",
+    ],
+    tagline: "Anantara — Beyond Boundaries. Beyond Beginnings. Beyond Infinity.",
+  },
+  organisedBy: {
+    label: "Organised By",
+    society: "Vishweshwar Education Society’s",
+    institutions: [
+      "Western College of Commerce and Business Management",
+      "Indira Institute of Business Management",
+      "Theo Business School",
+    ],
+    addressLabel: "Address",
+    address:
+      "Plot No. 2, Sector 9, Navi Mumbai – 400705, Maharashtra, India",
+  },
+}
+
 export const coreMembers = [
   {
     name: "Abdul Hannan Hanwari",
