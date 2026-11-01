@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 import bundleAnalyzer from "@next/bundle-analyzer";
 
 const nextConfig: NextConfig = {
+  // Lets a production build run next to `next dev` without fighting over
+  // `.next` (dev overwrites the manifests a running `next start` needs):
+  //   NEXT_DIST_DIR=.next-prod npm run build && NEXT_DIST_DIR=.next-prod npm start
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   poweredByHeader: false,
   compress: true,
   reactStrictMode: true,

@@ -68,3 +68,6 @@ agent/
 *.log
 .tmp-*
 
+
+# separate production build dir used to measure next to a running dev server
+/.next-prod/
