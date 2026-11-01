@@ -40,6 +40,7 @@
     "eslint": "^9",
     "eslint-config-next": "^15.5.25",
     "postcss": "^8.5.26",
+    "subset-font": "^2.9.0",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"
   }

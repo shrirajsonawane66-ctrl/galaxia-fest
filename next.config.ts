@@ -33,6 +33,10 @@ const nextConfig: NextConfig = {
   },
 
   experimental: {
+    // The whole stylesheet is ~12 kB. Inlining it into the document removes a
+    // render-blocking request (and one round trip) from the critical path, which
+    // is what the simulated mobile LCP pays for first.
+    inlineCss: true,
     optimizePackageImports: [
       "framer-motion",
       "lucide-react",
