@@ -1,29 +1,33 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Outfit } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { IntroVideo } from "@/components/ui/intro-video";
 import NebulaBackground from "@/components/nebula-background";
 
-const display = Bricolage_Grotesque({
-  subsets: ["latin"],
+// Self-hosted latin subsets (copied once from the Google Fonts build, OFL).
+// Declaring them locally instead of via `next/font/google` does two things:
+//   1. only the two files we actually use ship — the old setup also pulled a
+//      18 kB `latin-ext` face and served three font requests on first load;
+//   2. `preload: true` emits a real `<link rel="preload">` (it did not for the
+//      CSS-variable setup with google fonts), so the files start downloading
+//      with the document instead of after the stylesheet has been parsed.
+const display = localFont({
+  src: "../fonts/bricolage-latin.woff2",
   variable: "--font-display",
-  // Variable font: one file covers every weight the type scale uses.
+  weight: "200 800",
   display: "swap",
-  // Not preloaded: the wordmark above the fold is an image, so the display face
-  // is only needed further down the page and should not compete with the LCP
-  // image for the first round trip.
-  preload: false,
+  preload: true,
   fallback: ["ui-sans-serif", "system-ui", "sans-serif"],
-  adjustFontFallback: true,
+  adjustFontFallback: "Arial",
 });
-const body = Outfit({
-  subsets: ["latin"],
+const body = localFont({
+  src: "../fonts/outfit-latin.woff2",
   variable: "--font-body",
-  // Variable font: one file covers 400–700 instead of four static instances.
+  weight: "100 900",
   display: "swap",
   preload: true,
   fallback: ["system-ui", "Arial"],
-  adjustFontFallback: true,
+  adjustFontFallback: "Arial",
 });
 
 export const viewport: Viewport = {
