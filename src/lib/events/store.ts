@@ -36,6 +36,31 @@ type EventRow = {
   updated_at: string | null;
 };
 
+type LegacyEventRow = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  category: string;
+  venue: string;
+  start_at: string;
+  end_at: string | null;
+  countdown_at: string | null;
+  show_countdown: boolean | null;
+  is_featured: boolean | null;
+  is_published: boolean | null;
+  image_url: string | null;
+  thumbnail_url: string | null;
+  sort_order: number | null;
+  created_at: string | null;
+  updated_at: string | null;
+};
+
+type StoredEventRow = EventRow | LegacyEventRow;
+
+type EventsSchema = "modern" | "legacy";
+let cachedSchema: EventsSchema | null = null;
+
 function getSupabaseAdmin(): SupabaseClient | null {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -49,6 +74,42 @@ export function isDatabaseConfigured(): boolean {
   return Boolean(
     process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
   );
+}
+
+function isLegacyRow(row: StoredEventRow): row is LegacyEventRow {
+  return "start_at" in row && !("heading" in row);
+}
+
+function clockFromTimestamp(value: string | null): string | undefined {
+  if (!value) return undefined;
+  const match = /T(\d{2}:\d{2})/.exec(value);
+  return match ? match[1] : undefined;
+}
+
+function fromLegacyRow(row: LegacyEventRow): EventRecord {
+  const title = row.title;
+  return {
+    id: row.id,
+    slug: row.slug,
+    heading: title,
+    description: row.description,
+    date: row.start_at.slice(0, 10),
+    startTime: clockFromTimestamp(row.start_at) ?? "00:00",
+    endTime: clockFromTimestamp(row.end_at),
+    imageUrl: row.image_url ?? row.thumbnail_url ?? undefined,
+    imageAlt: undefined,
+    eventName: title,
+    location: row.venue,
+    category: row.category,
+    actionLabel: undefined,
+    actionType: "none",
+    actionUrl: undefined,
+    status: row.is_published ? "published" : "draft",
+    featured: Boolean(row.is_featured),
+    sortOrder: row.sort_order ?? 0,
+    createdAt: row.created_at ?? new Date().toISOString(),
+    updatedAt: row.updated_at ?? new Date().toISOString(),
+  };
 }
 
 function fromRow(row: EventRow): EventRecord {
@@ -79,6 +140,10 @@ function fromRow(row: EventRow): EventRecord {
   };
 }
 
+function fromStoredRow(row: StoredEventRow): EventRecord {
+  return isLegacyRow(row) ? fromLegacyRow(row) : fromRow(row);
+}
+
 function toRow(input: EventInput) {
   return {
     heading: input.heading,
@@ -98,6 +163,45 @@ function toRow(input: EventInput) {
     featured: input.featured,
     sort_order: input.sortOrder,
   };
+}
+
+function toLegacyRow(input: EventInput, slug?: string) {
+  return {
+    ...(slug ? { slug } : {}),
+    title: input.eventName || input.heading,
+    description: input.description,
+    category: input.category,
+    venue: input.location,
+    start_at: `${input.date}T${input.startTime}:00.000Z`,
+    end_at: input.endTime ? `${input.date}T${input.endTime}:00.000Z` : null,
+    countdown_at: null,
+    show_countdown: false,
+    is_featured: input.featured,
+    is_published: input.status === "published",
+    image_url: input.imageUrl || null,
+    thumbnail_url: input.imageUrl || null,
+    sort_order: input.sortOrder,
+  };
+}
+
+async function detectSchema(supabase: SupabaseClient): Promise<EventsSchema> {
+  const { error } = await supabase.from("events").select("heading").limit(0);
+  if (!error) return "modern";
+  if (error.code === "42703" || error.message.includes("does not exist")) {
+    return "legacy";
+  }
+  throw new Error(`Could not inspect events table: ${error.message}`);
+}
+
+async function eventsSchema(supabase: SupabaseClient): Promise<EventsSchema> {
+  if (cachedSchema) return cachedSchema;
+  try {
+    cachedSchema = await detectSchema(supabase);
+    return cachedSchema;
+  } catch (error) {
+    cachedSchema = null;
+    throw error;
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -135,16 +239,11 @@ async function loadPublishedEvents(): Promise<EventRecord[]> {
     return sortEvents(local.filter((event) => event.status === "published"));
   }
 
-  const { data, error } = await supabase
-    .from("events")
-    .select("*")
-    .eq("status", "published")
-    .order("date", { ascending: true })
-    .order("start_time", { ascending: true })
-    .order("sort_order", { ascending: true });
+  const { data, error } = await supabase.from("events").select("*");
 
   if (error) throw new Error(`Could not load events: ${error.message}`);
-  return (data ?? []).map((row) => fromRow(row as EventRow));
+  const events = (data ?? []).map((row) => fromStoredRow(row as StoredEventRow));
+  return sortEvents(events.filter((event) => event.status === "published"));
 }
 
 /**
@@ -162,15 +261,10 @@ export async function listAllEvents(): Promise<EventRecord[]> {
   const supabase = getSupabaseAdmin();
   if (!supabase) return sortEvents(await readLocal());
 
-  const { data, error } = await supabase
-    .from("events")
-    .select("*")
-    .order("date", { ascending: true })
-    .order("start_time", { ascending: true })
-    .order("sort_order", { ascending: true });
+  const { data, error } = await supabase.from("events").select("*");
 
   if (error) throw new Error(`Could not load events: ${error.message}`);
-  return (data ?? []).map((row) => fromRow(row as EventRow));
+  return sortEvents((data ?? []).map((row) => fromStoredRow(row as StoredEventRow)));
 }
 
 export async function getEventById(id: string): Promise<EventRecord | null> {
@@ -182,7 +276,7 @@ export async function getEventById(id: string): Promise<EventRecord | null> {
 
   const { data, error } = await supabase.from("events").select("*").eq("id", id).maybeSingle();
   if (error) throw new Error(`Could not load event: ${error.message}`);
-  return data ? fromRow(data as EventRow) : null;
+  return data ? fromStoredRow(data as StoredEventRow) : null;
 }
 
 async function uniqueSlug(base: string): Promise<string> {
@@ -198,13 +292,18 @@ export async function createEvent(input: EventInput): Promise<EventRecord> {
   const supabase = getSupabaseAdmin();
 
   if (supabase) {
+    const schema = await eventsSchema(supabase);
+    const row =
+      schema === "modern"
+        ? { ...toRow(input), slug }
+        : toLegacyRow(input, slug);
     const { data, error } = await supabase
       .from("events")
-      .insert({ ...toRow(input), slug })
+      .insert(row as Record<string, unknown>)
       .select("*")
       .single();
     if (error) throw new Error(error.message);
-    return fromRow(data as EventRow);
+    return fromStoredRow(data as StoredEventRow);
   }
 
   const local = await readLocal();
@@ -222,15 +321,21 @@ export async function createEvent(input: EventInput): Promise<EventRecord> {
 export async function updateEvent(id: string, input: EventInput): Promise<EventRecord> {
   const supabase = getSupabaseAdmin();
   if (supabase) {
+    const schema = await eventsSchema(supabase);
+    const updatedAt = new Date().toISOString();
+    const row =
+      schema === "modern"
+        ? { ...toRow(input), updated_at: updatedAt }
+        : { ...toLegacyRow(input), updated_at: updatedAt };
     const { data, error } = await supabase
       .from("events")
-      .update({ ...toRow(input), updated_at: new Date().toISOString() })
+      .update(row as Record<string, unknown>)
       .eq("id", id)
       .select("*")
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!data) throw new Error("Event not found");
-    return fromRow(data as EventRow);
+    return fromStoredRow(data as StoredEventRow);
   }
 
   const local = await readLocal();
