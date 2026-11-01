@@ -20,6 +20,7 @@ export const siteConfig = {
   links: {
     events: "/events",
     passes: "/#passes",
+    changelog: "/changelog",
     admin: "/admin",
   },
   eventDays: [

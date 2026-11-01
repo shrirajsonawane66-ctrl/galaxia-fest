@@ -430,6 +430,7 @@ export default function HomePage({ performers }: { performers: Performer[] }) {
             <a href={eventSeed.instagram_url} className="type-small inline-flex min-h-11 min-w-11 items-center justify-center px-2 transition-colors hover:text-[var(--text-strong)] sm:min-h-0 sm:min-w-0 sm:px-0">Instagram</a>
             <a href={eventSeed.youtube_url} className="type-small inline-flex min-h-11 min-w-11 items-center justify-center px-2 transition-colors hover:text-[var(--text-strong)] sm:min-h-0 sm:min-w-0 sm:px-0">YouTube</a>
             <a href={eventSeed.x_url} className="type-small inline-flex min-h-11 min-w-11 items-center justify-center px-2 transition-colors hover:text-[var(--text-strong)] sm:min-h-0 sm:min-w-0 sm:px-0">X</a>
+            <Link href={siteConfig.links.changelog} prefetch={false} className="type-small inline-flex min-h-11 min-w-11 items-center justify-center px-2 transition-colors hover:text-[var(--text-strong)] sm:min-h-0 sm:min-w-0 sm:px-0">Changelog</Link>
             <Link href="/admin" prefetch={false} className="type-small inline-flex min-h-11 min-w-11 items-center justify-center px-2 transition-colors hover:text-[var(--text-strong)] sm:min-h-0 sm:min-w-0 sm:px-0">Admin</Link>
           </nav>
         </div>
