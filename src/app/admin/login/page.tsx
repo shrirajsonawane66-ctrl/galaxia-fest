@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { Sparkles, ArrowRight, Loader2, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signInAdmin } from "@/lib/adminAuth"
@@ -94,7 +95,7 @@ export default function AdminLogin() {
           </p>
         </form>
         <div className="mt-4 text-center">
-          <a href="/" className="inline-flex min-h-11 items-center text-sm text-[var(--text-muted)] hover:text-[var(--text-strong)] sm:min-h-0">← Back to Galaxia site</a>
+          <Link href="/" className="inline-flex min-h-11 items-center text-sm text-[var(--text-muted)] hover:text-[var(--text-strong)] sm:min-h-0">← Back to Galaxia site</Link>
         </div>
       </div>
     </div>

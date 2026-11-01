@@ -5,12 +5,14 @@ export type GalaxiaUser = { id: string; email: string; name?: string }
 const LS_KEY = "galaxia_user"
 const USERS_KEY = "galaxia_users"
 
-function getUsers(): any[] {
+type StoredUser = GalaxiaUser & { password: string }
+
+function getUsers(): StoredUser[] {
   if (typeof window === "undefined") return []
-  try { return JSON.parse(localStorage.getItem(USERS_KEY) || "[]") } catch { return [] }
+  try { return JSON.parse(localStorage.getItem(USERS_KEY) || "[]") as StoredUser[] } catch { return [] }
 }
 
-function saveUsers(users: any[]) {
+function saveUsers(users: StoredUser[]) {
   if (typeof window === "undefined") return
   localStorage.setItem(USERS_KEY, JSON.stringify(users))
 }

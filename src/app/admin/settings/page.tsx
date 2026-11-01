@@ -13,7 +13,7 @@ export default function SettingsAdmin() {
   const Field = ({ label, k, placeholder }:{label:string,k:keyof typeof ev,placeholder?:string}) => (
     <div>
       <label className="text-sm font-space text-[var(--text-muted)]">{label}</label>
-      <input value={(ev as any)[k]} onChange={e=>setEv({...ev, [k]: e.target.value})} placeholder={placeholder} className="mt-1 w-full min-h-11 rounded-lg bg-white/5 border border-white/10 px-3 py-2.5 text-sm focus:outline-none focus:border-[#F4EDE0]/50 md:min-h-0" />
+      <input value={ev[k]} onChange={e=>setEv({...ev, [k]: e.target.value})} placeholder={placeholder} className="mt-1 w-full min-h-11 rounded-lg bg-white/5 border border-white/10 px-3 py-2.5 text-sm focus:outline-none focus:border-[#F4EDE0]/50 md:min-h-0" />
     </div>
   )
 

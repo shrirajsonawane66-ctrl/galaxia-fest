@@ -4,14 +4,16 @@ import { Button } from "@/components/ui/button"
 import { scheduleSeed } from "@/lib/data"
 import { Plus, Trash2, Save } from "lucide-react"
 
+type ScheduleItem = typeof scheduleSeed[0]
+
 export default function ScheduleAdmin(){
-  const [items,setItems]=useState(scheduleSeed)
-  const [editing,setEditing]=useState<any>(null)
+  const [items,setItems]=useState<ScheduleItem[]>(scheduleSeed)
+  const [editing,setEditing]=useState<ScheduleItem|null>(null)
   const [isNew,setIsNew]=useState(false)
-  useEffect(()=>{ const s=localStorage.getItem("galaxia_schedule"); if(s) setItems(JSON.parse(s)) },[])
+  useEffect(()=>{ const s=localStorage.getItem("galaxia_schedule"); if(s) setItems(JSON.parse(s) as ScheduleItem[]) },[])
   useEffect(()=>{ localStorage.setItem("galaxia_schedule", JSON.stringify(items)) },[items])
 
-  const save = (it:any)=>{
+  const save = (it:ScheduleItem)=>{
     if(isNew) setItems(prev=>[...prev,{...it, id: Date.now().toString()}])
     else setItems(prev=>prev.map(x=>x.id===it.id?it:x))
     setEditing(null); setIsNew(false)

@@ -1,3 +1,4 @@
+import crypto from "node:crypto"
 import Razorpay from "razorpay"
 
 export function getRazorpay() {
@@ -19,7 +20,6 @@ export async function createOrder(amountPaisa: number, receipt: string, currency
 export function verifySignature(orderId: string, paymentId: string, signature: string) {
   const secret = process.env.RAZORPAY_KEY_SECRET || ""
   if (!secret) return true // mock pass in dev
-  const crypto = require("crypto")
   const expected = crypto.createHmac("sha256", secret).update(orderId + "|" + paymentId).digest("hex")
   return expected === signature
 }

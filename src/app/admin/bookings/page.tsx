@@ -3,12 +3,25 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Search, Download } from "lucide-react"
 
+export type Booking = {
+  ref: string
+  name: string
+  email: string
+  phone: string
+  college: string
+  pass: string
+  qty: number
+  total: number
+  status: string
+  at: string
+}
+
 export default function BookingsAdmin() {
-  const [bookings, setBookings] = useState<any[]>([])
+  const [bookings, setBookings] = useState<Booking[]>([])
   const [q, setQ] = useState("")
   const [filter, setFilter] = useState("all")
 
-  useEffect(()=>{ setBookings(JSON.parse(localStorage.getItem("galaxia_bookings")||"[]")) },[])
+  useEffect(()=>{ setBookings(JSON.parse(localStorage.getItem("galaxia_bookings")||"[]") as Booking[]) },[])
 
   const filtered = bookings.filter(b=>{
     const matchQ = !q || `${b.ref} ${b.name} ${b.email} ${b.pass}`.toLowerCase().includes(q.toLowerCase())

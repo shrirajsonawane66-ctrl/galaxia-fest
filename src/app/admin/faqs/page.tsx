@@ -4,14 +4,16 @@ import { Button } from "@/components/ui/button"
 import { faqsSeed } from "@/lib/data"
 import { Plus, Trash2, Save } from "lucide-react"
 
+type Faq = typeof faqsSeed[0]
+
 export default function FaqsAdmin(){
-  const [faqs,setFaqs]=useState(faqsSeed)
-  const [editing,setEditing]=useState<any>(null)
+  const [faqs,setFaqs]=useState<Faq[]>(faqsSeed)
+  const [editing,setEditing]=useState<Faq|null>(null)
   const [isNew,setIsNew]=useState(false)
-  useEffect(()=>{ const s=localStorage.getItem("galaxia_faqs"); if(s) setFaqs(JSON.parse(s)) },[])
+  useEffect(()=>{ const s=localStorage.getItem("galaxia_faqs"); if(s) setFaqs(JSON.parse(s) as Faq[]) },[])
   useEffect(()=>{ localStorage.setItem("galaxia_faqs", JSON.stringify(faqs)) },[faqs])
 
-  const save=(f:any)=>{
+  const save=(f:Faq)=>{
     if(isNew) setFaqs(prev=>[...prev,{...f,id:Date.now().toString()}])
     else setFaqs(prev=>prev.map(x=>x.id===f.id?f:x))
     setEditing(null); setIsNew(false)

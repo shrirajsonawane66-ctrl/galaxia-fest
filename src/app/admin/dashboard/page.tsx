@@ -1,13 +1,21 @@
 "use client"
 import { useEffect, useState } from "react"
-import { Ticket, Users, IndianRupee, TrendingUp, AlertTriangle } from "lucide-react"
+import { IndianRupee, TrendingUp, AlertTriangle } from "lucide-react"
 import { passesSeed } from "@/lib/data"
 import Link from "next/link"
 
+type Booking = {
+  ref: string
+  name: string
+  pass: string
+  qty: number
+  total: number
+}
+
 export default function Dashboard() {
-  const [bookings, setBookings] = useState<any[]>([])
+  const [bookings, setBookings] = useState<Booking[]>([])
   useEffect(() => {
-    setBookings(JSON.parse(localStorage.getItem("galaxia_bookings") || "[]"))
+    setBookings(JSON.parse(localStorage.getItem("galaxia_bookings") || "[]") as Booking[])
   }, [])
 
   const totalTickets = bookings.reduce((a,b)=>a+(b.qty||0),0)

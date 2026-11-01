@@ -5,8 +5,10 @@ import { passesSeed } from "@/lib/data"
 import { formatINR } from "@/lib/utils"
 import { Save, AlertTriangle, Trash2 } from "lucide-react"
 
+type Pass = typeof passesSeed[0]
+
 export default function PassesAdmin() {
-  const [passes, setPasses] = useState(passesSeed)
+  const [passes, setPasses] = useState<Pass[]>(passesSeed)
   const [saved, setSaved] = useState("")
 
   useEffect(() => {
@@ -20,7 +22,7 @@ export default function PassesAdmin() {
     setTimeout(()=>setSaved(""), 4000)
   }
 
-  const update = (id: string, patch: any) => setPasses(prev => prev.map(p => p.id===id ? {...p, ...patch} : p))
+  const update = (id: string, patch: Partial<Pass>) => setPasses(prev => prev.map(p => p.id===id ? {...p, ...patch} : p))
 
   const remove = (id: string) => {
     const pass = passes.find(p => p.id===id)

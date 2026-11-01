@@ -6,15 +6,25 @@ import { Button } from "@/components/ui/button"
 import { eventSeed } from "@/lib/data"
 import Link from "next/link"
 
+type Booking = {
+  ref: string
+  pass: string
+  qty: number
+  total: number
+  name: string
+  email: string
+  phone: string
+}
+
 function SuccessInner() {
   const params = useSearchParams()
   const refParam = params.get("ref")
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<Booking | null>(null)
   const [qr, setQr] = useState<string>("")
 
   useEffect(() => {
-    const bookings = JSON.parse(localStorage.getItem("galaxia_bookings") || "[]")
-    const found = bookings.find((b: any) => b.ref === refParam) || bookings[0]
+    const bookings = JSON.parse(localStorage.getItem("galaxia_bookings") || "[]") as Booking[]
+    const found = bookings.find((b) => b.ref === refParam) || bookings[0]
     if (found) {
       setData(found)
       // generate QR as data URL via simple canvas fallback if qrcode not available client side

@@ -32,7 +32,7 @@ export default function ArtistsAdmin() {
           <h1 className="font-display text-2xl font-bold text-[var(--text-strong)] sm:text-3xl">Artists</h1>
           <p className="text-[var(--text-muted)] text-sm font-space">Add / edit / delete / reorder. Images via URL.</p>
         </div>
-        <Button variant="galaxy" className="min-h-11 w-full rounded-full font-ui tracking-normal sm:min-h-0 sm:w-auto" onClick={()=>{ setEditing({ id:"", name:"", genre:"", role:"", year:"2025", bio:"", image_url:"https://images.unsplash.com/photo-1595152772835-219674b2a8a6?auto=format&fit=crop&w=600&q=80", display_order: artists.length+1, featured:false, size:96, orbit:300, duration:60, startAngle:0, spin:5, label:"#FF4D58", glow:"rgba(255,77,88,0.6)", accent:"#FFB3A8" } as any); setIsNew(true)}}><Plus className="w-4 h-4" /> Add Artist</Button>
+        <Button variant="galaxy" className="min-h-11 w-full rounded-full font-ui tracking-normal sm:min-h-0 sm:w-auto" onClick={()=>{ setEditing({ id:"", name:"", genre:"", role:"", year:"2025", bio:"", image_url:"https://images.unsplash.com/photo-1595152772835-219674b2a8a6?auto=format&fit=crop&w=600&q=80", instagram_url:"#", spotify_url:"#", youtube_url:"#", display_order: artists.length+1, featured:false, size:96, orbit:300, duration:60, startAngle:0, spin:5, label:"#FF4D58", glow:"rgba(255,77,88,0.6)", accent:"#FFB3A8" }); setIsNew(true)}}><Plus className="w-4 h-4" /> Add Artist</Button>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -64,8 +64,8 @@ export default function ArtistsAdmin() {
             <input placeholder="Image URL" value={editing.image_url} onChange={e=>setEditing({...editing, image_url:e.target.value})} className="w-full min-h-11 rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm md:min-h-0" />
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               <input placeholder="Display order" type="number" value={editing.display_order} onChange={e=>setEditing({...editing, display_order: parseInt(e.target.value)||0})} className="min-h-11 rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm md:min-h-0" />
-              <input placeholder="Label color" value={(editing as any).label} onChange={e=>setEditing({...editing, label:e.target.value} as any)} className="min-h-11 rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm md:min-h-0" />
-              <label className="flex min-h-11 items-center gap-2 text-sm font-space md:min-h-0"><input type="checkbox" checked={(editing as any).featured} onChange={e=>setEditing({...editing, featured:e.target.checked} as any)} /> Featured</label>
+              <input placeholder="Label color" value={editing.label} onChange={e=>setEditing({...editing, label:e.target.value})} className="min-h-11 rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm md:min-h-0" />
+              <label className="flex min-h-11 items-center gap-2 text-sm font-space md:min-h-0"><input type="checkbox" checked={editing.featured} onChange={e=>setEditing({...editing, featured:e.target.checked})} /> Featured</label>
             </div>
             {/* image upload stub */}
             <div className="text-sm text-[var(--text-muted)] font-space">For demo paste URL above or use <a href="https://images.unsplash.com" target="_blank" className="text-fest-red-soft">Unsplash</a>.</div>
