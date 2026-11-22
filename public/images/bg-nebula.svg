@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#06123a"/>
+      <stop offset="0.55" stop-color="#081845"/>
+      <stop offset="1" stop-color="#0a1f5c"/>
+    </linearGradient>
+    <radialGradient id="lav" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#b3a6ff" stop-opacity="0.8"/>
+      <stop offset="0.42" stop-color="#735ff5" stop-opacity="0.36"/>
+      <stop offset="1" stop-color="#5a4bd8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="royal" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#3f6ff2" stop-opacity="0.95"/>
+      <stop offset="0.45" stop-color="#1e3fa8" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#1e3fa8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="violetTop" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#9d80ff" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#7a5cff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pink" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ec4899" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#ec4899" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blurA" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="60"/>
+    </filter>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.12 0"/>
+    </filter>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#base)"/>
+  <ellipse cx="500" cy="540" rx="700" ry="430" fill="url(#lav)" filter="url(#blurA)"/>
+  <ellipse cx="1460" cy="790" rx="700" ry="430" fill="url(#royal)" filter="url(#blurA)"/>
+  <ellipse cx="960" cy="-20" rx="900" ry="320" fill="url(#violetTop)" filter="url(#blurA)"/>
+  <ellipse cx="1210" cy="420" rx="460" ry="300" fill="url(#pink)" filter="url(#blurA)"/>
+  <rect width="1920" height="1080" filter="url(#grain)" opacity="0.5"/>
+</svg>
