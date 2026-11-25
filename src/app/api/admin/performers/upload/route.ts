@@ -38,11 +38,13 @@ export async function POST(request: Request) {
     revalidatePath("/");
     revalidateTag(PERFORMERS_TAG);
     return NextResponse.json({ url });
-  } catch {
+  } catch (error) {
     return NextResponse.json(
       {
         error:
-          "Could not save the upload. On Vercel the filesystem is read-only — use Supabase Storage or an external image URL.",
+          error instanceof Error
+            ? error.message
+            : "Could not save the upload. Check your Supabase Storage configuration.",
       },
       { status: 500 }
     );

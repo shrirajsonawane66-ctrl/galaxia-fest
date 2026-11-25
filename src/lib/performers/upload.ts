@@ -3,8 +3,18 @@ import "server-only";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
+import {
+  PERFORMER_IMAGE_BUCKET,
+  uploadPublicImage,
+} from "@/lib/storage/images";
 import { PERFORMER_UPLOAD_DIR, performerImageUrl } from "./storage";
 import { slugify } from "./types";
+
+function contentTypeFor(extension: string): string {
+  if (extension === "webp") return "image/webp";
+  if (extension === "png") return "image/png";
+  return "image/jpeg";
+}
 
 export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 export const MAX_BULK_FILES = 20;
@@ -58,6 +68,16 @@ export async function processAndStorePerformerImage(
   const safeName = slugify(nameHint) || "performer";
   const unique = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   const filename = `${safeName}-${unique}.${extension}`;
+
+  // Production (Vercel) has a read-only filesystem, so store in Supabase
+  // Storage when it is configured. Locally, fall back to public/uploads.
+  const storedUrl = await uploadPublicImage(
+    PERFORMER_IMAGE_BUCKET,
+    `performers/${filename}`,
+    buffer,
+    contentTypeFor(extension)
+  );
+  if (storedUrl) return storedUrl;
 
   await fs.mkdir(PERFORMER_UPLOAD_DIR, { recursive: true });
   await fs.writeFile(path.join(PERFORMER_UPLOAD_DIR, filename), buffer);
