@@ -4,9 +4,10 @@ import dynamic from "next/dynamic"
 import { ArrowRight, Rocket, Play, Star, Users, Building2, Music4, Trophy, Ticket, Crown, Zap, ShieldCheck, ChevronDown } from "lucide-react"
 import SiteNav from "@/components/site-nav"
 import { PerformersCurvedSection } from "@/components/performers/performers-curved-section"
+import { CoreMembersSection } from "@/components/sections/core-members"
 import { Button } from "@/components/ui/button"
 import { SectionTitle } from "@/components/ui/section-title"
-import { coreMembers, eventSeed, festival2026, passesSeed, scheduleSeed, faqsSeed, statsSeed } from "@/lib/data"
+import { eventSeed, festival2026, passesSeed, scheduleSeed, faqsSeed, statsSeed } from "@/lib/data"
 import type { Performer } from "@/lib/performers"
 import { siteConfig } from "@/lib/site-config"
 import { formatINR } from "@/lib/utils"
@@ -303,21 +304,7 @@ export default function HomePage({ performers }: { performers: Performer[] }) {
             </div>
           </div>
 
-          <div className="mt-16 border-t border-white/10 pt-12 md:mt-24 md:pt-16">
-            <div className="max-w-3xl">
-              <h2 className="type-h2" aria-label="Galaxia Core Members">𝔊𝔞𝔩𝔞𝔵𝔦𝔞 ℭ𝔬𝔯𝔢 𝔐𝔢𝔪𝔟𝔢𝔯𝔰</h2>
-              <p className="type-lead mt-4">The people who keep the festival in orbit, behind the scenes and on the ground.</p>
-            </div>
-            <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 md:mt-12">
-              {coreMembers.map((member) => (
-                <li key={member.name} className="flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-5 sm:p-6">
-                  <div className="type-small text-[#E5121F]">{member.role}</div>
-                  <h3 className="type-h3 mt-2">{member.name}</h3>
-                  <p className="type-body mt-3">{member.quote}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <CoreMembersSection className="mt-16 md:mt-24" />
         </div>
       </section>
 

@@ -29,6 +29,16 @@ const body = localFont({
   fallback: ["system-ui", "Arial"],
   adjustFontFallback: "Arial",
 });
+// Used only by the "Galaxia Core Members" heading. Kept off the critical path
+// (preload: false) because that section sits well below the fold.
+const blackletter = localFont({
+  src: "../fonts/unifrakturcook-latin.woff2",
+  variable: "--font-blackletter",
+  weight: "700",
+  display: "swap",
+  preload: false,
+  fallback: ["serif"],
+});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -63,7 +73,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${display.variable} ${body.variable}`}
+      className={`${display.variable} ${body.variable} ${blackletter.variable}`}
     >
       <head>
         {/* Preconnect to image CDNs — saves ~100-300ms DNS+TLS */}

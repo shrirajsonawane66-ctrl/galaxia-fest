@@ -29,6 +29,7 @@ module.exports = {
       fontFamily: {
         display: ["var(--font-display)", "ui-sans-serif", "system-ui", "sans-serif"],
         sans: ["var(--font-body)", "ui-sans-serif", "system-ui", "sans-serif"],
+        blackletter: ["var(--font-blackletter)", "serif"],
       },
       fontSize: {
         // 13px is the smallest type allowed on the public site.
