@@ -117,7 +117,7 @@ function Reveal({
   )
 }
 
-export default function HomePage({ performers }: { performers: Performer[] }) {
+export default function HomePage({ performers }: { performers: Performer[]; content?: any }) {
   // The booking + success dialogs (and their Radix/framer-motion code) are only
   // downloaded the first time a visitor opens the booking flow.
   const [bookingMounted, setBookingMounted] = useState(false)
