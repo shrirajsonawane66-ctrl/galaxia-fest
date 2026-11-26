@@ -17,6 +17,7 @@ const AuthModal = dynamic(() => import("@/components/AuthModal"), {
 
 const links = [
   { href: "/events", label: "Events" },
+  { href: "/sponsorship", label: "Sponsorship" },
   { href: "/#about", label: "About" },
   { href: "/#stats", label: "Stats" },
   { href: "/#performers", label: "Performers" },

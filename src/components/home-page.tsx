@@ -423,6 +423,9 @@ export default function HomePage({ performers, content }: { performers: Performe
       <section id="sponsors" className="relative z-10 px-5 py-16 sm:px-6 sm:py-20 md:px-10 md:py-32">
         <div className="mx-auto w-full max-w-7xl">
           <SectionTitle cream="Our" red="partners." className="max-w-4xl" />
+          <Link href="/sponsorship" className={`type-small mt-4 inline-flex min-h-11 items-center gap-1 text-[var(--accent)] sm:min-h-0 ${focusRing}`}>
+            Sponsorship details <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+          </Link>
           {sponsors.length === 0 ? (
             <div className="mt-10"><ComingSoon message="Sponsorship Details Coming Soon" /></div>
           ) : (
