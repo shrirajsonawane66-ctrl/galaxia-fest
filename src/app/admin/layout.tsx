@@ -7,6 +7,7 @@ import { LayoutDashboard, Ticket, Users, Calendar, Settings, LogOut, BookOpen, H
 import { Toaster } from "sonner"
 import { getAdminSession, signOutAdmin, onAuthStateChange } from "@/lib/adminAuth"
 import { Sheet, SheetContent, SheetCloseButton, SheetTrigger } from "@/components/ui/sheet"
+import { PublishButton } from "./publish-button"
 
 export const dynamic = "force-dynamic"
 
@@ -102,6 +103,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <div className="text-sm text-[var(--text-muted)] font-space">Admin panel</div>
             </div>
           </div>
+          <div className="border-b border-white/10 p-3">
+            <PublishButton />
+            <p className="mt-2 px-1 text-[13px] leading-snug text-[var(--text-muted)]">
+              Publishes every ready draft to the public site.
+            </p>
+          </div>
           <nav className="p-3 space-y-1 flex-1">
             {nav.map(n => {
               const Icon = n.icon
@@ -142,15 +149,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               />
               <span className="truncate font-sans font-semibold text-sm text-[var(--text-strong)]">Admin</span>
             </Link>
-            <SheetTrigger asChild>
-              <button
-                type="button"
-                aria-label="Open menu"
-                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20 text-[#F4EDE0] transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F4EDE0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#06123A]"
-              >
-                <Menu className="h-5 w-5" aria-hidden />
-              </button>
-            </SheetTrigger>
+            <div className="flex shrink-0 items-center gap-2">
+              <PublishButton compact />
+              <SheetTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="Open menu"
+                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20 text-[#F4EDE0] transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F4EDE0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#06123A]"
+                >
+                  <Menu className="h-5 w-5" aria-hidden />
+                </button>
+              </SheetTrigger>
+            </div>
           </div>
           <div className="flex-1 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] md:p-6 lg:p-8">{children}</div>
         </div>
