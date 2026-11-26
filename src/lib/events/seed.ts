@@ -12,9 +12,9 @@ const DAY_ONE = "2026-12-17";
 const DAY_TWO = "2026-12-18";
 
 const dayOne: SeedItem[] = [
-  ["Elocution", "", "Cultural"],
-  ["FF (Final Zone Arena)", "Final Zone Arena", "Gaming"],
-  ["Mehndi (Starlit Hands)", "Starlit Hands", "Cultural"],
+  ["Elocution", "", "Cultural", "/Elocution.jpg", "Elocution competition"],
+  ["FF (Final Zone Arena)", "Final Zone Arena", "Gaming", "/ff%20zone%20arena.jpg", "Final Zone Arena gaming"],
+  ["Mehndi (Starlit Hands)", "Starlit Hands", "Cultural", "/menhindi.jpg", "Mehndi art"],
   ["Dance – Solo", "", "Dance", "/solo%20dance.jpg", "Solo dance performance"],
   ["Dance – Group", "", "Dance", "/group%20dance.jpg", "Group dance performance"],
   ["Ramp Walk (Face of Galaxia)", "Face of Galaxia", "Cultural", "/ramp%20walk.jpg", "Ramp walk contestants"],
@@ -30,7 +30,7 @@ const dayTwo: SeedItem[] = [
   ["Party Makeup (Infinite Glam)", "Infinite Glam", "Cultural", "/party%20make%20up.jpg", "Party makeup artists"],
   ["Singing (Echo of Orbit)", "Echo of Orbit", "Music", "/singing.jpg", "Singing performance"],
   ["Rap (Cosmic Cypher)", "Cosmic Cypher", "Music", "/Rap.jpg", "Rap performance"],
-  ["Treasure Hunt (Unlock the Infinity)", "Unlock the Infinity", "Adventure"],
+  ["Treasure Hunt (Unlock the Infinity)", "Unlock the Infinity", "Adventure", "/treasure%20hunt.jpg", "Treasure hunt challenge"],
   ["Volleyball (Male)", "Male", "Sports", "/vollyball%20male.jpg", "Men's volleyball match"],
   ["Volleyball (Female)", "Female", "Sports", "/vollyball%20femail.jpg", "Women's volleyball match"],
   ["BGMI (Space Battle)", "Space Battle", "Gaming", "/bgmi.jpg", "BGMI gaming tournament"],
