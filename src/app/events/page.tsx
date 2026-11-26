@@ -8,11 +8,11 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Events | Galaxia i-Fest",
   description:
-    "Explore the full Galaxia i-Fest event schedule across two days — music, dance, gaming, tech and workshops.",
+    "Explore the Galaxia i-Fest events and competitions across three days — music, dance, gaming, tech and workshops.",
   openGraph: {
     title: "Events | Galaxia i-Fest",
     description:
-      "Explore the full Galaxia i-Fest event schedule across two days — music, dance, gaming, tech and workshops.",
+      "Explore the Galaxia i-Fest events and competitions across three days — music, dance, gaming, tech and workshops.",
     type: "website",
     url: "/events",
   },
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Events | Galaxia i-Fest",
     description:
-      "Explore the full Galaxia i-Fest event schedule across two days — music, dance, gaming, tech and workshops.",
+      "Explore the Galaxia i-Fest events and competitions across three days — music, dance, gaming, tech and workshops.",
   },
 };
 
@@ -36,7 +36,7 @@ export default async function EventsPage() {
         <div className="max-w-4xl">
           <h1 className="type-h1">Event schedule</h1>
           <p className="type-lead mt-6">
-            Find what&apos;s happening across both days.
+            Find what&apos;s happening across all three days. Registration links appear here as soon as they are confirmed.
           </p>
         </div>
 

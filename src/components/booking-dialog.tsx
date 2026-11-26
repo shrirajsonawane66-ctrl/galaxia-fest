@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { eventSeed, passesSeed } from "@/lib/data";
-import { formatINR, genRef } from "@/lib/utils";
+import { genRef } from "@/lib/utils";
 import { getUser, type GalaxiaUser } from "@/lib/userAuth";
 
 const focusRing =
@@ -148,8 +148,14 @@ export default function BookingDialog({
                 >
                   {p.name}
                 </div>
-                <div className="font-display text-base font-bold">
-                  {formatINR(p.price)}
+                <div
+                  className={`text-[13px] ${
+                    selectedPass === p.id
+                      ? "text-[#050816]/60"
+                      : "text-[var(--text-muted)]"
+                  }`}
+                >
+                  {p.description}
                 </div>
                 <div
                   className={`text-[13px] ${
@@ -274,17 +280,6 @@ export default function BookingDialog({
               <span className="text-[var(--text-body)]">
                 {activePass.name} × {qty}
               </span>
-              <span className="font-medium text-[var(--text-strong)]">
-                {formatINR(activePass.price)} each
-              </span>
-            </div>
-            <div className="flex items-baseline justify-between border-t border-white/10 pt-2 font-display text-lg font-bold text-[var(--text-strong)]">
-              <span>Total</span>
-              <span>{formatINR(total)}</span>
-            </div>
-            <div className="text-[13px] text-[var(--text-muted)]">
-              Price fetched server-side — test Razorpay order will verify amount.
-              Inventory checked atomically.
             </div>
             {errors.pass && (
               <div className="text-[13px] text-[var(--accent)]">{errors.pass}</div>
@@ -292,11 +287,10 @@ export default function BookingDialog({
           </div>
 
           <Button variant="galaxy" size="lg" className="w-full" onClick={handleBook}>
-            <Ticket className="h-4 w-4" /> Pay {formatINR(total)} — Razorpay test
+            <Ticket className="h-4 w-4" /> Confirm booking
           </Button>
           <div className="text-center text-[13px] text-[var(--text-muted)]">
-            Use Razorpay test card 4111 1111 1111 1111. No real money charged. On
-            success you’ll get GAL-XXXXXX reference + QR at /booking/success.
+            On success you’ll get a GAL-XXXXXX reference + QR at /booking/success.
           </div>
         </DialogContent>
       </Dialog>
@@ -319,7 +313,7 @@ export default function BookingDialog({
                 {successRef}
               </div>
               <div className="type-small mt-1">
-                {activePass.name} × {qty} • {formatINR(total)} paid
+                {activePass.name} × {qty} confirmed
               </div>
             </div>
             <div className="text-sm text-[var(--text-body)]">

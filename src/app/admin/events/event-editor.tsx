@@ -24,7 +24,7 @@ type FormValues = EventInput;
 const defaultValues: FormValues = {
   heading: "",
   description: "",
-  date: "2025-12-19",
+  date: "2026-12-17",
   startTime: "10:00",
   endTime: "11:00",
   dateTbd: false,
@@ -36,6 +36,11 @@ const defaultValues: FormValues = {
   actionLabel: "Register",
   actionType: "none",
   actionUrl: "",
+  registrationStatus: "coming_soon",
+  registrationUrl: "",
+  participationType: "individual",
+  rules: "",
+  requirements: "",
   status: "draft",
   featured: false,
   sortOrder: 1,
@@ -93,6 +98,11 @@ export default function EventEditor({
         actionLabel: initial.actionLabel || "",
         actionType: initial.actionType,
         actionUrl: initial.actionUrl || "",
+        registrationStatus: initial.registrationStatus || "coming_soon",
+        registrationUrl: initial.registrationUrl || "",
+        participationType: initial.participationType || "individual",
+        rules: initial.rules || "",
+        requirements: initial.requirements || "",
         status: initial.status,
         featured: initial.featured,
         sortOrder: initial.sortOrder,
@@ -166,7 +176,7 @@ export default function EventEditor({
     }
   };
 
-  const previewDate = new Date(`${values.date || "2025-12-19"}T00:00:00+05:30`);
+  const previewDate = new Date(`${values.date || "2026-12-17"}T00:00:00+05:30`);
   const previewTime = values.endTime
     ? `${formatEventTime({ startTime: values.startTime, endTime: values.endTime })}`
     : formatEventTime({ startTime: values.startTime });
@@ -283,6 +293,50 @@ export default function EventEditor({
               </Field>
             </div>
 
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Registration status" error={errors.registrationStatus?.message}>
+                <select {...register("registrationStatus")} className={inputClass}>
+                  <option value="coming_soon" className="bg-[#050816]">Registration coming soon</option>
+                  <option value="open" className="bg-[#050816]">Open</option>
+                  <option value="closed" className="bg-[#050816]">Closed</option>
+                </select>
+              </Field>
+              <Field label="Registration URL" error={errors.registrationUrl?.message}>
+                <input {...register("registrationUrl")} className={inputClass} placeholder="https://…" />
+              </Field>
+              <Field label="Participation type" error={errors.participationType?.message}>
+                <select {...register("participationType")} className={inputClass}>
+                  <option value="individual" className="bg-[#050816]">Individual</option>
+                  <option value="team" className="bg-[#050816]">Team</option>
+                </select>
+              </Field>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Rules" error={errors.rules?.message} hint={`${values.rules?.length || 0}/2000`}>
+                <textarea
+                  {...register("rules")}
+                  rows={4}
+                  maxLength={2000}
+                  className={inputClass}
+                  placeholder="Explain the format and rules of the event."
+                />
+              </Field>
+              <Field
+                label="Participation requirements"
+                error={errors.requirements?.message}
+                hint={`${values.requirements?.length || 0}/1000`}
+              >
+                <textarea
+                  {...register("requirements")}
+                  rows={4}
+                  maxLength={1000}
+                  className={inputClass}
+                  placeholder="Eligibility, team size, or anything participants need."
+                />
+              </Field>
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-3">
               <Field label="Status">
                 <select {...register("status")} className={inputClass}>
@@ -335,6 +389,11 @@ export default function EventEditor({
               time={previewTime}
               actionLabel={values.actionType === "none" ? undefined : values.actionLabel || "Action"}
               onActionClick={values.actionType === "none" ? undefined : () => undefined}
+              registrationStatus={values.registrationStatus || "coming_soon"}
+              registrationUrl={values.registrationUrl}
+              participationType={values.participationType || "individual"}
+              rules={values.rules}
+              requirements={values.requirements}
               featured={values.featured}
             />
           </div>

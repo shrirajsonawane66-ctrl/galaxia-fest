@@ -18,6 +18,11 @@ export interface EventCardProps {
   time: string;
   actionLabel?: string;
   onActionClick?: () => void;
+  registrationStatus?: "open" | "closed" | "coming_soon";
+  registrationUrl?: string;
+  participationType?: "individual" | "team";
+  rules?: string;
+  requirements?: string;
   className?: string;
   featured?: boolean;
 }
@@ -44,6 +49,11 @@ export function EventCard({
   time,
   actionLabel,
   onActionClick,
+  registrationStatus,
+  registrationUrl,
+  participationType,
+  rules,
+  requirements,
   className,
   featured = false,
 }: EventCardProps) {
@@ -51,6 +61,31 @@ export function EventCard({
   const showImage = Boolean(imageUrl) && !imageFailed;
   const shownDate = dateLabel ?? formatCardDate(date);
   const shownTime = timeLabel === undefined ? time : timeLabel;
+  let hasRegistrationUrl = false;
+  if (registrationUrl) {
+    try {
+      new URL(registrationUrl);
+      hasRegistrationUrl = true;
+    } catch {
+      hasRegistrationUrl = false;
+    }
+  }
+  const canRegister = registrationStatus === "open" && hasRegistrationUrl;
+  const registrationLabel =
+    registrationStatus === "open" && hasRegistrationUrl
+      ? "Registration open"
+      : registrationStatus === "closed"
+        ? "Registration closed"
+        : "Registration Coming Soon";
+  const registrationDetails = [
+    rules ? `Rules: ${rules}` : "",
+    requirements ? `Requirements: ${requirements}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+  const shownActionLabel = canRegister ? actionLabel || "Register" : actionLabel;
+  const shownOnActionClick =
+    canRegister || (Boolean(actionLabel) && Boolean(onActionClick)) ? onActionClick : undefined;
 
   return (
     <article
@@ -98,6 +133,17 @@ export function EventCard({
               {shownTime}
             </>
           )}
+          <span
+            title={registrationDetails || undefined}
+            className="type-small rounded-full border border-white/15 px-2.5 py-0.5 text-[var(--text-muted)]"
+          >
+            {registrationLabel}
+          </span>
+          {participationType && (
+            <span className="text-[var(--text-muted)]">
+              {participationType === "team" ? "Team" : "Individual"}
+            </span>
+          )}
         </div>
 
         <div>
@@ -114,13 +160,13 @@ export function EventCard({
             <MapPin className="h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden />
             <span className="truncate">{location}</span>
           </span>
-          {actionLabel && onActionClick && (
+          {shownActionLabel && shownOnActionClick && (
             <button
               type="button"
-              onClick={onActionClick}
+              onClick={shownOnActionClick}
               className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-full bg-[#E5121F] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#FF1F2D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F4EDE0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#06123A] md:min-h-0"
             >
-              {actionLabel}
+              {shownActionLabel}
               <ArrowUpRight className="h-4 w-4" aria-hidden />
             </button>
           )}

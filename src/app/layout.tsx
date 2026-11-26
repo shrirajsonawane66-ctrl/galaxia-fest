@@ -39,18 +39,18 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Galaxia 2025 — Where Music Meets the Cosmos | Western College of Business Management",
-  description: "Galaxia is the premier college music festival by Western College of Business Management — a galactic fusion of sound, light, and celebration. Dec 19–20, 2025.",
+  title: "Galaxia 2026 — Where Music Meets the Cosmos | Western College of Business Management",
+  description: "Galaxia is the premier college music festival by Western College of Business Management — a galactic fusion of sound, light, and celebration. 17–19 December 2026.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   openGraph: {
-    title: "Galaxia 2025 — Where Music Meets the Cosmos",
-    description: "A galactic music festival experience at Western College of Business Management.",
+    title: "Galaxia 2026 — Where Music Meets the Cosmos",
+    description: "A galactic music festival experience across three days at Western College of Business Management.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Galaxia 2025 — Where Music Meets the Cosmos",
-    description: "A galactic music festival experience at Western College of Business Management.",
+    title: "Galaxia 2026 — Where Music Meets the Cosmos",
+    description: "A galactic music festival experience across three days at Western College of Business Management.",
   },
   robots: {
     index: true,

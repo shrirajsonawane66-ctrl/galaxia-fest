@@ -3,7 +3,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { LayoutDashboard, Ticket, Users, Calendar, Settings, LogOut, BookOpen, HelpCircle, CalendarDays, Star, Menu } from "lucide-react"
+import { LayoutDashboard, Ticket, Users, Calendar, Settings, LogOut, BookOpen, HelpCircle, CalendarDays, Star, Menu, HeartHandshake, Megaphone, MapPin, Share2 } from "lucide-react"
 import { Toaster } from "sonner"
 import { getAdminSession, signOutAdmin, onAuthStateChange } from "@/lib/adminAuth"
 import { Sheet, SheetContent, SheetCloseButton, SheetTrigger } from "@/components/ui/sheet"
@@ -13,13 +13,17 @@ export const dynamic = "force-dynamic"
 const nav = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/bookings", label: "Bookings", icon: BookOpen },
-  { href: "/admin/passes", label: "Passes / Prices", icon: Ticket },
+  { href: "/admin/content/tickets", label: "Tickets & Booking", icon: Ticket },
   { href: "/admin/artists", label: "Artists", icon: Users },
-  { href: "/admin/schedule", label: "Schedule", icon: Calendar },
+  { href: "/admin/content/schedule", label: "Schedule", icon: Calendar },
   { href: "/admin/events", label: "Events", icon: CalendarDays },
   { href: "/admin/performers", label: "Performers", icon: Star },
-  { href: "/admin/faqs", label: "FAQs", icon: HelpCircle },
-  { href: "/admin/settings", label: "Event Settings", icon: Settings },
+  { href: "/admin/content/faqs", label: "FAQs", icon: HelpCircle },
+  { href: "/admin/content/overview", label: "Event Info", icon: Settings },
+  { href: "/admin/content/sponsors", label: "Sponsors", icon: HeartHandshake },
+  { href: "/admin/content/announcements", label: "Announcements", icon: Megaphone },
+  { href: "/admin/content/contact", label: "Venue & Contact", icon: MapPin },
+  { href: "/admin/content/socials", label: "Social Links", icon: Share2 },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

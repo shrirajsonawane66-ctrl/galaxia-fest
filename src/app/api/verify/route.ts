@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       }
       const bk = {
         booking_reference: bookingRef,
-        event_id: "galaxia-2025",
+        event_id: "galaxia-2026",
         customer_name: booking.name,
         email: booking.email,
         phone: booking.phone,

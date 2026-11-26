@@ -2,6 +2,8 @@ import { z } from "zod";
 
 export type EventStatus = "draft" | "published";
 export type EventActionType = "link" | "calendar" | "none";
+export type EventRegistrationStatus = "open" | "closed" | "coming_soon";
+export type EventParticipationType = "individual" | "team";
 
 export interface EventRecord {
   id: string;
@@ -20,6 +22,11 @@ export interface EventRecord {
   actionLabel?: string;
   actionType: EventActionType;
   actionUrl?: string;
+  registrationStatus?: "open" | "closed" | "coming_soon";
+  registrationUrl?: string;
+  rules?: string;
+  participationType?: "individual" | "team";
+  requirements?: string;
   status: EventStatus;
   featured: boolean;
   sortOrder: number;
@@ -42,6 +49,11 @@ export interface EventInput {
   actionLabel?: string;
   actionType: EventActionType;
   actionUrl?: string;
+  registrationStatus?: "open" | "closed" | "coming_soon";
+  registrationUrl?: string;
+  rules?: string;
+  participationType?: "individual" | "team";
+  requirements?: string;
   status: EventStatus;
   featured: boolean;
   sortOrder: number;
@@ -70,6 +82,13 @@ export const eventInputSchema = z
     actionLabel: z.string().trim().max(40).optional(),
     actionType: z.enum(["link", "calendar", "none"]),
     actionUrl: z.string().trim().max(2048).optional(),
+    registrationStatus: z
+      .enum(["open", "closed", "coming_soon"])
+      .default("coming_soon"),
+    registrationUrl: z.string().trim().max(2048).optional(),
+    rules: z.string().trim().max(2000).optional(),
+    participationType: z.enum(["individual", "team"]).default("individual"),
+    requirements: z.string().trim().max(1000).optional(),
     status: z.enum(["draft", "published"]),
     featured: z.boolean(),
     sortOrder: z.number().int().min(0).max(9999),
@@ -97,6 +116,24 @@ export const eventInputSchema = z
           code: "custom",
           path: ["actionUrl"],
           message: "Enter a valid URL",
+        });
+      }
+    }
+    if (value.registrationStatus === "open" && !value.registrationUrl) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["registrationUrl"],
+        message: "Registration URL is required when registration is open",
+      });
+    }
+    if (value.registrationUrl) {
+      try {
+        new URL(value.registrationUrl);
+      } catch {
+        ctx.addIssue({
+          code: "custom",
+          path: ["registrationUrl"],
+          message: "Enter a valid registration URL",
         });
       }
     }

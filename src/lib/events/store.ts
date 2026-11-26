@@ -29,6 +29,11 @@ type EventRow = {
   action_label: string | null;
   action_type: string | null;
   action_url: string | null;
+  registration_status: string | null;
+  registration_url: string | null;
+  rules: string | null;
+  participation_type: string | null;
+  requirements: string | null;
   status: string | null;
   featured: boolean | null;
   sort_order: number | null;
@@ -71,6 +76,14 @@ function fromRow(row: EventRow): EventRecord {
         ? row.action_type
         : "none",
     actionUrl: row.action_url ?? undefined,
+    registrationStatus:
+      row.registration_status === "open" || row.registration_status === "closed"
+        ? row.registration_status
+        : "coming_soon",
+    registrationUrl: row.registration_url ?? undefined,
+    rules: row.rules ?? undefined,
+    participationType: row.participation_type === "team" ? "team" : "individual",
+    requirements: row.requirements ?? undefined,
     status: row.status === "published" ? "published" : "draft",
     featured: Boolean(row.featured),
     sortOrder: row.sort_order ?? 0,
@@ -94,6 +107,11 @@ function toRow(input: EventInput) {
     action_label: input.actionLabel || null,
     action_type: input.actionType,
     action_url: input.actionUrl || null,
+    registration_status: input.registrationStatus || "coming_soon",
+    registration_url: input.registrationUrl || null,
+    rules: input.rules || null,
+    participation_type: input.participationType || "individual",
+    requirements: input.requirements || null,
     status: input.status,
     featured: input.featured,
     sort_order: input.sortOrder,
@@ -210,6 +228,11 @@ export async function createEvent(input: EventInput): Promise<EventRecord> {
   const local = await readLocal();
   const event: EventRecord = {
     ...input,
+    registrationStatus: input.registrationStatus || "coming_soon",
+    registrationUrl: input.registrationUrl || undefined,
+    rules: input.rules || undefined,
+    participationType: input.participationType || "individual",
+    requirements: input.requirements || undefined,
     id: crypto.randomUUID(),
     slug,
     createdAt: now,
@@ -279,6 +302,11 @@ export async function setEventStatus(
     actionLabel: current.actionLabel,
     actionType: current.actionType,
     actionUrl: current.actionUrl,
+    registrationStatus: current.registrationStatus,
+    registrationUrl: current.registrationUrl,
+    rules: current.rules,
+    participationType: current.participationType,
+    requirements: current.requirements,
     status,
     featured: current.featured,
     sortOrder: current.sortOrder,

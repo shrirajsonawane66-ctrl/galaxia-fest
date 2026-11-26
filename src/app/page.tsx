@@ -1,6 +1,7 @@
 import HomePage from "@/components/home-page";
 import type { Performer } from "@/lib/performers";
 import { getPublishedGalleryPerformers } from "@/lib/performers/store";
+import { getPublicContent } from "@/lib/content/store";
 
 export const revalidate = 60;
 
@@ -15,5 +16,7 @@ export default async function Page() {
     console.error("Could not load performers for the homepage:", error);
   }
 
-  return <HomePage performers={performers} />;
+  const content = await getPublicContent();
+
+  return <HomePage performers={performers} content={content} />;
 }

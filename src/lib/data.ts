@@ -1,9 +1,9 @@
 export const eventSeed = {
-  id: "galaxia-2025",
+  id: "galaxia-2026",
   title: "GALAXIA",
   subtitle: "WHERE MUSIC MEETS THE COSMOS",
-  description: "Two days. Four stages. Fifty thousand souls under one nebula sky. The largest college music festival returns for its most electrifying edition yet.",
-  date: "Dec 19–20 · 2025",
+  description: "Three days. Four stages. Fifty thousand souls under one nebula sky. The largest college music festival returns for its most electrifying edition yet.",
+  date: "17–19 December · 2026",
   venue: "Western College of Business Management",
   address: "Western College Campus, Main Ground, Mumbai, Maharashtra",
   college_name: "Western College of Business Management",
@@ -17,7 +17,7 @@ export const eventSeed = {
   about_title: "A festival out of this world.",
   about_text1: "Galaxia is not just a festival — it is an interstellar rite of passage. Born on a college campus in 2013 with a single stage and a dream, we have become the most anticipated cultural gathering in the region.",
   about_text2: "From bass-shaking headliners and student anthems, to hackathons under the stars, cosplay parades, cinema on the lawn and midnight art installations — every corner of Galaxia is designed to feel like stepping through a wormhole into a universe built by, and for, the next generation.",
-  seo_title: "Galaxia 2025 — Where Music Meets the Cosmos",
+  seo_title: "Galaxia 2026 — Where Music Meets the Cosmos",
   seo_description: "Galaxia is the premier college music festival by Western College of Business Management — a galactic fusion of sound, light, and celebration.",
 }
 
@@ -28,7 +28,7 @@ export const passesSeed = [
     name: "Regular",
     price: 499,
     description: "General admission — common & back rows",
-    benefits: ["General entry — both days", "Back rows & standing zone", "Access to 4 stages", "Food court access"],
+    benefits: ["General entry — all three days", "Back rows & standing zone", "Access to 4 stages", "Food court access"],
     capacity: 2000,
     sold_count: 342,
     is_active: true,

@@ -142,9 +142,11 @@ export function EventsBrowser({ events }: { events: EventRecord[] }) {
         <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] px-6 py-20 text-center">
           <CalendarX2 className="h-8 w-8 text-[var(--text-muted)]" aria-hidden />
           <p className="type-body mt-4">
-            {day !== "all" || category !== "all"
-              ? "No events match these filters."
-              : "No events announced yet. Check back soon."}
+            {events.length === 0
+              ? "Events & competitions coming soon."
+              : day !== "all" || category !== "all"
+                ? "No events match these filters."
+                : "No events announced yet. Check back soon."}
           </p>
           {(day !== "all" || category !== "all") && (
             <button
@@ -165,7 +167,11 @@ export function EventsBrowser({ events }: { events: EventRecord[] }) {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
           {filtered.map((event) => {
-            const action = actionFor(event);
+            const hasRegistration =
+              event.registrationStatus === "open" && Boolean(event.registrationUrl);
+            const action = hasRegistration
+              ? () => window.open(event.registrationUrl as string, "_blank", "noopener,noreferrer")
+              : actionFor(event);
             return (
               <EventCard
                 key={event.id}
@@ -179,8 +185,19 @@ export function EventsBrowser({ events }: { events: EventRecord[] }) {
                 eventName={event.eventName}
                 location={event.location}
                 time={formatEventTime(event)}
-                actionLabel={event.actionType === "none" ? undefined : event.actionLabel}
+                actionLabel={
+                  hasRegistration
+                    ? "Register"
+                    : event.actionType === "none"
+                      ? undefined
+                      : event.actionLabel
+                }
                 onActionClick={action}
+                registrationStatus={event.registrationStatus}
+                registrationUrl={event.registrationUrl}
+                participationType={event.participationType}
+                rules={event.rules}
+                requirements={event.requirements}
                 featured={event.featured}
               />
             );

@@ -4,17 +4,33 @@ import { useSearchParams } from "next/navigation"
 import { Ticket, Calendar, MapPin, User, Mail, Phone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { eventSeed } from "@/lib/data"
+import type { PublicContent } from "@/lib/content/types"
 import Link from "next/link"
+
+type Booking = {
+  ref: string;
+  pass: string;
+  qty: number;
+  total: number;
+  name: string;
+  email: string;
+  phone: string;
+};
 
 function SuccessInner() {
   const params = useSearchParams()
   const refParam = params.get("ref")
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<Booking | null>(null)
   const [qr, setQr] = useState<string>("")
+  const [content, setContent] = useState<PublicContent | null>(null)
 
   useEffect(() => {
+    fetch("/api/content")
+      .then(response => response.json())
+      .then(payload => setContent(payload.content ?? null))
+      .catch(() => {})
     const bookings = JSON.parse(localStorage.getItem("galaxia_bookings") || "[]")
-    const found = bookings.find((b: any) => b.ref === refParam) || bookings[0]
+    const found: Booking | undefined = bookings.find((b: Booking) => b.ref === refParam) || bookings[0]
     if (found) {
       setData(found)
       // generate QR as data URL via simple canvas fallback if qrcode not available client side
@@ -44,7 +60,7 @@ function SuccessInner() {
         <div className="mb-6 text-center">
           <div className="type-small inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[var(--text-strong)]">Booking confirmed</div>
           <h1 className="type-h2 mt-3">Galaxia ticket</h1>
-          <p className="type-small mt-2">{eventSeed.college_name} • {eventSeed.date}</p>
+          <p className="type-small mt-2">{content?.settings.collegeName || eventSeed.college_name} • {content?.settings.dateLabel || eventSeed.date}</p>
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
@@ -54,13 +70,13 @@ function SuccessInner() {
               <div className="min-w-0 flex-1">
                 <div className="type-small">Booking reference</div>
                 <div className="mt-1 break-words font-mono text-2xl font-bold tracking-[0.12em] text-[var(--accent)]">{data.ref}</div>
-                <div className="type-small mt-1">{data.pass} × {data.qty} • ₹{data.total}</div>
+                <div className="type-small mt-1">{data.pass} × {data.qty} confirmed</div>
                 <div className="mt-4 grid grid-cols-1 gap-3 text-base sm:grid-cols-2 sm:text-sm">
                   <div className="flex items-center gap-2 text-[var(--text-body)]"><User className="h-4 w-4 shrink-0 text-[var(--text-muted)]" /> <span className="min-w-0 break-words">{data.name}</span></div>
                   <div className="flex items-center gap-2 text-[var(--text-body)]"><Mail className="h-4 w-4 shrink-0 text-[var(--text-muted)]" /> <span className="min-w-0 break-words">{data.email}</span></div>
                   <div className="flex items-center gap-2 text-[var(--text-body)]"><Phone className="h-4 w-4 shrink-0 text-[var(--text-muted)]" /> {data.phone}</div>
-                  <div className="flex items-center gap-2 text-[var(--text-body)]"><Calendar className="h-4 w-4 shrink-0 text-[var(--text-muted)]" /> {eventSeed.date}</div>
-                  <div className="flex items-center gap-2 text-[var(--text-body)] sm:col-span-2"><MapPin className="h-4 w-4 shrink-0 text-[var(--text-muted)]" /> {eventSeed.venue}</div>
+                  <div className="flex items-center gap-2 text-[var(--text-body)]"><Calendar className="h-4 w-4 shrink-0 text-[var(--text-muted)]" /> {content?.settings.dateLabel || eventSeed.date}</div>
+                  <div className="flex items-center gap-2 text-[var(--text-body)] sm:col-span-2"><MapPin className="h-4 w-4 shrink-0 text-[var(--text-muted)]" /> {content?.settings.venueName || content?.settings.venueAddress || "Venue details coming soon"}</div>
                 </div>
               </div>
               <div className="mx-auto flex h-36 w-36 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-[#050816] p-2 sm:mx-0">
@@ -74,7 +90,7 @@ function SuccessInner() {
             </div>
           </div>
           <div className="flex items-start justify-between gap-2 bg-[#F4EDE0] px-5 py-4 text-[#050816] sm:items-center sm:px-8">
-            <span className="text-sm opacity-70">Western College of Business Management</span>
+            <span className="text-sm opacity-70">{content?.settings.collegeName || eventSeed.college_name}</span>
             <Ticket className="h-5 w-5 shrink-0 opacity-40" />
           </div>
         </div>
