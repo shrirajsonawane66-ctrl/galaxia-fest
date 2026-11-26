@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import Link from "next/link"
 import {
   useForm,
@@ -13,7 +14,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z, type ZodTypeAny } from "zod"
 import { toast } from "sonner"
-import { Eye, EyeOff, Loader2, Pencil, Plus, Save, Trash2 } from "lucide-react"
+import { Eye, EyeOff, ImagePlus, Loader2, Pencil, Plus, Save, Trash2, Upload, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -78,6 +79,7 @@ type FieldKind =
   | "lines"
   | "number"
   | "url"
+  | "image"
   | "checkbox"
   | "select"
 
@@ -198,7 +200,7 @@ const FIELD_CONFIGS: Record<CollectionSection, readonly FieldConfig[]> = {
   ],
   sponsors: [
     { name: "name", label: "Name", kind: "text", placeholder: "Partner name", required: true },
-    { name: "logoUrl", label: "Logo URL", kind: "url", placeholder: "https://" },
+    { name: "logoUrl", label: "Logo", kind: "image", placeholder: "Paste a URL or upload a logo" },
     { name: "category", label: "Category", kind: "text", placeholder: "Title partner" },
     { name: "websiteUrl", label: "Website URL", kind: "url", placeholder: "https://" },
     { name: "description", label: "Description", kind: "textarea", placeholder: "Short partner description" },
@@ -798,6 +800,8 @@ function AutoForm({
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: typedZodResolver(resolverSchema),
@@ -818,6 +822,29 @@ function AutoForm({
     <form onSubmit={submit} className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
         {fields.map((field) => {
+          if (field.kind === "image") {
+            const current = watch(field.name)
+            const error = getErrorMessage(errors, field.name)
+            return (
+              <div key={field.name}>
+                <span className="mb-1.5 flex items-center justify-between gap-2 text-sm text-[var(--text-muted)]">
+                  <span>
+                    {field.label}
+                    {field.required ? <span className="ml-1 text-red-300">*</span> : null}
+                  </span>
+                </span>
+                <LogoField
+                  value={typeof current === "string" ? current : ""}
+                  placeholder={field.placeholder}
+                  onChange={(url) =>
+                    setValue(field.name, url, { shouldValidate: true, shouldDirty: true })
+                  }
+                />
+                {error ? <span className="mt-1 block text-[13px] text-red-300">{error}</span> : null}
+              </div>
+            )
+          }
+
           if (field.kind === "checkbox") {
             return (
               <label
@@ -895,6 +922,140 @@ function Field({
       {children}
       {error ? <span className="mt-1 block text-[13px] text-red-300">{error}</span> : null}
     </label>
+  )
+}
+
+function LogoField({
+  value,
+  placeholder,
+  onChange,
+}: {
+  value: string
+  placeholder?: string
+  onChange: (url: string) => void
+}) {
+  const fileRef = React.useRef<HTMLInputElement>(null)
+  const [uploading, setUploading] = React.useState(false)
+
+  const previewSrc = React.useMemo(() => {
+    if (value.startsWith("/") && !value.startsWith("//")) return value
+    try {
+      const parsed = new URL(value)
+      return parsed.protocol === "http:" || parsed.protocol === "https:" ? value : ""
+    } catch {
+      return ""
+    }
+  }, [value])
+
+  const upload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    event.target.value = ""
+    if (!file) return
+
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      toast.error("Only JPG, PNG or WebP images are allowed.")
+      return
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image must be 2MB or smaller.")
+      return
+    }
+
+    setUploading(true)
+    try {
+      const form = new FormData()
+      form.append("file", file)
+      const response = await fetch("/api/admin/content/sponsors/upload", {
+        method: "POST",
+        body: form,
+      })
+      const payload = (await response.json().catch(() => ({}))) as {
+        url?: unknown
+        error?: unknown
+      }
+      if (!response.ok) {
+        throw new Error(
+          typeof payload.error === "string" ? payload.error : "Could not upload logo."
+        )
+      }
+      if (typeof payload.url !== "string" || !payload.url) {
+        throw new Error("Upload did not return an image URL.")
+      }
+      onChange(payload.url)
+      toast.success("Logo uploaded")
+    } catch (uploadError) {
+      toast.error(uploadError instanceof Error ? uploadError.message : "Could not upload logo.")
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="flex gap-2">
+        <input
+          type="url"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={placeholder}
+          className={inputClass}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          className="min-h-11 shrink-0 rounded-lg px-3 sm:min-h-0"
+          disabled={uploading}
+          onClick={() => fileRef.current?.click()}
+        >
+          {uploading ? (
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+          ) : (
+            <Upload className="h-4 w-4" aria-hidden />
+          )}
+          Upload
+        </Button>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={(event) => void upload(event)}
+          className="sr-only"
+          aria-label="Upload sponsor logo"
+        />
+      </div>
+      {value ? (
+        <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 p-2">
+          {previewSrc ? (
+            <Image
+              src={previewSrc}
+              alt="Sponsor logo preview"
+              width={48}
+              height={48}
+              unoptimized
+              className="h-12 w-12 rounded-md border border-white/10 bg-white object-contain p-1"
+            />
+          ) : (
+            <div className="flex h-12 w-12 items-center justify-center rounded-md border border-white/10 bg-white/5 text-[var(--text-muted)]">
+              <ImagePlus className="h-4 w-4" aria-hidden />
+            </div>
+          )}
+          <span className="min-w-0 flex-1 truncate text-xs text-[var(--text-muted)]">{value}</span>
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            aria-label="Remove logo"
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[var(--text-muted)] transition hover:bg-white/10 hover:text-[var(--text-strong)]"
+          >
+            <X className="h-4 w-4" aria-hidden />
+          </button>
+        </div>
+      ) : (
+        <p className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+          <ImagePlus className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          Upload a JPG, PNG or WebP up to 2MB, or paste a URL.
+        </p>
+      )}
+    </div>
   )
 }
 

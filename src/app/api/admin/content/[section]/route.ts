@@ -19,6 +19,7 @@ function isSection(section: string): section is ContentSection {
 function refresh() {
   revalidatePath("/");
   revalidatePath("/events");
+  revalidatePath("/sponsorship");
   revalidateTag(CONTENT_TAG);
 }
 

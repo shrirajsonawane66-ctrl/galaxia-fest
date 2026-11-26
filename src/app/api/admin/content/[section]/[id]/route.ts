@@ -17,6 +17,7 @@ const statusSchema = z.object({ status: z.enum(["draft", "published"]) });
 function refresh() {
   revalidatePath("/");
   revalidatePath("/events");
+  revalidatePath("/sponsorship");
   revalidateTag(CONTENT_TAG);
 }
 

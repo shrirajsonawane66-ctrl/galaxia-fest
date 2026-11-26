@@ -33,6 +33,18 @@ const urlOrEmpty = z
   .max(2048)
   .refine((value) => value === "" || isUrl(value), "Enter a valid URL");
 
+const assetUrlOrEmpty = z
+  .string()
+  .trim()
+  .max(2048)
+  .refine(
+    (value) =>
+      value === "" ||
+      isUrl(value) ||
+      (value.startsWith("/") && !value.startsWith("//")),
+    "Enter a valid URL"
+  );
+
 export const siteSettingsSchema = z.object({
   title: z.string().trim().min(1, "Event title is required").max(120),
   tagline: z.string().trim().max(160),
@@ -67,7 +79,7 @@ export const scheduleEntrySchema = z.object({
 
 export const sponsorSchema = z.object({
   name: z.string().trim().min(1, "Sponsor name is required").max(160),
-  logoUrl: urlOrEmpty,
+  logoUrl: assetUrlOrEmpty,
   category: z.string().trim().max(80),
   websiteUrl: urlOrEmpty,
   description: z.string().trim().max(1000),
