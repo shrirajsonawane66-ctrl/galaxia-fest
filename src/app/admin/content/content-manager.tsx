@@ -938,6 +938,7 @@ function LogoField({
   const [uploading, setUploading] = React.useState(false)
 
   const previewSrc = React.useMemo(() => {
+    if (value.startsWith("data:image/")) return value
     if (value.startsWith("/") && !value.startsWith("//")) return value
     try {
       const parsed = new URL(value)

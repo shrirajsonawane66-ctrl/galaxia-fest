@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { SectionTitle } from "@/components/ui/section-title"
 import { eventSeed, festival2026, passesSeed, scheduleSeed, faqsSeed, statsSeed } from "@/lib/data"
 import type { Performer } from "@/lib/performers"
+import type { PublicContent } from "@/lib/content/types"
 import { siteConfig } from "@/lib/site-config"
 import { formatINR } from "@/lib/utils"
 import Link from "next/link"
@@ -117,7 +118,7 @@ function Reveal({
   )
 }
 
-export default function HomePage({ performers }: { performers: Performer[]; content?: any }) {
+export default function HomePage({ performers }: { performers: Performer[]; content?: PublicContent }) {
   // The booking + success dialogs (and their Radix/framer-motion code) are only
   // downloaded the first time a visitor opens the booking flow.
   const [bookingMounted, setBookingMounted] = useState(false)

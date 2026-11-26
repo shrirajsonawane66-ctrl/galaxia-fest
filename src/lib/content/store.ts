@@ -46,13 +46,24 @@ type ContentRow = {
   updated_at: string | null;
 };
 
-function getSupabaseAdmin(): SupabaseClient | null {
+async function getSupabaseClient(): Promise<SupabaseClient | null> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) return null;
-  return createClient(url, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || (!serviceKey && !anonKey)) return null;
+  if (serviceKey) {
+    return createClient(url, serviceKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+  }
+  try {
+    const { createClient: createServerClient } = await import("@/lib/supabase/server");
+    return await createServerClient();
+  } catch {
+    return createClient(url, anonKey!, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+  }
 }
 
 async function readLocal(): Promise<LocalRow[]> {
@@ -102,7 +113,7 @@ function toRow(row: LocalRow) {
 }
 
 async function readAll(): Promise<LocalRow[]> {
-  const supabase = getSupabaseAdmin();
+  const supabase = await getSupabaseClient();
   if (!supabase) return readLocal();
   const { data, error } = await supabase.from("site_content").select("*");
   if (error) throw new Error(`Could not load site content: ${error.message}`);
@@ -176,7 +187,7 @@ export async function saveSettings(input: SiteSettings): Promise<SiteSettings> {
     createdAt: now,
     updatedAt: now,
   };
-  const supabase = getSupabaseAdmin();
+  const supabase = await getSupabaseClient();
   if (supabase) {
     const { error } = await supabase.from("site_content").upsert({
       id: row.id,
@@ -213,7 +224,7 @@ export async function createContent(
   delete (row.data as Record<string, unknown>).status;
   delete (row.data as Record<string, unknown>).sortOrder;
 
-  const supabase = getSupabaseAdmin();
+  const supabase = await getSupabaseClient();
   if (supabase) {
     const { data, error } = await supabase
       .from("site_content")
@@ -245,7 +256,7 @@ export async function updateContent(
   delete (next.data as Record<string, unknown>).status;
   delete (next.data as Record<string, unknown>).sortOrder;
 
-  const supabase = getSupabaseAdmin();
+  const supabase = await getSupabaseClient();
   if (supabase) {
     const { data, error } = await supabase
       .from("site_content")
@@ -267,7 +278,7 @@ export async function updateContent(
 }
 
 export async function deleteContent(section: CollectionSection, id: string): Promise<void> {
-  const supabase = getSupabaseAdmin();
+  const supabase = await getSupabaseClient();
   if (supabase) {
     const { error } = await supabase
       .from("site_content")

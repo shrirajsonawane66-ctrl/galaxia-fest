@@ -33,13 +33,16 @@ const urlOrEmpty = z
   .max(2048)
   .refine((value) => value === "" || isUrl(value), "Enter a valid URL");
 
+const dataImageUrl = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
+
 const assetUrlOrEmpty = z
   .string()
   .trim()
-  .max(2048)
+  .max(4 * 1024 * 1024)
   .refine(
     (value) =>
       value === "" ||
+      dataImageUrl.test(value) ||
       isUrl(value) ||
       (value.startsWith("/") && !value.startsWith("//")),
     "Enter a valid URL"
