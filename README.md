@@ -1,4 +1,4 @@
-# Galaxia 2025 - Where Music Meets the Cosmos
+# Galaxia 2026 - Where Music Meets the Cosmos
 
 Official concert booking website for **Western College of Business Management**.
 

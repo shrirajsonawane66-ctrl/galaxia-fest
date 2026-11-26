@@ -17,7 +17,7 @@ export const eventSeed = {
   about_title: "A festival out of this world.",
   about_text1: "Galaxia is not just a festival — it is an interstellar rite of passage. Born on a college campus in 2013 with a single stage and a dream, we have become the most anticipated cultural gathering in the region.",
   about_text2: "From bass-shaking headliners and student anthems, to hackathons under the stars, cosplay parades, cinema on the lawn and midnight art installations — every corner of Galaxia is designed to feel like stepping through a wormhole into a universe built by, and for, the next generation.",
-  seo_title: "Galaxia 2025 — Where Music Meets the Cosmos",
+  seo_title: "Galaxia 2026 — Where Music Meets the Cosmos",
   seo_description: "Galaxia is the premier college music festival by Western College of Business Management — a galactic fusion of sound, light, and celebration.",
 }
 
