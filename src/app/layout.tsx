@@ -76,6 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${display.variable} ${body.variable} ${blackletter.variable}`}
     >
       <head>
+        <meta name="google-site-verification" content="ASiTOKAOHD6y0V0gG2ci-5b4goe98JMon9limr58qqI" />
         {/* Preconnect to image CDNs — saves ~100-300ms DNS+TLS */}
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
       </head>
