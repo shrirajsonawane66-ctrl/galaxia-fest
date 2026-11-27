@@ -80,7 +80,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         <meta name="google-site-verification" content="ASiTOKAOHD6y0V0gG2ci-5b4goe98JMon9limr58qqI" />
-
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Galaxia i-Fest",
+              url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.galaxia-i-fest.in",
+              creator: { "@type": "Person", name: "Shriraj Sonawane" },
+            }),
+          }}
+        />
         {/* Preconnect to image CDNs — saves ~100-300ms DNS+TLS */}
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
       </head>

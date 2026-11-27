@@ -414,7 +414,7 @@ export default function HomePage({ performers, highlights = [] }: { performers: 
               decoding="async"
               className="h-10 w-auto shrink-0 object-contain"
             />
-            <span className="type-small">© 2025 Galaxia · {eventSeed.college_name} · Built among the stars</span>
+            <span className="type-small">© 2025 Galaxia · {eventSeed.college_name} · Built among the stars · Developed by Shriraj Sonawane</span>
           </div>
           <nav aria-label="Social" className="flex flex-wrap items-center justify-center gap-2 sm:gap-6">
             <a href={eventSeed.instagram_url} className="type-small inline-flex min-h-11 min-w-11 items-center justify-center px-2 transition-colors hover:text-[var(--text-strong)] sm:min-h-0 sm:min-w-0 sm:px-0">Instagram</a>
