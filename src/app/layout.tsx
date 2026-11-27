@@ -77,31 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         <meta name="google-site-verification" content="ASiTOKAOHD6y0V0gG2ci-5b4goe98JMon9limr58qqI" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Event",
-              name: "Galaxia 2026 — Where Music Meets the Cosmos",
-              startDate: "2026-12-17",
-              endDate: "2026-12-19",
-              eventStatus: "https://schema.org/EventScheduled",
-              eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-              location: {
-                "@type": "Place",
-                name: "Western College of Business Management",
-                address: {
-                  "@type": "PostalAddress",
-                  addressCountry: "IN",
-                },
-              },
-              description:
-                "Galaxia is the premier college music festival by Western College of Business Management — a galactic fusion of sound, light, and celebration.",
-              url: "https://www.galaxia-i-fest.in/",
-            }),
-          }}
-        />
+
         {/* Preconnect to image CDNs — saves ~100-300ms DNS+TLS */}
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
       </head>
