@@ -3,9 +3,23 @@
 import * as React from "react";
 import { CalendarX2, Filter } from "lucide-react";
 import { EventCard } from "@/components/ui/card-14";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { buildIcs, dayLabel, formatEventTime, sortEvents } from "@/lib/events/format";
+import { findEventRules, UNANNOUNCED_RULES_MESSAGE } from "@/lib/events/rules";
 import type { EventRecord } from "@/lib/events/types";
 import { cn } from "@/lib/utils";
+
+type SelectedRules = {
+  eventName: string;
+  subtitle: string;
+  rules: string[];
+};
 
 function toDate(value: string): Date {
   return new Date(`${value}T00:00:00+05:30`);
@@ -37,6 +51,7 @@ const filterFocus =
 export function EventsBrowser({ events }: { events: EventRecord[] }) {
   const [day, setDay] = React.useState("all");
   const [category, setCategory] = React.useState("all");
+  const [selectedRules, setSelectedRules] = React.useState<SelectedRules | null>(null);
 
   const days = React.useMemo(() => {
     const unique = Array.from(new Set(events.map((event) => event.date))).sort();
@@ -160,6 +175,7 @@ export function EventsBrowser({ events }: { events: EventRecord[] }) {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
           {filtered.map((event) => {
             const action = actionFor(event);
+            const rules = findEventRules(event);
             return (
               <EventCard
                 key={event.id}
@@ -173,12 +189,40 @@ export function EventsBrowser({ events }: { events: EventRecord[] }) {
                 time={formatEventTime(event)}
                 actionLabel={event.actionType === "none" ? undefined : event.actionLabel}
                 onActionClick={action}
+                onOpenRules={() =>
+                  setSelectedRules({
+                    eventName: rules?.eventName ?? event.eventName,
+                    subtitle: rules?.subtitle || event.description,
+                    rules: rules?.rules ?? [UNANNOUNCED_RULES_MESSAGE],
+                  })
+                }
                 featured={event.featured}
               />
             );
           })}
         </div>
       )}
+
+      <Dialog
+        open={Boolean(selectedRules)}
+        onOpenChange={(open) => {
+          if (!open) setSelectedRules(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{selectedRules?.eventName}</DialogTitle>
+            <DialogDescription>
+              {selectedRules?.subtitle || "Event rules"}
+            </DialogDescription>
+          </DialogHeader>
+          <ol className="type-body list-decimal space-y-2 pl-5">
+            {selectedRules?.rules.map((rule, index) => (
+              <li key={`${selectedRules.eventName}-${index}`}>{rule}</li>
+            ))}
+          </ol>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

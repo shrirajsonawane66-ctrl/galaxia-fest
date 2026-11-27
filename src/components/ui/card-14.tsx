@@ -16,6 +16,7 @@ export interface EventCardProps {
   time: string;
   actionLabel?: string;
   onActionClick?: () => void;
+  onOpenRules?: () => void;
   className?: string;
   featured?: boolean;
 }
@@ -40,6 +41,7 @@ export function EventCard({
   time,
   actionLabel,
   onActionClick,
+  onOpenRules,
   className,
   featured = false,
 }: EventCardProps) {
@@ -48,6 +50,7 @@ export function EventCard({
 
   return (
     <article
+      onClick={onOpenRules}
       className={cn(
         "group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] text-[var(--text-body)] transition-colors hover:border-white/25",
         className
@@ -107,7 +110,10 @@ export function EventCard({
           {actionLabel && onActionClick && (
             <button
               type="button"
-              onClick={onActionClick}
+              onClick={(event) => {
+                event.stopPropagation();
+                onActionClick?.();
+              }}
               className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-full bg-[#E5121F] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#FF1F2D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F4EDE0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#06123A] md:min-h-0"
             >
               {actionLabel}
