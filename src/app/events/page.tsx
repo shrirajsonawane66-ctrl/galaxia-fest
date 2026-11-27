@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "Events | Galaxia i-Fest",
   description:
     "Explore the full Galaxia i-Fest event schedule across three days — music, dance, gaming, tech and workshops.",
+  alternates: { canonical: "/events" },
   openGraph: {
     title: "Events | Galaxia i-Fest",
     description:

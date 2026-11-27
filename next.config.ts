@@ -13,8 +13,8 @@ const nextConfig: NextConfig = {
 
   images: {
     remotePatterns: [
-      // Admin-managed events may reference any HTTPS image host.
-      { protocol: "https", hostname: "**" },
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "njojbocosuadkdxzsyub.supabase.co" },
     ],
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
@@ -54,6 +54,10 @@ const nextConfig: NextConfig = {
     const isProduction = process.env.NODE_ENV === "production"
 
     return [
+      {
+        source: "/galaxia-pass.html",
+        headers: [{ key: "X-Robots-Tag", value: "noindex" }],
+      },
       {
         // The soundtrack can be replaced in place. Revalidate by ETag instead
         // of allowing an immutable response to preserve the previous MP3.

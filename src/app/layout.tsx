@@ -48,6 +48,10 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 };
 
+if (process.env.NODE_ENV === "production" && !process.env.NEXT_PUBLIC_SITE_URL) {
+  throw new Error("NEXT_PUBLIC_SITE_URL is required in production");
+}
+
 export const metadata: Metadata = {
   title: "Galaxia 2026 — Where Music Meets the Cosmos | Western College of Business Management",
   description: "Galaxia is the premier college music festival by Western College of Business Management — a galactic fusion of sound, light, and celebration. Dec 17–19, 2026.",
@@ -62,10 +66,9 @@ export const metadata: Metadata = {
     title: "Galaxia 2026 — Where Music Meets the Cosmos",
     description: "A galactic music festival experience at Western College of Business Management.",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: process.env.VERCEL_ENV === "preview"
+    ? { index: false, follow: false }
+    : { index: true, follow: true },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

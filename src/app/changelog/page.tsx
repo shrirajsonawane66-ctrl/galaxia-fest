@@ -8,6 +8,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Changelog | Galaxia i-Fest",
   description: "Every commit that shaped the Galaxia i-Fest website.",
+  robots: { index: false, follow: false },
   openGraph: {
     title: "Changelog | Galaxia i-Fest",
     description: "Every commit that shaped the Galaxia i-Fest website.",

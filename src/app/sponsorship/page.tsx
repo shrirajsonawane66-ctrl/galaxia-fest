@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "Sponsorship | Galaxia i-Fest",
   description:
     "Meet the partners powering Galaxia i-Fest 2026 and find out how to become a sponsor.",
+  alternates: { canonical: "/sponsorship" },
   openGraph: {
     title: "Sponsorship | Galaxia i-Fest",
     description:

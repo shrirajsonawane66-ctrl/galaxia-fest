@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Core Members | Galaxia i-Fest",
   description:
     "Meet the Galaxia i-Fest core team — the students leading the 2026 edition behind the scenes and on the ground.",
+  alternates: { canonical: "/core-members" },
   openGraph: {
     title: "Core Members | Galaxia i-Fest",
     description:
