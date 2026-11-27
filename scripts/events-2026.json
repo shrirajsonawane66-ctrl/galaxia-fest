@@ -1,0 +1,389 @@
+[
+  {
+    "day": 1,
+    "sortOrder": 1,
+    "title": "Elocution",
+    "theme": "Speak to the Stars",
+    "thumbnail": "/Elocution.jpg",
+    "rules": [
+      "Individual participation only.",
+      "The topic will be given on the spot.",
+      "Time limit: minimum 3 minutes, maximum 5 minutes.",
+      "No vulgar, abusive, offensive, political, or discriminatory content.",
+      "Reporting time: 20 minutes before the event starts."
+    ],
+    "whatsappUrl": null
+  },
+  {
+    "day": 1,
+    "sortOrder": 2,
+    "title": "FF (Final Zone Arena)",
+    "theme": "Final Zone Arena",
+    "thumbnail": "/ff%20zone%20arena.jpg",
+    "rules": [
+      "A team must have 4+1 players. Each team must have a team name.",
+      "Teaming up with students from other departments is strictly not allowed.",
+      "No WiFi and no charging points will be provided.",
+      "Only mobile phones are allowed. No iPad, tablet, or emulator.",
+      "Each qualification round has 3 matches. Room ID and password will be given before each match.",
+      "Any player found cheating will result in disqualification of the team.",
+      "At least 2 members must record their POV, and screenshots (SS) are mandatory.",
+      "Points: 1st rank 10, 2nd rank 9, 3rd rank 8, 4th rank 7, 5th rank 6, 6th rank 5, 7th rank 4, 8th rank 3. Per kill: 1 point."
+    ],
+    "whatsappUrl": "https://chat.whatsapp.com/JvUiz9gX6E5EAoFA3G9mfi"
+  },
+  {
+    "day": 1,
+    "sortOrder": 3,
+    "title": "Mehndi",
+    "theme": "Starlit Hands",
+    "thumbnail": "/menhindi.jpg",
+    "rules": [
+      "Participants must bring their own natural mehndi cones and materials. Chemical colours, glitter, stickers, or stencils are generally prohibited.",
+      "Duration: 1 hour.",
+      "Designs must cover one hand, including the palm side and the back of the hand up to the elbow.",
+      "Designs must be original and creative. No printed materials, phones, or references are allowed once the competition begins.",
+      "Participants may apply mehndi on their own hand or on a model's hand that they bring themselves.",
+      "Breaking any rule, including using prohibited materials or excessive tardiness, may lead to disqualification."
+    ],
+    "whatsappUrl": "https://chat.whatsapp.com/KZFyGt6qKCNJK2cy19Go41"
+  },
+  {
+    "day": 1,
+    "sortOrder": 4,
+    "title": "Dance - Solo",
+    "theme": "Cosmic Choreography",
+    "thumbnail": "/solo%20dance.jpg",
+    "rules": [
+      "Maximum performance time: 3 minutes.",
+      "Audio quality must be 320 kbps or 256 kbps. Audio format must be MP3.",
+      "Audio must be submitted at least 5 days before the event day. No end-moment changes are allowed.",
+      "Props are allowed but must be handled by the participant only.",
+      "Stunts (fire, glass, flips, etc.) are strictly prohibited."
+    ],
+    "whatsappUrl": "https://chat.whatsapp.com/KULDg4U0Lqp2Jr5S16cbTh"
+  },
+  {
+    "day": 1,
+    "sortOrder": 5,
+    "title": "Dance - Group",
+    "theme": "Cosmic Choreography",
+    "thumbnail": "/group%20dance.jpg",
+    "rules": [
+      "Each team must have a maximum of 8 members.",
+      "Maximum performance time: 5 minutes.",
+      "Audio quality must be 320 kbps or 256 kbps. Audio format must be MP3.",
+      "Audio must be submitted at least 5 days before the event day. No end-moment changes are allowed.",
+      "Props are allowed but must be handled by the participants only.",
+      "Stunts (fire, glass, flips, etc.) are strictly prohibited."
+    ],
+    "whatsappUrl": "https://chat.whatsapp.com/CxHt2lJT8Yr3iPE5B2w6tq"
+  },
+  {
+    "day": 1,
+    "sortOrder": 6,
+    "title": "Ramp Walk",
+    "theme": "Face of Galaxia",
+    "thumbnail": "/ramp%20walk.jpg",
+    "rules": [
+      "Duration: 3 minutes.",
+      "Participants must bring their own music track (MP3). Audio must be submitted at least 5 days before the event day.",
+      "Costumes, choreography, and presentation must be creative and beyond the imagination.",
+      "Props are allowed, except hazardous items such as fire, water, or glitter bombs.",
+      "Every participant must report 30 minutes before the event for registration and sound check."
+    ],
+    "whatsappUrl": null
+  },
+  {
+    "day": 1,
+    "sortOrder": 7,
+    "title": "Box Cricket",
+    "theme": "Boundary Breakers",
+    "thumbnail": "/box%20cricket.jpg",
+    "rules": [
+      "A team has 8+1 players. The extra 1 player is compulsory.",
+      "Each team is given 2 overs per match. 3 overs are given in the semi-final and final only.",
+      "No sidearm action is allowed.",
+      "One bowler bowls one over (mandatory).",
+      "In case of a tie, there is no super over or replay. The result will be decided as per the tournament organisers' rules.",
+      "Team members cannot be changed after registration until the end of the competition.",
+      "Participants must bring their own bats.",
+      "Strict action will be taken for arguing with referees. The referee's decision is final.",
+      "Changes in rules, schedule, or draws are at the discretion of the WCCBM sports committee."
+    ],
+    "whatsappUrl": "https://chat.whatsapp.com/GoWj1wgz5YJEWgpPaNb2an"
+  },
+  {
+    "day": 1,
+    "sortOrder": 8,
+    "title": "Carom",
+    "theme": "Orbit Strike",
+    "thumbnail": "/carrom.jpg",
+    "rules": [
+      "Singles and doubles categories will be played.",
+      "Only one board will be played per match. Best of 3 boards for the semi-final and final only.",
+      "Taping is considered a foul.",
+      "Every player must carry their own striker.",
+      "General carom rules will apply.",
+      "Changes in rules, schedule, or draws are at the discretion of the WCCBM sports committee."
+    ],
+    "whatsappUrl": "https://chat.whatsapp.com/LWdjh6gWPD57ZhARxiuo7C"
+  },
+  {
+    "day": 1,
+    "sortOrder": 9,
+    "title": "Football",
+    "theme": "",
+    "thumbnail": "/vollyball%20male.jpg",
+    "rules": [
+      "5 players per side (5-a-side). 2 rolling substitutes.",
+      "Duration: 10 minutes + 2 minute break + 10 minutes.",
+      "The referee's decision is final.",
+      "Lots and draws are finalised only by the organising committee.",
+      "Team members cannot be changed after registration until the end of the competition.",
+      "Changes in rules, schedule, or draws are at the discretion of the WCCBM sports committee."
+    ],
+    "whatsappUrl": null
+  },
+  {
+    "day": 1,
+    "sortOrder": 10,
+    "title": "Body Posing",
+    "theme": "Titans of Anantara or Galaxia",
+    "thumbnail": "/body%20posing.jpg",
+    "rules": [
+      "Two height categories: up to 170 cm, and 170 cm and above.",
+      "Top 2 athletes in each category receive a trophy, cash prize, and certificate. 3rd place receives a medal and certificate.",
+      "College ID is compulsory.",
+      "Shorts must follow the standard rules of Mr. Physique. Board shorts must not be lower than 2 inches above the knees. Any pattern or colour is acceptable, but no commercial branding or advertising is allowed. Bring shorts to event check-in for inspection.",
+      "Except for a wedding ring, competitors may not wear footwear, glasses, watches, pendants, earrings, wigs, or distracting ornamentation.",
+      "Implants or fluid injections that change the natural shape of the body are strictly prohibited and may result in disqualification.",
+      "Props are strictly prohibited during prejudging or the finals presentation.",
+      "A category runs only if it has at least 5 athletes. If not, it is combined with the next taller class where possible. If the tallest category has fewer than 5, it is combined with the closest shorter class. If still fewer than 5, more categories are combined, or eventually one open class is run.",
+      "Changes in rules, schedule, or draws are at the discretion of the WCCBM sports committee."
+    ],
+    "whatsappUrl": "https://chat.whatsapp.com/LJukQmm5exR7XZb1eDLsO6"
+  },
+  {
+    "day": 1,
+    "sortOrder": 11,
+    "title": "Stalk the Stock",
+    "theme": "",
+    "thumbnail": "/stock%20the%20shock.jpg",
+    "rules": [
+      "Category 1: intraday stock trading. Category 2: futures and options (F&O). Category 3: Other (details to be confirmed).",
+      "In Categories 1 and 2, participants may place up to 10 trades per category. Every buy or sell order counts as one trade.",
+      "Rules, fee, and scoring for Category 3 (Other) are to be confirmed.",
+      "For intraday stocks and F&O, the participant with the highest portfolio value wins.",
+      "Trading is intraday only. Do not hold positions overnight. Automated tools and bots are not allowed.",
+      "The same prize schedule applies to all three categories. Any tie will be handled at the event venue.",
+      "The trading platform and virtual starting capital have not been declared yet."
+    ],
+    "whatsappUrl": null
+  },
+  {
+    "day": 1,
+    "sortOrder": 12,
+    "title": "Case Toh Banta Hai",
+    "theme": "",
+    "thumbnail": "/case%20tho%20banta%20hai.jpg",
+    "rules": [
+      "Choose one case study from the 10 provided.",
+      "Make a PowerPoint presentation explaining your analysis and solution.",
+      "Maximum 15 slides. Exceeding 15 slides results in disqualification.",
+      "Presentation time: 10 minutes. If a team goes over time, marks may be deducted and a penalty applies (the exact penalty is not stated).",
+      "Plagiarism up to 15% is allowed. More than 15% results in negative marking.",
+      "Submit the PowerPoint through Unstop. The submission deadline is not provided yet (8 December 2026 is unconfirmed).",
+      "Judging: clarity and structure 30%, depth of analysis 30%, creativity and innovation 20%, practicality 20%."
+    ],
+    "whatsappUrl": "https://chat.whatsapp.com/CwUoMqlgLRPAp8cIbs789E"
+  },
+  {
+    "day": 1,
+    "sortOrder": 13,
+    "title": "Into the Adverse",
+    "theme": "",
+    "thumbnail": "/into%20the%20advise.jpg",
+    "rules": [
+      "Submit one creative photo and one advertisement reel of 10 to 25 seconds. Both must use the same idea or message.",
+      "You may show the product or leave it unseen, but viewers must understand the message.",
+      "Follow the assigned topic, which may focus on a product or an idea.",
+      "AI-generated visuals, downloaded photos or videos, and copyrighted music are not allowed.",
+      "Do not include vulgar, hateful, violent, offensive, or unsafe content.",
+      "The submission deadline is the event day.",
+      "A surprise creative challenge may take place on the event day. Its task and details are still to be decided.",
+      "Judging considers creativity, clarity of message, visual quality, originality, and how well the advertisement communicates its idea. Scoring weights are not stated."
+    ],
+    "whatsappUrl": "https://chat.whatsapp.com/IP0fNXq97q1HxwvZZfBepk"
+  },
+  {
+    "day": 2,
+    "sortOrder": 1,
+    "title": "Debate",
+    "theme": "Clash of Minds",
+    "thumbnail": "/debate.jpg",
+    "rules": [
+      "Only 2 participants per group.",
+      "Each speaker has a fixed time limit (for example, 5 minutes), enforced by a timekeeper.",
+      "Arguments must be logical, relevant, and supported by evidence.",
+      "Conduct: maintain formal and respectful language. No personal attacks."
+    ],
+    "whatsappUrl": null
+  },
+  {
+    "day": 2,
+    "sortOrder": 2,
+    "title": "Party Makeup",
+    "theme": "Infinite Glam",
+    "thumbnail": "/party%20make%20up.jpg",
+    "rules": [
+      "Participants must report at least 20 minutes before the start at the venue.",
+      "Participants must bring their own model. The model must be dressed before the event.",
+      "Duration: 1 hour.",
+      "Originality and creativity are highly encouraged. Use of mobile phones or reference images is strictly prohibited.",
+      "Participants must bring their own makeup tools, products, and materials, including brushes, dotting tools, glitters, stickers, rhinestones, etc."
+    ],
+    "whatsappUrl": "https://chat.whatsapp.com/Ech2uSiCQzDJpPqYxVKxjY"
+  },
+  {
+    "day": 2,
+    "sortOrder": 3,
+    "title": "Singing",
+    "theme": "Echo of Orbit",
+    "thumbnail": "/singing.jpg",
+    "rules": [
+      "Participants must register before the deadline.",
+      "Performance time: 2 to 3 minutes. A buzzer sounds in the last 20 seconds.",
+      "Audio quality must be 320 kbps or 256 kbps (if any audio is used).",
+      "Prior notice is required to use any instrument (guitar, tabla, dhol, keyboard, etc.) during the performance.",
+      "Audio must be submitted at least 3 days before the event day. No end-moment changes are allowed."
+    ],
+    "whatsappUrl": "https://chat.whatsapp.com/KFQ1LdHAcHh23DN78WwjT3"
+  },
+  {
+    "day": 2,
+    "sortOrder": 4,
+    "title": "Rap",
+    "theme": "Cosmic Cypher",
+    "thumbnail": "/Rap.jpg",
+    "rules": [
+      "Performance time: 2 to 3 minutes.",
+      "Audio quality must be 320 kbps or 256 kbps, with a pre-recorded instrumental or beat.",
+      "Participants may perform a cappella (without background music).",
+      "Audio must be submitted at least 5 days before the event day. No end-moment changes are allowed."
+    ],
+    "whatsappUrl": "https://chat.whatsapp.com/D8oBzPb5gnTBl25Pp6Xm8Y"
+  },
+  {
+    "day": 2,
+    "sortOrder": 5,
+    "title": "Treasure Hunt (Unlock the Infinity) - Chess",
+    "theme": "Unlock the Infinity",
+    "thumbnail": "/treasure%20hunt.jpg",
+    "rules": [
+      "Knockout format.",
+      "When time is over, the winner is decided by points.",
+      "Players must move a piece after touching it.",
+      "Boys and girls play separately.",
+      "Changes in rules, schedule, or draws are at the discretion of the WCCBM sports committee."
+    ],
+    "whatsappUrl": null
+  },
+  {
+    "day": 2,
+    "sortOrder": 6,
+    "title": "Volleyball",
+    "theme": "Gravity Smash",
+    "thumbnail": "/vollyball%20male.jpg",
+    "rules": [
+      "A squad has 12 players (6 playing and 6 substitutes).",
+      "Only bonafide college students with a valid ID card are allowed.",
+      "Matches are best of 3 sets, played as per International Volleyball Federation (IVF) rules.",
+      "Walkover if a team does not report within 15 minutes of the scheduled time.",
+      "No player can play for two colleges or two teams.",
+      "Changes in rules, schedule, or draws are at the discretion of the WCCBM sports committee."
+    ],
+    "whatsappUrl": "https://chat.whatsapp.com/DjFOJkSEfDFJHKeT4ld8sX"
+  },
+  {
+    "day": 2,
+    "sortOrder": 7,
+    "title": "BGMI",
+    "theme": "Space Battle",
+    "thumbnail": "/bgmi.jpg",
+    "rules": [
+      "A team must have 4+1 players. Each team must have a team name.",
+      "Teaming up with students from other departments is strictly not allowed.",
+      "Teams or squads must sit together.",
+      "No WiFi and no charging points will be provided.",
+      "Only mobile phones are allowed. No iPad, tablet, or emulator.",
+      "3 matches will be played. Room ID and password will be given before each match.",
+      "Abusive language is strictly prohibited during the game.",
+      "Any player found cheating will result in disqualification of the team.",
+      "At least 2 members must record their POV, and screenshots (SS) are mandatory.",
+      "Points: 1st rank 10, 2nd rank 6, 3rd rank 5, 4th rank 4, 5th rank 3, 6th rank 2, 7th rank 1, 8th rank 1. Per kill: 1 point."
+    ],
+    "whatsappUrl": "https://chat.whatsapp.com/FwBRyZgTjowAyDwFCIuajn"
+  },
+  {
+    "day": 2,
+    "sortOrder": 8,
+    "title": "Brand Battle",
+    "theme": "",
+    "thumbnail": "/bizz%20words.jpg",
+    "rules": [
+      "Each team may register up to 4 participants. Registration fee: ₹300 per team.",
+      "All participants must be students of a recognised college or educational institution.",
+      "Organisers assign each team a brand from a pair of competitors (for example, Coca-Cola and Pepsi, or Jio and Airtel). Teams may not change their assigned brand.",
+      "Teams receive preparation time before each debate. After the first round, teams get 10 minutes to prepare for the next match, including arguments and speaking order.",
+      "Each team defends its assigned brand and explains why it is better than its competitor. Discussion may cover brand strengths, product quality, customer appeal, market positioning, and competitive advantages.",
+      "Arguments must be relevant, logical, and supported by reasonable evidence.",
+      "All four team members are encouraged to contribute. Teams should divide speaking roles before the debate. No interrupting opponents outside the designated rebuttal period.",
+      "False information, personal attacks, offensive language, and inappropriate arguments are not allowed.",
+      "Mobile phones and internet access are not permitted during preparation unless the organisers explicitly allow them.",
+      "Knockout format: the winning team advances and the losing team is eliminated, until the finalists compete for the championship. Organisers may arrange preliminary matches or byes if needed.",
+      "Judges use the published scoring criteria, and the team with the higher score wins. In a tie, judges may ask both teams an additional question. The judges' decision is final."
+    ],
+    "whatsappUrl": null
+  },
+  {
+    "day": 2,
+    "sortOrder": 9,
+    "title": "Bizz-War",
+    "theme": "",
+    "thumbnail": "/bizz%20words.jpg",
+    "rules": [
+      "A team may have up to 4 members. Only registered members may take part, and every team member must attend.",
+      "Each team has 15 minutes to pitch, followed by 5 minutes for questions and answers.",
+      "The pitch should explain the problem, solution, target market, business model, what makes the idea different, finances, funding requested, and the share of the business offered in return.",
+      "A PowerPoint, prototype, or other visual aid is optional. The submission method, deadline, and file requirements will be decided later.",
+      "Only one person should speak at a time unless the judges ask otherwise.",
+      "Be professional, respect the judges, and arrive on time. Late teams may lose their slot.",
+      "Do not present copied ideas, illegal or unethical concepts, misleading claims, or offensive content.",
+      "Disqualification may occur for repeated time-limit violations, offensive content, rule-breaking, late reporting, or plagiarism.",
+      "Arrive 30 minutes early for registration, setup, and briefing.",
+      "Bring any laptop, charger, pen drive, or props you need. Organisers are not responsible for device problems. Tell organisers about special technical needs in advance.",
+      "Event photos and videos may be used for promotion. Your business idea remains your intellectual property.",
+      "Judging considers creativity, problem-solution fit, market understanding, feasibility, financial clarity, presentation skills, and teamwork. Scoring weights are not stated.",
+      "Funding is not guaranteed. The funding amount, selection process, timing, and terms are still to be decided."
+    ],
+    "whatsappUrl": "https://chat.whatsapp.com/LlDgpiBb9BNL7Fcz8tmTpe"
+  },
+  {
+    "day": 2,
+    "sortOrder": 10,
+    "title": "Sale Star",
+    "theme": "",
+    "thumbnail": "/case%20tho%20banta%20hai.jpg",
+    "rules": [
+      "Each participant randomly selects one product from the mystery box. Participants may not choose a product in advance or exchange the selected item.",
+      "Preparation: exactly 3 minutes to examine the product and prepare a pitch. Mobile phones, internet access, and outside assistance are not allowed during preparation.",
+      "Sales pitch: maximum 5 minutes to sell the assigned product to the judge. Participants may demonstrate the product and explain its usefulness, benefits, and value in their own approach, as long as the pitch stays relevant to the product.",
+      "The judge acts as a buyer and may ask questions, raise objections, or challenge the product's value. The judge is not required to accept the offer.",
+      "The host gives a warning when about 1 minute remains. Participants must stop when selling time expires.",
+      "Use only the assigned product. Do not make false claims about its features, performance, or benefits. Offensive language, inappropriate behaviour, or deliberate disruption may lead to disqualification.",
+      "Judges apply the same criteria to all participants. The decision is based on the quality of the pitch, not confidence or entertainment value alone. The judges' decision is final. In a tie, they may ask the tied participants one additional question."
+    ],
+    "whatsappUrl": null
+  }
+]
