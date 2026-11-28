@@ -64,7 +64,7 @@ function SuccessInner() {
               <div className="min-w-0 flex-1">
                 <div className="type-small">Booking reference</div>
                 <div className="mt-1 break-words font-mono text-2xl font-bold tracking-[0.12em] text-[var(--accent)]">{data.ref}</div>
-                <div className="type-small mt-1">{data.pass} × {data.qty} • ₹{data.total}</div>
+                <div className="type-small mt-1">{data.pass} × {data.qty}</div>
                 <div className="mt-4 grid grid-cols-1 gap-3 text-base sm:grid-cols-2 sm:text-sm">
                   <div className="flex items-center gap-2 text-[var(--text-body)]"><User className="h-4 w-4 shrink-0 text-[var(--text-muted)]" /> <span className="min-w-0 break-words">{data.name}</span></div>
                   <div className="flex items-center gap-2 text-[var(--text-body)]"><Mail className="h-4 w-4 shrink-0 text-[var(--text-muted)]" /> <span className="min-w-0 break-words">{data.email}</span></div>
@@ -79,7 +79,7 @@ function SuccessInner() {
             </div>
 
             <div className="flex flex-col gap-1 border-t border-white/10 pt-4 text-sm sm:flex-row sm:items-center sm:justify-between">
-              <span className="text-[var(--text-muted)]">Payment • Razorpay test • Paid</span>
+              <span className="text-[var(--text-muted)]">Payment confirmed</span>
               <span className="text-[var(--text-muted)]">Valid for entry — show QR</span>
             </div>
           </div>
