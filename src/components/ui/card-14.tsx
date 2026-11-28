@@ -6,6 +6,7 @@ import {
   ArrowUpRight,
   CalendarDays,
   ChevronDown,
+  ClipboardList,
   Clock,
   ImageOff,
   MapPin,
@@ -28,6 +29,7 @@ export interface EventCardProps {
   featured?: boolean;
   rules?: string[];
   whatsappUrl?: string | null;
+  formUrl?: string | null;
 }
 
 function formatCardDate(date: Date): string {
@@ -54,6 +56,7 @@ export function EventCard({
   featured = false,
   rules = [],
   whatsappUrl,
+  formUrl,
 }: EventCardProps) {
   const [imageFailed, setImageFailed] = React.useState(false);
   const showImage = Boolean(imageUrl) && !imageFailed;
@@ -128,16 +131,31 @@ export function EventCard({
           </details>
         )}
 
-        {whatsappUrl && (
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-2 text-sm font-semibold text-[#052e16] transition-colors hover:bg-[#1ebe5d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F4EDE0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#06123A]"
-          >
-            <MessageCircle className="h-4 w-4" aria-hidden />
-            Join WhatsApp Group
-          </a>
+        {(formUrl || whatsappUrl) && (
+          <div className="grid gap-2 sm:grid-cols-2">
+            {formUrl && (
+              <a
+                href={formUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-[#E5121F] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#FF1F2D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F4EDE0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#06123A]"
+              >
+                <ClipboardList className="h-4 w-4" aria-hidden />
+                Register Now
+              </a>
+            )}
+            {whatsappUrl && (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-2 text-sm font-semibold text-[#052e16] transition-colors hover:bg-[#1ebe5d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F4EDE0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#06123A]"
+              >
+                <MessageCircle className="h-4 w-4" aria-hidden />
+                Join WhatsApp Group
+              </a>
+            )}
+          </div>
         )}
 
         <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4">

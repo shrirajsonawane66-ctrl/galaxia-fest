@@ -185,6 +185,7 @@ export function EventsBrowser({ events }: { events: EventRecord[] }) {
                 featured={event.featured}
                 rules={event.rules}
                 whatsappUrl={event.whatsappUrl}
+                formUrl={event.formUrl}
               />
             );
           })}

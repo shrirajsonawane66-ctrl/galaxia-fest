@@ -8,6 +8,7 @@ export type FestivalEventSeed = {
   thumbnail: string;
   rules: string[];
   whatsappUrl?: string | null;
+  formUrl?: string | null;
 };
 
 /**

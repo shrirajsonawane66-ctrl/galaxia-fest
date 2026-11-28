@@ -21,6 +21,7 @@ export interface EventRecord {
   startsAt: string | null; // UTC ISO string, entered/displayed in Asia/Kolkata
   rules: string[];
   whatsappUrl: string | null;
+  formUrl: string | null;
   isPublished: boolean;
 
   // Existing card fields (kept working)
@@ -53,6 +54,7 @@ export interface EventInput {
   startsAt: string | null;
   rules: string[];
   whatsappUrl: string | null;
+  formUrl?: string | null;
   isPublished: boolean;
   sortOrder: number;
 
@@ -95,6 +97,14 @@ export const whatsappUrlSchema = z
     }
   );
 
+export const registrationUrlSchema = z
+  .string()
+  .trim()
+  .url("Enter a valid https URL")
+  .refine((value) => value.startsWith("https://"), {
+    message: "Registration link must use https",
+  });
+
 export const eventInputSchema = z
   .object({
     title: z.string().trim().min(1, "Title is required").max(80, "Keep the title under 80 characters"),
@@ -103,6 +113,7 @@ export const eventInputSchema = z
     startsAt: isoDateTime.nullable(),
     rules: z.array(z.string().trim().max(2000, "Keep each rule under 2000 characters")),
     whatsappUrl: whatsappUrlSchema.nullable(),
+    formUrl: registrationUrlSchema.nullable(),
     isPublished: z.boolean(),
     sortOrder: z.number().int().min(0).max(9999),
 
@@ -174,13 +185,18 @@ export function normalizeEventPayload(payload: unknown): unknown {
         : null
       : raw.startsAt;
 
+  const actionUrl = text("actionUrl");
   let whatsappUrl = raw.whatsappUrl;
   if (whatsappUrl === undefined || whatsappUrl === "") {
-    const actionUrl = text("actionUrl");
     whatsappUrl =
       actionUrl.startsWith("https://chat.whatsapp.com/") || actionUrl.startsWith("https://wa.me/")
         ? actionUrl
         : null;
+  }
+
+  let formUrl = raw.formUrl;
+  if (formUrl === undefined || formUrl === "") {
+    formUrl = actionUrl.startsWith("https://ves-admin.learnqoch.com/eventform/") ? actionUrl : null;
   }
 
   const isPublished =
@@ -194,6 +210,7 @@ export function normalizeEventPayload(payload: unknown): unknown {
     startsAt,
     rules: Array.isArray(raw.rules) ? raw.rules : [],
     whatsappUrl,
+    formUrl,
     isPublished,
     sortOrder:
       typeof raw.sortOrder === "number" && Number.isFinite(raw.sortOrder) ? raw.sortOrder : 0,
@@ -221,6 +238,7 @@ export function eventToInput(event: EventRecord): EventInput {
     startsAt: event.startsAt,
     rules: event.rules,
     whatsappUrl: event.whatsappUrl,
+    formUrl: event.formUrl,
     isPublished: event.isPublished,
     sortOrder: event.sortOrder,
     heading: event.heading,

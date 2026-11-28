@@ -23,6 +23,7 @@ import {
   cleanedRules,
   eventInputSchema,
   eventToInput,
+  registrationUrlSchema,
   whatsappUrlSchema,
 } from "@/lib/events/types";
 import type { EventRecord } from "@/lib/events/types";
@@ -36,6 +37,7 @@ const defaults: FormValues = {
   startsAt: null,
   rules: [],
   whatsappUrl: null,
+  formUrl: null,
   isPublished: false,
   sortOrder: 0,
 };
@@ -70,6 +72,7 @@ export default function EventEditor({
   const [rules, setRules] = React.useState<string[]>([]);
   const [startsAtLocal, setStartsAtLocal] = React.useState("");
   const [whatsapp, setWhatsapp] = React.useState("");
+  const [formLink, setFormLink] = React.useState("");
   const [customThumbnail, setCustomThumbnail] = React.useState<string | null>(null);
   const title = watch("title");
 
@@ -84,6 +87,7 @@ export default function EventEditor({
         startsAt: input.startsAt,
         rules: input.rules,
         whatsappUrl: input.whatsappUrl,
+        formUrl: input.formUrl,
         isPublished: input.isPublished,
         sortOrder: input.sortOrder,
         imageUrl: input.imageUrl || "",
@@ -92,12 +96,14 @@ export default function EventEditor({
       setRules(input.rules);
       setStartsAtLocal(utcToIstDateTimeLocal(initial.startsAt));
       setWhatsapp(input.whatsappUrl || "");
+      setFormLink(input.formUrl || "");
       setCustomThumbnail(initial.imageUrl || null);
     } else {
       reset(defaults);
       setRules([]);
       setStartsAtLocal("");
       setWhatsapp("");
+      setFormLink("");
       setCustomThumbnail(null);
     }
   }, [open, initial, reset]);
@@ -140,6 +146,16 @@ export default function EventEditor({
       }
     }
 
+    const trimmedForm = formLink.trim();
+    const formUrl = trimmedForm || null;
+    if (formUrl) {
+      const parsedForm = registrationUrlSchema.safeParse(formUrl);
+      if (!parsedForm.success) {
+        toast.error(parsedForm.error.issues[0]?.message ?? "Invalid registration link");
+        return;
+      }
+    }
+
     setSaving(true);
     try {
       const payload = {
@@ -147,6 +163,7 @@ export default function EventEditor({
         startsAt,
         rules: cleanRules,
         whatsappUrl,
+        formUrl,
         imageUrl: thumbnail,
         imageAlt: `${data.title} thumbnail`,
         eventName: data.title,
@@ -313,6 +330,16 @@ export default function EventEditor({
               onChange={(event) => setWhatsapp(event.target.value)}
               className={inputClass}
               placeholder="https://chat.whatsapp.com/… or https://wa.me/…"
+            />
+          </Field>
+
+          <Field label="Registration form link (optional)">
+            <input
+              type="url"
+              value={formLink}
+              onChange={(event) => setFormLink(event.target.value)}
+              className={inputClass}
+              placeholder="https://ves-admin.learnqoch.com/eventform/…"
             />
           </Field>
 

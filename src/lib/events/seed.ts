@@ -13,7 +13,14 @@ const now = "2025-11-01T00:00:00.000Z";
 
 type LegacySample = Omit<
   EventRecord,
-  "title" | "day" | "theme" | "startsAt" | "rules" | "whatsappUrl" | "isPublished"
+  | "title"
+  | "day"
+  | "theme"
+  | "startsAt"
+  | "rules"
+  | "whatsappUrl"
+  | "formUrl"
+  | "isPublished"
 >;
 
 const legacySamples: LegacySample[] = [
@@ -163,5 +170,6 @@ export const sampleEvents: EventRecord[] = legacySamples.map((sample) => ({
   startsAt: new Date(`${sample.date}T${sample.startTime}:00+05:30`).toISOString(),
   rules: [],
   whatsappUrl: null,
+  formUrl: null,
   isPublished: sample.status === "published",
 }));

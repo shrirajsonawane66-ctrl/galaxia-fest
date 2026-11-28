@@ -50,40 +50,31 @@ const sponsorshipContacts = [
   },
 ];
 
-function BrochureImage({
-  number,
-  alt,
-  priority = false,
-}: {
-  number: "13" | "14";
-  alt: string;
-  priority?: boolean;
-}) {
-  return (
-    <picture>
-      <source
-        type="image/avif"
-        srcSet={`/sponsorship-${number}-640.avif 640w, /sponsorship-${number}-1080.avif 1080w`}
-        sizes="100vw"
-      />
-      <source
-        type="image/webp"
-        srcSet={`/sponsorship-${number}-640.webp 640w, /sponsorship-${number}-1080.webp 1080w`}
-        sizes="100vw"
-      />
-      <img
-        src={`/${number}.jpg`}
-        alt={alt}
-        width={1414}
-        height={2000}
-        loading={priority ? "eager" : "lazy"}
-        fetchPriority={priority ? "high" : undefined}
-        decoding="async"
-        className="block h-auto w-full"
-      />
-    </picture>
-  );
-}
+const sponsorLogos = [
+  "21-removebg-preview.png",
+  "22-removebg-preview.png",
+  "23-removebg-preview.png",
+  "24-removebg-preview.png",
+  "25-removebg-preview.png",
+  "26-removebg-preview.png",
+  "28-removebg-preview.png",
+  "29-removebg-preview.png",
+  "30-removebg-preview.png",
+  "31-removebg-preview.png",
+  "32-removebg-preview.png",
+  "33-removebg-preview.png",
+  "34-removebg-preview.png",
+  "sample_id_card__14_-removebg-preview.png",
+  "sample_of_id_cards_original_2026__10_-removebg-preview.png",
+  "sample_of_id_cards_original_2026__11_-removebg-preview.png",
+  "sample_of_id_cards_original_2026__12_-removebg-preview.png",
+  "sample_of_id_cards_original_2026__13_-removebg-preview.png",
+  "sample_of_id_cards_original_2026__5_-removebg-preview.png",
+  "sample_of_id_cards_original_2026__6_-removebg-preview.png",
+  "sample_of_id_cards_original_2026__7_-removebg-preview.png",
+  "sample_of_id_cards_original_2026__8_-removebg-preview.png",
+  "sample_of_id_cards_original_2026__9_-removebg-preview.png",
+].map((file) => `/sponsor%20logos/${file}`);
 
 export default async function SponsorshipPage() {
   const { settings, sponsors } = await getPublicContent();
@@ -94,18 +85,7 @@ export default async function SponsorshipPage() {
       <SiteNav />
       <div className="noise pointer-events-none fixed inset-0 z-[1]" />
 
-      <section
-        aria-label="Galaxia i-Fest sponsorship brochure"
-        className="relative z-10 w-full bg-[#06123A] pt-[calc(64px+env(safe-area-inset-top))] md:pt-[72px]"
-      >
-        <BrochureImage
-          number="13"
-          alt="Galaxia i-Fest sponsorship details"
-          priority
-        />
-      </section>
-
-      <main className="relative z-10 mx-auto w-full max-w-7xl px-5 pb-16 pt-12 sm:px-6 sm:pb-24 sm:pt-16 md:px-10 md:pb-32 md:pt-20">
+      <main className="relative z-10 mx-auto w-full max-w-7xl px-5 pb-16 pt-[calc(64px+env(safe-area-inset-top)+3rem)] sm:px-6 sm:pb-24 sm:pt-[calc(72px+4rem)] md:px-10 md:pb-32 md:pt-[calc(72px+5rem)]">
         <div className="max-w-4xl">
           <p className="type-small text-[var(--accent)]">
             {settings.dateLabel || "Galaxia i-Fest 2026"}
@@ -121,6 +101,22 @@ export default async function SponsorshipPage() {
           <h2 id="sponsors-heading" className="type-h2">
             Our partners
           </h2>
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:mt-10 sm:gap-6 md:grid-cols-3 xl:grid-cols-4">
+            {sponsorLogos.map((src, index) => (
+              <div
+                key={src}
+                className="flex min-h-[160px] items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] p-4 sm:min-h-[180px] sm:p-5"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={src}
+                  alt={`Sponsor logo ${index + 1}`}
+                  className="max-h-[120px] w-auto max-w-full object-contain sm:max-h-[140px]"
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
           {sponsors.length > 0 && (
             <div className="mt-8 grid grid-cols-2 gap-4 sm:mt-10 sm:gap-6 md:grid-cols-3 xl:grid-cols-4">
               {sponsors.map((sponsor) => (

@@ -2,7 +2,13 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { CalendarDays, ChevronDown, ImageOff, MessageCircle } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronDown,
+  ClipboardList,
+  ImageOff,
+  MessageCircle,
+} from "lucide-react";
 import { formatStartsAt } from "@/lib/events/format";
 import { thumbnailForTitle } from "@/lib/events/thumbnails";
 import type { EventRecord } from "@/lib/events/types";
@@ -138,7 +144,18 @@ export function FestivalEventCard({
           </details>
         )}
 
-        <div className="mt-auto border-t border-white/10 pt-4">
+        <div className="mt-auto grid gap-2 border-t border-white/10 pt-4">
+          {event.formUrl && (
+            <a
+              href={event.formUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-[#E5121F] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#FF1F2D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F4EDE0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#06123A]"
+            >
+              <ClipboardList className="h-4 w-4" aria-hidden />
+              Register Now
+            </a>
+          )}
           {event.whatsappUrl ? (
             <a
               href={event.whatsappUrl}

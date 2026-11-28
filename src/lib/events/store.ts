@@ -5,6 +5,7 @@ import path from "node:path";
 import { unstable_cache } from "next/cache";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { festival2026Seeds } from "./seed-2026";
+import { apply2026Links } from "./links-2026";
 import { reference2026Events } from "./reference-2026";
 import { thumbnailForTitle } from "./thumbnails";
 import {
@@ -33,6 +34,7 @@ type NewEventColumns = {
   starts_at: string | null;
   rules: string[] | null;
   whatsapp_url: string | null;
+  form_url: string | null;
   is_published: boolean | null;
 };
 
@@ -125,11 +127,21 @@ function safeWhatsappUrl(value: string | null): string | null {
   }
 }
 
+function safeRegistrationUrl(value: string | null | undefined): string | null {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" ? value : null;
+  } catch {
+    return null;
+  }
+}
+
 function fromLegacyRow(row: LegacyEventRow): EventRecord {
   const title = row.title || "Untitled event";
   const now = new Date().toISOString();
   const startsAt = row.starts_at ?? row.start_at ?? startsAtFromLegacy(null, null);
-  return {
+  return apply2026Links({
     id: row.id,
     slug: row.slug,
     title,
@@ -138,6 +150,7 @@ function fromLegacyRow(row: LegacyEventRow): EventRecord {
     startsAt,
     rules: Array.isArray(row.rules) ? row.rules : [],
     whatsappUrl: safeWhatsappUrl(row.whatsapp_url ?? null),
+    formUrl: safeRegistrationUrl(row.form_url),
     isPublished: row.is_published ?? false,
     heading: title,
     description: row.description ?? "",
@@ -157,13 +170,13 @@ function fromLegacyRow(row: LegacyEventRow): EventRecord {
     sortOrder: row.sort_order ?? 0,
     createdAt: row.created_at ?? now,
     updatedAt: row.updated_at ?? now,
-  };
+  });
 }
 
 function fromRow(row: EventRow): EventRecord {
   const title = row.event_name || row.heading || "Untitled event";
   const now = new Date().toISOString();
-  return {
+  return apply2026Links({
     id: row.id,
     slug: row.slug,
     title,
@@ -173,6 +186,7 @@ function fromRow(row: EventRow): EventRecord {
       row.starts_at !== undefined ? row.starts_at : startsAtFromLegacy(row.date, row.start_time),
     rules: Array.isArray(row.rules) ? row.rules : [],
     whatsappUrl: safeWhatsappUrl(row.whatsapp_url ?? null),
+    formUrl: safeRegistrationUrl(row.form_url),
     isPublished: row.is_published ?? row.status === "published",
     heading: row.heading ?? title,
     description: row.description ?? "",
@@ -195,7 +209,7 @@ function fromRow(row: EventRow): EventRecord {
     sortOrder: row.sort_order ?? 0,
     createdAt: row.created_at ?? now,
     updatedAt: row.updated_at ?? now,
-  };
+  });
 }
 
 function fromStoredRow(row: StoredEventRow): EventRecord {
@@ -220,6 +234,7 @@ function toRow(input: EventInput) {
     starts_at: input.startsAt,
     rules: cleanedRules(input.rules),
     whatsapp_url: input.whatsappUrl,
+    form_url: input.formUrl ?? null,
     is_published: input.isPublished,
     slug: input.eventName ? slugify(input.eventName) : slugify(title),
     heading: input.heading ?? title,
@@ -251,6 +266,7 @@ function toLegacyRow(input: EventInput, slug?: string) {
     starts_at: input.startsAt,
     rules: cleanedRules(input.rules),
     whatsapp_url: input.whatsappUrl,
+    form_url: input.formUrl ?? null,
     is_published: input.isPublished,
     title,
     description: input.description ?? input.theme ?? "",
@@ -279,6 +295,7 @@ function toRecord(input: EventInput, id: string, slug: string, now: string): Eve
     startsAt: input.startsAt,
     rules: cleanedRules(input.rules),
     whatsappUrl: input.whatsappUrl,
+    formUrl: input.formUrl ?? null,
     isPublished: input.isPublished,
     heading: input.heading ?? title,
     description: input.description ?? input.theme ?? "",
@@ -346,6 +363,7 @@ function localSeedEvents(): EventRecord[] {
       startsAt: null,
       rules: seed.rules,
       whatsappUrl: seed.whatsappUrl ?? null,
+      formUrl: seed.formUrl ?? null,
       isPublished: false,
       sortOrder: seed.sortOrder,
       imageUrl: seed.thumbnail,
@@ -369,6 +387,7 @@ function localSeedEvents(): EventRecord[] {
       startsAt: null,
       rules: event.rules,
       whatsappUrl: event.whatsappUrl,
+      formUrl: null,
       isPublished: true,
       sortOrder: event.sortOrder,
       heading: event.heading,
@@ -392,14 +411,15 @@ function localSeedEvents(): EventRecord[] {
     };
   });
 
-  return [...festivalRecords, ...referenceRecords];
+  return [...festivalRecords, ...referenceRecords].map(apply2026Links);
 }
 
 /** Older local files may contain only the original card fields. */
 function normalizeLocalEvent(event: EventRecord): EventRecord {
   const title = event.title || event.eventName || event.heading || "Untitled event";
-  return {
+  return apply2026Links({
     ...event,
+    formUrl: safeRegistrationUrl(event.formUrl),
     title,
     day: event.day === 1 || event.day === 2 ? event.day : event.date === "2025-12-19" ? 1 : 2,
     theme: event.theme ?? "",
@@ -411,7 +431,7 @@ function normalizeLocalEvent(event: EventRecord): EventRecord {
     dateTbd: event.dateTbd,
     imageUrl: event.imageUrl || thumbnailForTitle(title),
     imageAlt: event.imageAlt || `${title} thumbnail`,
-  };
+  });
 }
 
 async function writeLocal(events: EventRecord[]): Promise<void> {
