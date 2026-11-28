@@ -346,14 +346,9 @@ export default function HomePage({ performers, highlights = [] }: { performers: 
           <div className="mt-10 grid gap-4 sm:mt-12 md:mt-16 md:grid-cols-2">
             {scheduleSeed.map((s) => (
               <Reveal key={s.id}>
-                <div className="flex flex-col gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition-colors hover:border-white/25 sm:flex-row sm:gap-4 sm:p-6">
-                  <div className="type-small whitespace-nowrap text-[var(--accent)] sm:pt-1">{s.time}</div>
-                  <div className="hidden h-10 w-px bg-white/10 sm:block" />
-                  <div>
-                    <div className="type-h3">{s.title}</div>
-                    <div className="type-body mt-1 sm:text-[15px]">{s.description}</div>
-                    <div className="type-small mt-1">{s.venue}</div>
-                  </div>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition-colors hover:border-white/25 sm:p-6">
+                  <div className="type-h3">{s.title}</div>
+                  <div className="type-small mt-2 text-[var(--accent)]">{s.time}</div>
                 </div>
               </Reveal>
             ))}

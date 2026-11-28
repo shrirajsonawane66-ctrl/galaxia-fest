@@ -195,10 +195,10 @@ export const artistsSeed = [
 ]
 
 export const scheduleSeed = [
-  { id: "s1", time: "Fri 19 — 04:00 PM", title: "Cosmic Gates Open", description: "Wristband collection & nebula entrance", venue: "Main Ground", display_order: 1 },
-  { id: "s2", time: "Fri 19 — 07:00 PM", title: "Shreya Ghoshal · Neha Kakkar", description: "Cosmos Stage double header", venue: "Cosmos Stage", display_order: 2 },
-  { id: "s3", time: "Sat 20 — 06:30 PM", title: "Raftaar · Diljit Dosanjh", description: "Hip-hop to global Punjabi takeover", venue: "Main + Void Stage", display_order: 3 },
-  { id: "s4", time: "Sun 21 — 08:00 PM", title: "Arijit Singh · AP Dhillon", description: "Grand finale under the nebula sky", venue: "Main Stage", display_order: 4 },
+  { id: "s1", time: "17.12.2026", title: "Kaustubh Agarwal", description: "", venue: "", display_order: 1 },
+  { id: "s2", time: "18.12.2026", title: "Karan Kanchan", description: "", venue: "", display_order: 2 },
+  { id: "s3", time: "19.12.2026", title: "Amaal Mallik", description: "", venue: "", display_order: 3 },
+  { id: "s4", time: "19.12.2026", title: "Dhvani Bhanushali", description: "", venue: "", display_order: 4 },
 ]
 
 export const faqsSeed = [
