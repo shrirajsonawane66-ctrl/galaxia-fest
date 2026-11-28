@@ -18,6 +18,7 @@ export interface EventCardProps {
   heading: string;
   description: string;
   date: Date;
+  dateLabel?: string;
   imageUrl?: string;
   imageAlt?: string;
   eventName: string;
@@ -45,6 +46,7 @@ export function EventCard({
   heading,
   description,
   date,
+  dateLabel,
   imageUrl,
   imageAlt,
   eventName,
@@ -85,9 +87,11 @@ export function EventCard({
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#050d24] via-[#050d24]/10 to-transparent" />
         <div className="absolute left-4 top-4 flex items-center gap-2">
-          <span className="type-small rounded-full border border-white/15 bg-[#050d24]/80 px-3 py-1 text-[var(--text-strong)]">
-            {heading}
-          </span>
+          {heading !== dateLabel && (
+            <span className="type-small rounded-full border border-white/15 bg-[#050d24]/80 px-3 py-1 text-[var(--text-strong)]">
+              {heading}
+            </span>
+          )}
           {featured && (
             <span className="rounded-full bg-[#E5121F] px-3 py-1 text-[13px] font-medium text-white">
               Featured
@@ -99,7 +103,7 @@ export function EventCard({
       <div className="flex flex-1 flex-col gap-4 p-5 md:p-6">
         <div className="type-small flex flex-wrap items-center gap-2">
           <CalendarDays className="h-4 w-4 text-[var(--accent)]" aria-hidden />
-          {formatCardDate(date)}
+          {dateLabel ?? formatCardDate(date)}
           <span className="h-1 w-1 rounded-full bg-white/30" />
           <Clock className="h-4 w-4 text-[var(--accent)]" aria-hidden />
           {time}

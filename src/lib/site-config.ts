@@ -24,9 +24,9 @@ export const siteConfig = {
     admin: "/admin",
   },
   eventDays: [
-    { label: "Day 1", date: "2025-12-19" },
-    { label: "Day 2", date: "2025-12-20" },
-    { label: "Day 3", date: "2025-12-21" },
+    { label: "Day 1", date: "2026-12-17" },
+    { label: "Day 2", date: "2026-12-18" },
+    { label: "Day 3", date: "2026-12-19" },
   ],
 } as const;
 

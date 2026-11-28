@@ -3,11 +3,6 @@ import type { EventDay, EventRecord } from "./types";
 
 export const IST_TIME_ZONE = "Asia/Kolkata";
 
-const MONTHS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-] as const;
-
 export function formatEventDate(date: string): string {
   const [year, month, day] = date.split("-").map(Number);
   if (!year || !month || !day) return date;
@@ -86,11 +81,7 @@ export function eventDay(event: Pick<EventRecord, "day" | "date">): EventDay {
 
 export function dayLabel(date: string): string {
   const match = siteConfig.eventDays.find((day) => day.date === date);
-  if (match) {
-    const [, month, day] = date.split("-").map(Number);
-    return `${match.label} (${MONTHS[month - 1]} ${day})`;
-  }
-  return formatEventDate(date);
+  return match ? match.label : formatEventDate(date);
 }
 
 export function dayKey(date: string): string {

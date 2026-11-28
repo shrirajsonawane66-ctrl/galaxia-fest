@@ -175,6 +175,7 @@ export function EventsBrowser({ events }: { events: EventRecord[] }) {
                 heading={event.heading}
                 description={event.description}
                 date={toDate(event.date)}
+                dateLabel={dayLabel(event.date)}
                 imageUrl={event.imageUrl}
                 imageAlt={event.imageAlt}
                 eventName={event.eventName}
